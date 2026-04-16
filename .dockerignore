@@ -1,0 +1,36 @@
+# ── Python cache ─────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Data & results (mounted as volumes at runtime) ────────────────────────────
+data/
+results/
+*.csv
+results/benchmark_results.csv
+
+# ── Development & IDE ────────────────────────────────────────────────────────
+.git/
+.gitignore
+.idea/
+.vscode/
+*.egg-info/
+dist/
+build/
+
+# ── OS artefacts ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Tests / docs (not needed at runtime) ─────────────────────────────────────
+tests/
+docs/
+*.md

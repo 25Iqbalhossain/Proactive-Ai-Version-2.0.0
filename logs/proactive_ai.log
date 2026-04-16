@@ -1,0 +1,229 @@
+2026-04-16 12:40:03 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-16 12:40:03 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-16 12:40:03 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-16 12:40:03 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-16 12:40:03 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:03 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:03 | INFO     | algorithms.explicit_models.svd | SVD trained | components=50 users=112 items=73
+2026-04-16 12:40:03 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:03 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-16 12:40:05 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-16 12:40:05 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:05 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-16 12:40:08 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-16 12:40:08 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:08 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-16 12:40:08 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-16 12:40:08 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:08 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-16 12:40:10 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-16 12:40:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 85 users × 49 items | nnz=224 | density=5.3782% | implicit=True
+2026-04-16 12:40:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 94 users × 60 items | nnz=215 | density=3.8121% | implicit=True
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 82 users × 65 items | nnz=211 | density=3.9587% | implicit=True
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 68 users × 42 items | nnz=216 | density=7.5630% | implicit=True
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 73 users × 37 items | nnz=211 | density=7.8119% | implicit=True
+2026-04-16 12:40:11 | INFO     | algorithms.domain_models.movie_models | Temporal SVD trained | bins=5 components=50
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:11 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:11 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:11 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:11 | INFO     | algorithms.hybrid_models | LightFM-style hybrid trained | k=32 item_features=430 user_features=609
+2026-04-16 12:40:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:12 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=150
+2026-04-16 12:40:12 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:12 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=64
+2026-04-16 12:40:12 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:13 | INFO     | algorithms.hybrid_models | Factorization Machines trained | factors=24 epochs=20
+2026-04-16 12:40:14 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:14 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:14 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:14 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:15 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:15 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:16 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:17 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:18 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:19 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:20 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:21 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:22 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=175
+2026-04-16 12:40:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:22 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=75
+2026-04-16 12:40:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:22 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=16 iter=150
+2026-04-16 12:40:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:23 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=200
+2026-04-16 12:40:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:23 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=100
+2026-04-16 12:40:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:23 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=32 iter=150
+2026-04-16 12:40:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:23 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=150
+2026-04-16 12:40:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:24 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=32 iter=125
+2026-04-16 12:40:24 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:24 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=100
+2026-04-16 12:40:24 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:24 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=75
+2026-04-16 12:40:24 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:24 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=200
+2026-04-16 12:40:24 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:25 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=175
+2026-04-16 12:40:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:25 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:25 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:26 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=32
+2026-04-16 12:40:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:26 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:26 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:27 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:27 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=32
+2026-04-16 12:40:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:27 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=32
+2026-04-16 12:40:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:27 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:28 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=48
+2026-04-16 12:40:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:28 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:28 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=64
+2026-04-16 12:40:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:29 | INFO     | algorithms.general_models | User-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:29 | INFO     | models.model_registry | Model saved | id=c22e5c0f-b14 algo=User-KNN version=1 path=C:\Users\hi\Downloads\proactive-ai-unified-react-v2-fixed\model_store\user-knn_1_c22e5c0f-b14.pkl
+2026-04-16 12:40:29 | INFO     | models.model_registry | Model promoted | id=c22e5c0f-b14 algo=User-KNN
+2026-04-16 12:40:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:29 | INFO     | algorithms.general_models | EASE trained | items=73 lambda=300.00
+2026-04-16 12:40:29 | INFO     | models.model_registry | Model saved | id=cb42854d-7cd algo=EASE version=1 path=C:\Users\hi\Downloads\proactive-ai-unified-react-v2-fixed\model_store\ease_1_cb42854d-7cd.pkl
+2026-04-16 12:40:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:29 | INFO     | algorithms.hybrid_models | Autoencoder-CF trained | hidden=36 iter=150
+2026-04-16 12:40:29 | INFO     | models.model_registry | Model saved | id=7a15a34a-c1f algo=Autoencoder-CF version=1 path=C:\Users\hi\Downloads\proactive-ai-unified-react-v2-fixed\model_store\autoencoder-cf_1_7a15a34a-c1f.pkl
+2026-04-16 12:40:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:29 | INFO     | algorithms.general_models | Item-KNN trained | neighbors=40 shrinkage=10.00
+2026-04-16 12:40:29 | INFO     | models.model_registry | Model saved | id=fda7196e-70e algo=Item-KNN version=1 path=C:\Users\hi\Downloads\proactive-ai-unified-react-v2-fixed\model_store\item-knn_1_fda7196e-70e.pkl
+2026-04-16 12:40:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:40:29 | INFO     | algorithms.hybrid_models | Content TF-IDF trained | vocab=430 embed_dim=72
+2026-04-16 12:40:29 | INFO     | models.model_registry | Model saved | id=e07b645e-bb3 algo=Content-Based TF-IDF version=1 path=C:\Users\hi\Downloads\proactive-ai-unified-react-v2-fixed\model_store\content-based_tf-idf_1_e07b645e-bb3.pkl
+2026-04-16 12:40:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-16 12:41:10 | INFO     | models.model_loader | Loading model into memory | id=e07b645e-bb3 algo=Content-Based TF-IDF version=1
+2026-04-16 12:41:10 | INFO     | models.model_registry | Model loaded | id=e07b645e-bb3 algo=Content-Based TF-IDF
+2026-04-16 12:41:10 | INFO     | models.model_loader | Model loaded | algo=Content-Based TF-IDF id=e07b645e-bb3 version=1 elapsed=0.01s
+2026-04-16 12:41:10 | WARNING  | recommendation.recommender_engine | User user_123 not found; returning popularity fallback.

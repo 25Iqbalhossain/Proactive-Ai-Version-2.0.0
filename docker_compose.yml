@@ -1,0 +1,65 @@
+version: "3.9"
+
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  RecSys Auto-Benchmark — Docker Compose                         ║
+# ║                                                                 ║
+# ║  Services                                                       ║
+# ║    api   → FastAPI server  (http://localhost:8000/docs)         ║
+# ║    cli   → One-shot benchmark + Optuna tuning on a CSV          ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+services:
+
+  # ── FastAPI server ────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: recsys:latest
+    container_name: recsys_api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount local data folder → /app/data inside container
+      - ./data:/app/data:ro
+      # Results written by the API persist here
+      - ./results:/app/results
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    command: >
+      uvicorn main:app
+        --host 0.0.0.0
+        --port 8000
+        --workers 2
+
+  # ── CLI benchmark (one-shot, exits when done) ─────────────────────────────
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: recsys:latest
+    container_name: recsys_cli
+    volumes:
+      - ./data:/app/data:ro
+      - ./results:/app/results
+    environment:
+      - PYTHONUNBUFFERED=1
+    profiles:
+      # Not started by default — run with:
+      #   docker compose --profile cli up cli
+      - cli
+    command: >
+      python main.py
+        --file /app/data/ecommerce_full.csv
+        --topk 10
+        --trials 25

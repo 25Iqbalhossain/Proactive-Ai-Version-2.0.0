@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proactive AI - Recommendation Platform</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#142033;
+      --muted:#5a6b86;
+      --border:#d8e0ee;
+      --primary:#1e6fff;
+      --primary-soft:#e8f0ff;
+      --ok:#0d9d6f;
+      --warn:#d17f00;
+      --err:#d03030;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Segoe UI,Arial,sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#f7f9fe 0%,#eef3fb 100%);
+    }
+    header{
+      padding:14px 18px;
+      border-bottom:1px solid var(--border);
+      background:#fff;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+    .pill{
+      font-size:12px;
+      padding:5px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:#fff;
+      color:var(--muted);
+      margin-left:8px;
+    }
+    .pill.ok{color:var(--ok);border-color:#b6e8d7;background:#f1fbf7}
+    .pill.warn{color:var(--warn);border-color:#f2ddb8;background:#fff8eb}
+    .pill.err{color:var(--err);border-color:#f0c2c2;background:#fff4f4}
+    .layout{
+      max-width:1320px;
+      margin:0 auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns:360px 1fr;
+      gap:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      overflow:hidden;
+    }
+    .card h3{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:12px 14px;
+      border-bottom:1px solid var(--border);
+      background:#fbfcff;
+    }
+    .body{padding:14px}
+    .field{margin-bottom:12px}
+    .field:last-child{margin-bottom:0}
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    input,select{
+      width:100%;
+      padding:9px 10px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      font-size:14px;
+      background:#fff;
+      color:var(--text);
+    }
+    input:focus,select:focus{
+      outline:none;
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px var(--primary-soft);
+    }
+    button{
+      width:100%;
+      border:none;
+      border-radius:8px;
+      padding:10px 12px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+    }
+    button.secondary{
+      background:#edf2ff;
+      color:#27498f;
+      border:1px solid #cad9ff;
+    }
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+      line-height:1.4;
+    }
+    .status{
+      margin-top:8px;
+      padding:8px 10px;
+      border-radius:8px;
+      font-size:12px;
+      border:1px solid var(--border);
+      background:#fbfdff;
+      color:var(--muted);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:10px;
+    }
+    .mini{
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:10px;
+      background:#fff;
+    }
+    .mini h4{margin:0 0 8px 0;font-size:14px}
+    .mini p{margin:4px 0;font-size:12px;color:var(--muted)}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+    th,td{
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      padding:8px;
+    }
+    th{font-size:12px;color:var(--muted);text-transform:uppercase}
+    .scroll{overflow:auto}
+    .muted{color:var(--muted)}
+    .list{margin:6px 0 0 16px;padding:0}
+    .list li{margin-bottom:4px;font-size:12px;color:#31445f}
+    .ens-row{
+      display:grid;
+      grid-template-columns:auto 1fr 88px;
+      gap:8px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .ens-row input[type="number"]{padding:7px 8px}
+    .ens-empty{
+      font-size:12px;
+      color:var(--muted);
+      padding:8px;
+      border:1px dashed var(--border);
+      border-radius:8px;
+      background:#fbfdff;
+    }
+    .weight-ok{color:var(--ok);font-weight:600}
+    .weight-warn{color:var(--warn);font-weight:600}
+    .weight-err{color:var(--err);font-weight:600}
+    #log{
+      height:160px;
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:8px;
+      background:#fafcff;
+      font-size:12px;
+      color:#2d405c;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+    @media (max-width:1050px){
+      .layout{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>Proactive AI</strong> <span class="muted">Recommendation Intelligence</span></div>
+    <div>
+      <span id="apiPill" class="pill">API: checking</span>
+      <span id="authPill" class="pill">Auth: signed out</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <h3>1) Dataset and Training</h3>
+        <div class="body">
+          <div class="field">
+            <label>Upload Dataset</label>
+            <input type="file" id="datasetFile" accept=".csv,.xlsx,.xls,.json,.parquet" />
+          </div>
+          <div class="field">
+            <label>Algorithm Mode</label>
+            <select id="algorithmMode">
+              <option value="auto" selected>Auto-detect</option>
+              <option value="explicit">Explicit only</option>
+              <option value="implicit">Implicit only</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Top-K Cutoff</label>
+            <select id="topK">
+              <option value="10" selected>Top 10 (default)</option>
+              <option value="5">Top 5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Top Models to Tune and Save</label>
+            <select id="topModels">
+              <option value="10" selected>Top 10</option>
+              <option value="5">Top 5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Optuna Trials Per Algorithm</label>
+            <input id="nTrials" type="number" value="-1" min="-1" max="300" />
+            <div class="hint">Use <code>-1</code> for adaptive trial budgeting by algorithm complexity.</div>
+          </div>
+          <button id="trainBtn" disabled>Run Training</button>
+          <div id="trainStatus" class="status">Select a file to start.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>2) Login for Protected API</h3>
+        <div class="body">
+          <div class="field">
+            <label>Username</label>
+            <input id="username" type="text" value="admin" />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input id="password" type="password" value="admin123" />
+          </div>
+          <button id="loginBtn" class="secondary">Login</button>
+          <div id="loginStatus" class="status">Login is required for recommendations and model endpoints.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>3) Quick Recommendation</h3>
+        <div class="body">
+          <div class="field">
+            <label>User ID</label>
+            <input id="recUser" type="text" placeholder="e.g. user_123" />
+          </div>
+          <div class="field">
+            <label>Top-N</label>
+            <select id="recTopN">
+              <option value="10" selected>Top 10</option>
+              <option value="5">Top 5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Recommendation Strategy</label>
+            <select id="recStrategy">
+              <option value="best_promoted_model" selected>Use best promoted model</option>
+              <option value="single_model">Use a single selected model</option>
+              <option value="ensemble_weighted">Use custom weighted ensemble</option>
+            </select>
+            <div class="hint">Choose one strategy: default promoted model, single top model, or weighted ensemble of top models.</div>
+          </div>
+
+          <div id="singleModelWrap" class="field" style="display:none">
+            <label>Single Model</label>
+            <select id="recSingleModel"></select>
+          </div>
+
+          <div id="ensembleWrap" style="display:none">
+            <div class="field">
+              <label>Ensemble Models (Top 5)</label>
+              <div id="ensembleModels" class="ens-empty">No top models available yet. Run training first.</div>
+              <div class="hint">Select at least 2 models. You can enter weights as fractions (sum=1) or percentages (sum=100).</div>
+            </div>
+            <div class="field">
+              <label>Total Selected Weight</label>
+              <div id="weightTotal" class="status">0</div>
+            </div>
+            <div class="field">
+              <label><input id="autoNormalizeWeights" type="checkbox" checked style="width:auto;margin-right:6px" />Auto normalize weights</label>
+              <div class="hint">If total is not exactly 1.0 or 100, backend can normalize automatically.</div>
+            </div>
+          </div>
+
+          <button id="recBtn" class="secondary">Get Recommendations</button>
+          <div id="recResults" class="status">No recommendation request yet.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Activity Log</h3>
+        <div class="body">
+          <div id="log"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3>Training Summary</h3>
+        <div class="body">
+          <div id="summary" class="status">No training result yet.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Leaderboard (Transparent Ranking)</h3>
+        <div class="body scroll">
+          <div id="leaderboard" class="status">No leaderboard yet.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Top Model Recommendations and Reasons</h3>
+        <div class="body">
+          <div id="modelReasons" class="grid"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Optuna and Tuning</h3>
+        <div class="body scroll">
+          <div id="tuning" class="status">No tuning result yet.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Available Algorithms</h3>
+        <div class="body scroll">
+          <div id="algorithms" class="status">Loading algorithms...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/ui/recommendation_ui_logic.js"></script>
+  <script>
+    const API = "";
+    let selectedFile = null;
+    let activeJobId = null;
+    let pollTimer = null;
+    let authToken = localStorage.getItem("proactive_token") || "";
+    const appState = {
+      latestTraining: null,
+      recommendationOptions: null
+    };
+
+    const logEl = document.getElementById("log");
+    const trainBtn = document.getElementById("trainBtn");
+    const recBtn = document.getElementById("recBtn");
+    const trainStatus = document.getElementById("trainStatus");
+    const authPill = document.getElementById("authPill");
+    const apiPill = document.getElementById("apiPill");
+
+    function log(message){
+      const ts = new Date().toLocaleTimeString();
+      logEl.textContent += `[${ts}] ${message}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setPill(el, text, kind){
+      el.className = `pill ${kind || ""}`.trim();
+      el.textContent = text;
+    }
+
+    async function apiFetch(path, options = {}, requiresAuth = false){
+      const headers = options.headers ? {...options.headers} : {};
+      if (requiresAuth){
+        if (!authToken) throw new Error("Please login first.");
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+      const res = await fetch(`${API}${path}`, {...options, headers});
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok){
+        throw new Error(data.detail || `Request failed: ${res.status}`);
+      }
+      return data;
+    }
+
+    async function checkHealth(){
+      try{
+        await apiFetch("/health");
+        setPill(apiPill, "API: online", "ok");
+      }catch(err){
+        setPill(apiPill, "API: offline", "err");
+      }
+    }
+
+    async function loadAlgorithms(){
+      try{
+        const data = await apiFetch("/algorithms");
+        const rows = (data.algorithms || []).map(a => `
+          <div class="mini">
+            <h4>${a.name}</h4>
+            <p>${a.description || ""}</p>
+            <p><strong>Feedback:</strong> ${a.feedback} | <strong>Domain:</strong> ${a.domain}</p>
+            <p><strong>Speed:</strong> ${a.training_speed || "-"} | <strong>Scalability:</strong> ${a.scalability || "-"}</p>
+          </div>
+        `).join("");
+        document.getElementById("algorithms").innerHTML = rows || '<div class="status">No algorithms found.</div>';
+      }catch(err){
+        document.getElementById("algorithms").innerHTML = `<div class="status">${err.message}</div>`;
+      }
+    }
+
+    async function loadRecommendationOptions(){
+      if (!authToken){
+        renderRecommendationOptionState(null);
+        return;
+      }
+      try{
+        const data = await apiFetch("/recommend/options", {}, true);
+        appState.recommendationOptions = data;
+        renderRecommendationOptionState(data);
+      }catch(err){
+        renderRecommendationOptionState(null);
+        log(`Cannot load recommendation options: ${err.message}`);
+      }
+    }
+
+    function renderRecommendationOptionState(options){
+      const singleSelect = document.getElementById("recSingleModel");
+      const ensembleContainer = document.getElementById("ensembleModels");
+      const topModels = (options && options.top_models) ? options.top_models.slice(0,5) : [];
+
+      if (!topModels.length){
+        singleSelect.innerHTML = `<option value="">No models available</option>`;
+        singleSelect.disabled = true;
+        ensembleContainer.innerHTML = `No top models available yet. Run training first.`;
+        updateWeightTotal();
+        return;
+      }
+      singleSelect.disabled = false;
+
+      singleSelect.innerHTML = topModels.map(m =>
+        `<option value="${m.algorithm}">${m.rank ? `#${m.rank} ` : ""}${m.algorithm}${m.metric_value !== null && m.metric_value !== undefined ? ` (${fmt(Number(m.metric_value))})` : ""}</option>`
+      ).join("");
+
+      ensembleContainer.innerHTML = topModels.map((m, idx) => `
+        <div class="ens-row" data-algo="${m.algorithm}" data-model-id="${m.model_id || ""}">
+          <input type="checkbox" class="ens-check" id="ens-check-${idx}" ${idx < 2 ? "checked" : ""} />
+          <label for="ens-check-${idx}" style="margin:0">${m.algorithm}</label>
+          <input type="number" class="ens-weight" value="${idx === 0 ? "50" : (idx === 1 ? "50" : "0")}" min="0" step="0.01" />
+        </div>
+      `).join("");
+
+      ensembleContainer.querySelectorAll(".ens-check,.ens-weight").forEach(el => {
+        el.addEventListener("input", updateWeightTotal);
+        el.addEventListener("change", updateWeightTotal);
+      });
+      updateWeightTotal();
+    }
+
+    function getSelectedEnsembleModels(){
+      const rows = Array.from(document.querySelectorAll("#ensembleModels .ens-row"));
+      const picked = [];
+      for (const row of rows){
+        const check = row.querySelector(".ens-check");
+        const weightInput = row.querySelector(".ens-weight");
+        if (!check || !weightInput) continue;
+        const weight = Number(weightInput.value);
+        picked.push({
+          algorithm: row.dataset.algo,
+          model_id: row.dataset.modelId || undefined,
+          selected: !!check.checked,
+          weight
+        });
+      }
+      return picked;
+    }
+
+    function updateWeightTotal(){
+      const totalEl = document.getElementById("weightTotal");
+      const ensembleModels = getSelectedEnsembleModels();
+      const picked = ensembleModels.filter(m => m.selected);
+      const total = picked.reduce((s,m) => s + (Number.isFinite(m.weight) ? m.weight : 0), 0);
+      const autoNormalize = document.getElementById("autoNormalizeWeights").checked;
+
+      let cls = "weight-warn";
+      let msg = `Total weight: ${total.toFixed(4)}`;
+      const helper = window.RecUiLogic;
+      if (helper && typeof helper.validateEnsembleSelection === "function"){
+        const validation = helper.validateEnsembleSelection(ensembleModels, autoNormalize, 2, 5);
+        if (validation.valid && !validation.normalizationNeeded){
+          cls = "weight-ok";
+          msg += " (valid)";
+        } else if (validation.valid){
+          cls = "weight-warn";
+          msg += ` (${validation.reason})`;
+        } else {
+          cls = "weight-err";
+          msg += ` (${validation.reason})`;
+        }
+      } else {
+        const isExactOne = Math.abs(total - 1.0) < 1e-8;
+        const isExactHundred = Math.abs(total - 100.0) < 1e-8;
+        if ((isExactOne || isExactHundred) && picked.length >= 2){
+          cls = "weight-ok";
+          msg += " (valid)";
+        }else if (picked.length < 2){
+          cls = "weight-err";
+          msg += " (select at least 2 models)";
+        }else if (autoNormalize && total > 0){
+          cls = "weight-warn";
+          msg += " (will be auto-normalized)";
+        }else{
+          cls = "weight-err";
+          msg += " (invalid unless auto-normalize is enabled)";
+        }
+      }
+      totalEl.className = `status ${cls}`;
+      totalEl.textContent = msg;
+    }
+
+    function toggleRecommendationStrategyUi(){
+      const strategy = document.getElementById("recStrategy").value;
+      document.getElementById("singleModelWrap").style.display = strategy === "single_model" ? "block" : "none";
+      document.getElementById("ensembleWrap").style.display = strategy === "ensemble_weighted" ? "block" : "none";
+      updateWeightTotal();
+    }
+
+    function updateAuthUi(signedIn){
+      if (signedIn){
+        setPill(authPill, "Auth: signed in", "ok");
+        document.getElementById("loginStatus").textContent = "Authenticated. Protected endpoints are enabled.";
+      }else{
+        setPill(authPill, "Auth: signed out", "warn");
+        document.getElementById("loginStatus").textContent = "Login is required for recommendations and model endpoints.";
+      }
+    }
+
+    async function verifyToken(){
+      if (!authToken){
+        updateAuthUi(false);
+        renderRecommendationOptionState(null);
+        return;
+      }
+      try{
+        await apiFetch("/auth/me", {}, true);
+        updateAuthUi(true);
+        await loadRecommendationOptions();
+      }catch{
+        authToken = "";
+        localStorage.removeItem("proactive_token");
+        updateAuthUi(false);
+        renderRecommendationOptionState(null);
+      }
+    }
+
+    document.getElementById("datasetFile").addEventListener("change", (e) => {
+      selectedFile = e.target.files[0] || null;
+      trainBtn.disabled = !selectedFile;
+      trainStatus.textContent = selectedFile
+        ? `Ready: ${selectedFile.name}`
+        : "Select a file to start.";
+    });
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      if (!username || !password){
+        document.getElementById("loginStatus").textContent = "Username and password are required.";
+        return;
+      }
+      try{
+        const data = await apiFetch("/auth/login", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({username, password})
+        });
+        authToken = data.access_token;
+        localStorage.setItem("proactive_token", authToken);
+        updateAuthUi(true);
+        await loadRecommendationOptions();
+        log("Login successful.");
+      }catch(err){
+        updateAuthUi(false);
+        document.getElementById("loginStatus").textContent = err.message;
+        log(`Login failed: ${err.message}`);
+      }
+    });
+
+    document.getElementById("recStrategy").addEventListener("change", toggleRecommendationStrategyUi);
+    document.getElementById("autoNormalizeWeights").addEventListener("change", updateWeightTotal);
+
+    trainBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+      const form = new FormData();
+      form.append("file", selectedFile);
+      form.append("top_k", document.getElementById("topK").value);
+      form.append("n_trials", document.getElementById("nTrials").value);
+      form.append("top_models", document.getElementById("topModels").value);
+      form.append("algorithm_mode", document.getElementById("algorithmMode").value);
+      form.append("format", "auto");
+
+      trainBtn.disabled = true;
+      trainStatus.textContent = "Submitting training job...";
+      try{
+        const data = await apiFetch("/train/file", {method: "POST", body: form});
+        activeJobId = data.job_id;
+        trainStatus.textContent = `Job submitted: ${activeJobId}`;
+        log(`Training job created: ${activeJobId}`);
+        pollJob(activeJobId);
+      }catch(err){
+        trainStatus.textContent = err.message;
+        trainBtn.disabled = false;
+        log(`Training submit failed: ${err.message}`);
+      }
+    });
+
+    function pollJob(jobId){
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(async () => {
+        try{
+          const job = await apiFetch(`/jobs/${jobId}`);
+          trainStatus.textContent = `Job ${jobId}: ${job.status}`;
+          if (job.status === "done"){
+            clearInterval(pollTimer);
+            pollTimer = null;
+            trainBtn.disabled = false;
+            renderTrainingResult(job.result || {});
+            log("Training completed.");
+          }else if (job.status === "error"){
+            clearInterval(pollTimer);
+            pollTimer = null;
+            trainBtn.disabled = false;
+            trainStatus.textContent = `Job failed: ${job.error || "unknown error"}`;
+            log(`Training failed: ${job.error}`);
+          }
+        }catch(err){
+          trainStatus.textContent = `Polling error: ${err.message}`;
+          log(`Polling error: ${err.message}`);
+        }
+      }, 2500);
+    }
+
+    function renderTrainingResult(result){
+      appState.latestTraining = result;
+      appState.recommendationOptions = result.recommendation_options || null;
+      if (appState.recommendationOptions){
+        renderRecommendationOptionState(appState.recommendationOptions);
+      }
+      const summary = `
+        <div><strong>Best Algorithm:</strong> ${result.best_algorithm || "-"}</div>
+        <div><strong>Best Model ID:</strong> ${result.best_model_id || "-"}</div>
+        <div><strong>Resolved Mode:</strong> ${result.resolved_mode || "-"}</div>
+        <div><strong>Elapsed:</strong> ${result.elapsed_s || "-"}s</div>
+        <div><strong>Optuna:</strong> ${result.optuna_note || "-"}</div>
+      `;
+      document.getElementById("summary").innerHTML = summary;
+
+      renderLeaderboard(result.leaderboard || [], result.ranking_logic || {});
+      renderModelReasons(result.top_model_recommendations || []);
+      renderTuning(result.tuning || []);
+    }
+
+    function renderLeaderboard(rows, rankingLogic){
+      if (!rows.length){
+        document.getElementById("leaderboard").innerHTML = "No leaderboard rows.";
+        return;
+      }
+      const table = `
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th><th>Algorithm</th><th>Primary</th><th>Composite</th><th>Time(s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td>${r.Rank ?? "-"}</td>
+                <td>${r.Algorithm ?? "-"}</td>
+                <td>${fmtPrimary(r)}</td>
+                <td>${fmt(r["Composite Score"])}</td>
+                <td>${fmt(r["Time (s)"])}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <div class="hint" style="margin-top:8px">
+          Ranking logic: primary metric=${rankingLogic.primary_metric || "-"},
+          weights=${JSON.stringify((rankingLogic.weights || {}))}
+        </div>
+      `;
+      document.getElementById("leaderboard").innerHTML = table;
+    }
+
+    function renderModelReasons(rows){
+      if (!rows.length){
+        document.getElementById("modelReasons").innerHTML = '<div class="status">No model recommendations yet.</div>';
+        return;
+      }
+      document.getElementById("modelReasons").innerHTML = rows.map(r => `
+        <div class="mini">
+          <h4>#${r.rank} ${r.algorithm}</h4>
+          <p><strong>Model ID:</strong> ${r.model_id || "-"}</p>
+          <p><strong>${r.metric_name || "Metric"}:</strong> ${fmt(r.metric_value)} | <strong>Composite:</strong> ${fmt(r.composite_score)}</p>
+          <p><strong>Status:</strong> ${r.status || "-"}</p>
+          <ul class="list">${(r.reasons || []).map(x => `<li>${x}</li>`).join("")}</ul>
+        </div>
+      `).join("");
+    }
+
+    function renderTuning(rows){
+      if (!rows.length){
+        document.getElementById("tuning").textContent = "No tuning rows.";
+        return;
+      }
+      document.getElementById("tuning").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Algorithm</th><th>Metric</th><th>Best</th><th>Trials</th><th>Status</th><th>Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td>${r.algorithm}</td>
+                <td>${r.metric || "-"}</td>
+                <td>${fmt(r.best_value)}</td>
+                <td>${r.n_trials}</td>
+                <td>${r.status}</td>
+                <td>${r.trial_budget || "-"}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    document.getElementById("recBtn").addEventListener("click", async () => {
+      const user = document.getElementById("recUser").value.trim();
+      const topN = Number(document.getElementById("recTopN").value);
+      const strategy = document.getElementById("recStrategy").value;
+      const helper = window.RecUiLogic;
+      let payload = null;
+      if (helper && typeof helper.buildRecommendationPayload === "function"){
+        const built = helper.buildRecommendationPayload({
+          userId: user,
+          topN,
+          strategy,
+          singleModel: document.getElementById("recSingleModel").value,
+          ensembleModels: getSelectedEnsembleModels(),
+          autoNormalizeWeights: document.getElementById("autoNormalizeWeights").checked,
+        });
+        if (built.error){
+          document.getElementById("recResults").textContent = built.error;
+          return;
+        }
+        payload = built.payload;
+      } else {
+        if (!user){
+          document.getElementById("recResults").textContent = "User ID is required.";
+          return;
+        }
+        payload = {user_id:user, top_n:topN, strategy};
+        if (strategy === "single_model"){
+          const algo = document.getElementById("recSingleModel").value;
+          if (!algo){
+            document.getElementById("recResults").textContent = "Select a model for single_model strategy.";
+            return;
+          }
+          payload.algorithm = algo;
+        } else if (strategy === "ensemble_weighted"){
+          const models = getSelectedEnsembleModels().filter(m => m.selected).map(m => ({
+            algorithm: m.algorithm,
+            model_id: m.model_id,
+            weight: m.weight,
+          }));
+          const autoNormalize = document.getElementById("autoNormalizeWeights").checked;
+          const total = models.reduce((s,m) => s + (Number.isFinite(m.weight) ? m.weight : 0), 0);
+          if (models.length < 2){
+            document.getElementById("recResults").textContent = "Select at least 2 models for ensemble strategy.";
+            return;
+          }
+          if (models.some(m => !m.algorithm || !Number.isFinite(m.weight) || m.weight <= 0)){
+            document.getElementById("recResults").textContent = "All selected models must have a positive numeric weight.";
+            return;
+          }
+          const validTotal = Math.abs(total - 1.0) < 1e-8 || Math.abs(total - 100.0) < 1e-8;
+          if (!validTotal && !autoNormalize){
+            document.getElementById("recResults").textContent = "Weights must sum to 1.0 or 100. Enable auto-normalize or fix weights.";
+            return;
+          }
+          payload.models = models;
+          payload.auto_normalize_weights = autoNormalize;
+        }
+      }
+
+      recBtn.disabled = true;
+      document.getElementById("recResults").textContent = "Loading recommendations...";
+      try{
+        const data = await apiFetch("/recommend", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(payload)
+        }, true);
+        const recs = data.recommendations || [];
+        if (!recs.length){
+          document.getElementById("recResults").textContent = "No recommendations returned.";
+          return;
+        }
+        const modelsUsed = data.models_used || [];
+        const warnings = data.warnings || [];
+        const normalizationNote = data.weight_normalization_note || "";
+        const header = `
+          <div><strong>Strategy:</strong> ${data.strategy || "-"}</div>
+          <div><strong>Weight normalization:</strong> ${data.weight_normalization_applied ? "applied" : "not applied"}</div>
+          ${normalizationNote ? `<div><strong>Normalization note:</strong> ${normalizationNote}</div>` : ""}
+          <div><strong>Models:</strong> ${modelsUsed.map(m => `${m.algorithm} (${fmt(m.normalized_weight)})`).join(", ")}</div>
+          ${warnings.length ? `<div class="weight-warn"><strong>Warnings:</strong> ${warnings.join(" | ")}</div>` : ""}
+          <hr style="border:none;border-top:1px solid var(--border);margin:8px 0" />
+        `;
+        const body = recs.map(r => `
+          <div style="margin-bottom:10px">
+            <div><strong>#${r.rank} Item ${r.item_id}</strong> - Final score: ${fmt(r.final_score)}</div>
+            <div class="muted">${r.explanation || ""}</div>
+            ${(r.contributions || []).length ? `
+              <ul class="list">
+                ${(r.contributions || []).map(c => `<li>${c.algorithm}: ${fmt(c.share_pct)}% (weighted ${fmt(c.weighted_score)})</li>`).join("")}
+              </ul>
+            ` : ""}
+            ${(helper && typeof helper.renderContributionText === "function" && (r.contributions || []).length)
+              ? `<div class="hint">Contribution summary: ${helper.renderContributionText(r.contributions || [])}</div>`
+              : ""}
+          </div>
+        `).join("");
+        document.getElementById("recResults").innerHTML = header + body;
+        log(`Recommendations fetched for ${user}.`);
+      }catch(err){
+        document.getElementById("recResults").textContent = err.message;
+        log(`Recommendation failed: ${err.message}`);
+      }finally{
+        recBtn.disabled = false;
+      }
+    });
+
+    function fmt(v){
+      if (v === null || v === undefined || Number.isNaN(v)) return "-";
+      if (typeof v === "number") return v.toFixed(4);
+      return String(v);
+    }
+    function fmtPrimary(row){
+      if (row["NDCG@K"] !== undefined && row["NDCG@K"] !== null) return `NDCG@K ${fmt(row["NDCG@K"])}`;
+      if (row["RMSE"] !== undefined && row["RMSE"] !== null) return `RMSE ${fmt(row["RMSE"])}`;
+      return "-";
+    }
+
+    (async function init(){
+      await checkHealth();
+      await verifyToken();
+      await loadAlgorithms();
+      toggleRecommendationStrategyUi();
+      updateWeightTotal();
+      setInterval(checkHealth, 15000);
+      log("Dashboard initialized.");
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+{
+  "c22e5c0f-b14": {
+    "model_id": "c22e5c0f-b14",
+    "algorithm": "User-KNN",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9787
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776321629.0867956,
+    "promoted": true,
+    "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\user-knn_1_c22e5c0f-b14.pkl",
+    "notes": "rank=1/5 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "cb42854d-7cd": {
+    "model_id": "cb42854d-7cd",
+    "algorithm": "EASE",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776321629.1613998,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\ease_1_cb42854d-7cd.pkl",
+    "notes": "rank=2/5 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "7a15a34a-c1f": {
+    "model_id": "7a15a34a-c1f",
+    "algorithm": "Autoencoder-CF",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4417,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8138
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 7.476312062252303e-05,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776321629.3404648,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\autoencoder-cf_1_7a15a34a-c1f.pkl",
+    "notes": "rank=3/5 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "fda7196e-70e": {
+    "model_id": "fda7196e-70e",
+    "algorithm": "Item-KNN",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8373
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776321629.436397,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\item-knn_1_fda7196e-70e.pkl",
+    "notes": "rank=4/5 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "e07b645e-bb3": {
+    "model_id": "e07b645e-bb3",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7673
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776321629.6497858,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\content-based_tf-idf_1_e07b645e-bb3.pkl",
+    "notes": "rank=5/5 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  }
+}

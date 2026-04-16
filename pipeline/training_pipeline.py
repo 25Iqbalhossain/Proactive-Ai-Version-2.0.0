@@ -1,0 +1,441 @@
+"""
+End-to-end training pipeline.
+"""
+from __future__ import annotations
+
+import math
+import time
+from dataclasses import dataclass, field
+from typing import Optional
+
+import pandas as pd
+from colorama import Fore, Style
+
+from algorithms import ALGORITHM_REGISTRY
+from benchmark.benchmark_engine import BenchmarkEngine, BenchmarkReport
+from config.database import NoSQLConfig, SQLConfig
+from config.settings import (
+    ALGORITHM_MODES,
+    DEFAULT_ALGORITHM_MODE,
+    OPTUNA_TRIALS_AUTO,
+    TOP_K,
+    TOP_K_ALLOWED,
+    TOP_MODEL_ALLOWED,
+    TOP_N_MODELS,
+)
+from data_processing.data_cleaning import DataCleaner
+from data_processing.dataset_analyzer import DatasetAnalyzer
+from data_processing.feedback_detector import FeedbackDetector
+from data_processing.interaction_matrix import InteractionMatrixBuilder
+from ingestion.csv_loader import FileLoader
+from ingestion.nosql_connector import NoSQLConnector
+from ingestion.sql_query_executor import SQLQueryExecutor
+from models.model_registry import ModelRegistry
+from optimization.optuna_tuner import OptunaTuner, TuningResult
+from utils.logger import get_logger
+
+log = get_logger(__name__)
+
+
+@dataclass
+class TrainingConfig:
+    top_k: int = TOP_K
+    n_tuning_trials: int = OPTUNA_TRIALS_AUTO
+    top_model_count: int = TOP_N_MODELS
+    algorithm_mode: str = DEFAULT_ALGORITHM_MODE
+    force_all_algos: bool = False
+    interactive: bool = False
+    save_model: bool = True
+    auto_promote: bool = True
+
+    def validate(self) -> None:
+        if self.top_k not in TOP_K_ALLOWED:
+            raise ValueError(f"top_k must be one of {TOP_K_ALLOWED}, got {self.top_k}")
+        if self.top_model_count not in TOP_MODEL_ALLOWED:
+            raise ValueError(
+                f"top_model_count must be one of {TOP_MODEL_ALLOWED}, got {self.top_model_count}"
+            )
+        if self.algorithm_mode not in ALGORITHM_MODES:
+            raise ValueError(
+                f"algorithm_mode must be one of {ALGORITHM_MODES}, got {self.algorithm_mode}"
+            )
+
+
+@dataclass
+class TrainingResult:
+    report: BenchmarkReport
+    tuning_results: list[TuningResult]
+    best_model_id: Optional[str]
+    best_algorithm: Optional[str]
+    best_params: dict
+    elapsed_s: float
+    all_model_ids: list[str] = field(default_factory=list)
+    resolved_mode: str = "implicit"
+    feedback_profile: dict = field(default_factory=dict)
+    top_model_recommendations: list[dict] = field(default_factory=list)
+    ranking_logic: dict = field(default_factory=dict)
+    optuna_note: str = ""
+
+    @property
+    def all_tuning_results(self) -> list[TuningResult]:
+        return self.tuning_results
+
+
+class TrainingPipeline:
+    def __init__(self, config: Optional[TrainingConfig] = None):
+        self.config = config or TrainingConfig()
+        self.config.validate()
+
+        self.analyzer = DatasetAnalyzer()
+        self.detector = FeedbackDetector()
+        self.cleaner = DataCleaner()
+        self.builder = InteractionMatrixBuilder()
+        self.benchmark = BenchmarkEngine()
+        self.tuner = OptunaTuner()
+        self.registry = ModelRegistry()
+
+    def run_from_file(self, path: str, file_format: str = "auto") -> TrainingResult:
+        print(f"\n{Fore.CYAN}Loading from file: {path}{Style.RESET_ALL}")
+        loader = FileLoader()
+        df = loader.load(path, file_format=file_format)
+        return self._run(df)
+
+    def run_from_dataframe(self, df: pd.DataFrame) -> TrainingResult:
+        print(f"\n{Fore.CYAN}Running from in-memory DataFrame{Style.RESET_ALL}")
+        return self._run(df)
+
+    def run_from_sql(
+        self,
+        sql_config: SQLConfig,
+        sql: str,
+        params: Optional[dict] = None,
+    ) -> TrainingResult:
+        print(f"\n{Fore.CYAN}Connecting to {sql_config.dialect} database...{Style.RESET_ALL}")
+        executor = SQLQueryExecutor(sql_config)
+        query_result = executor.execute_custom(sql, params)
+        return self._run(query_result.df)
+
+    def run_from_nosql(
+        self,
+        nosql_config: NoSQLConfig,
+        collection: str,
+        query: Optional[dict] = None,
+    ) -> TrainingResult:
+        print(f"\n{Fore.CYAN}Connecting to {nosql_config.engine}...{Style.RESET_ALL}")
+        with NoSQLConnector(nosql_config) as conn:
+            if nosql_config.engine == "mongodb":
+                df = conn.fetch_collection(collection, query)
+            elif nosql_config.engine == "dynamodb":
+                df = conn.fetch_dynamodb_table(collection)
+            else:
+                raise ValueError(f"Unsupported NoSQL engine: {nosql_config.engine}")
+        return self._run(df)
+
+    def _run(self, raw_df: pd.DataFrame) -> TrainingResult:
+        t0 = time.time()
+        self._print_header()
+        print(f"Rows: {raw_df.shape[0]:,} | Columns: {raw_df.shape[1]}")
+
+        print(f"\n{Fore.YELLOW}[1/6] Column Detection{Style.RESET_ALL}")
+        mapping = self.analyzer.detect_columns(raw_df)
+        warnings = self.analyzer.validate_mapping(raw_df, mapping)
+        for warning in warnings:
+            print(f"{Fore.YELLOW}warning: {warning}{Style.RESET_ALL}")
+        mapping = self.analyzer.confirm_or_override(
+            mapping, list(raw_df.columns), interactive=self.config.interactive
+        )
+
+        print(f"\n{Fore.YELLOW}[2/6] Feedback Profiling{Style.RESET_ALL}")
+        probe_df = raw_df.rename(columns={mapping.rating: "rating"}) if mapping.rating else raw_df
+        feedback = self.detector.detect_from_df(probe_df)
+        resolved_mode = self.detector.resolve_mode(feedback, self.config.algorithm_mode)
+        print(f"Resolved mode: {resolved_mode.upper()} (requested={self.config.algorithm_mode})")
+
+        print(f"\n{Fore.YELLOW}[3/6] Data Cleaning{Style.RESET_ALL}")
+        clean_df, cleaning_report = self.cleaner.clean(raw_df, mapping)
+        # For hybrid mode we optimize ranking metrics in Optuna.
+        clean_df.attrs["is_implicit"] = resolved_mode in {"implicit", "hybrid"}
+        clean_df.attrs["resolved_mode"] = resolved_mode
+        train, test = self.cleaner.split(clean_df)
+
+        print(f"\n{Fore.YELLOW}[4/6] Interaction Matrix{Style.RESET_ALL}")
+        im = self.builder.build(train)
+        print(f"Matrix: {im.n_users:,} x {im.n_items:,} nnz={im.matrix.nnz:,} density={im.density:.4%}")
+
+        print(f"\n{Fore.YELLOW}[5/6] Benchmark{Style.RESET_ALL}")
+        report = self.benchmark.run(
+            train=train,
+            test=test,
+            top_k=self.config.top_k,
+            force_all=self.config.force_all_algos,
+            algorithm_mode=resolved_mode,
+            feedback_profile=feedback,
+        )
+        self._print_leaderboard(report)
+
+        print(f"\n{Fore.YELLOW}[6/6] Hyperparameter Tuning{Style.RESET_ALL}")
+        top_n = self.config.top_model_count
+        top_algorithms = [r.algorithm for r in report.top_n(top_n)]
+        print(f"Selected algorithms ({len(top_algorithms)}): {top_algorithms}")
+
+        bench_by_algo = {r.algorithm: r for r in report.results}
+        tuning_results: list[TuningResult] = []
+        optuna_note = "OPTUNA_TRIALS_AUTO (-1) means adaptive per-algorithm trial budgets."
+        if self.config.n_tuning_trials == 0:
+            print("Optuna skipped (n_tuning_trials=0).")
+            for algo in top_algorithms:
+                tuning_results.append(
+                    TuningResult(
+                        algorithm=algo,
+                        best_params={},
+                        best_value=self._benchmark_primary_value(report, bench_by_algo.get(algo)),
+                        metric_name=report.primary_metric,
+                        n_trials=0,
+                        elapsed_s=0.0,
+                        status="skipped",
+                        fallback_reason="tuning skipped by configuration",
+                        trial_budget="fixed(0)",
+                    )
+                )
+        else:
+            tuning_results = self.tuner.tune_top_n(
+                algorithms=top_algorithms,
+                train=report.train,
+                test=report.test,
+                n_trials=self.config.n_tuning_trials,
+                top_k=self.config.top_k,
+            )
+
+        ranked_tuning = self._rank_tuning_results(tuning_results, report, bench_by_algo)
+        best_model_id = None
+        best_algorithm = None
+        best_params: dict = {}
+        all_model_ids: list[str] = []
+
+        if self.config.save_model:
+            for rank, tune_result in enumerate(ranked_tuning, 1):
+                promote = rank == 1 and self.config.auto_promote
+                try:
+                    model_id = self._save_model(
+                        tune_result=tune_result,
+                        report=report,
+                        rank=rank,
+                        total=len(ranked_tuning),
+                        promote=promote,
+                    )
+                    all_model_ids.append(model_id)
+                    if rank == 1:
+                        best_model_id = model_id
+                        best_algorithm = tune_result.algorithm
+                        best_params = tune_result.best_params
+                except Exception as e:
+                    log.error("Model save failed | algo=%s error=%s", tune_result.algorithm, e, exc_info=True)
+        elif ranked_tuning:
+            best_algorithm = ranked_tuning[0].algorithm
+            best_params = ranked_tuning[0].best_params
+
+        recommendations = self._build_model_recommendations(
+            ranked_results=ranked_tuning,
+            report=report,
+            bench_by_algo=bench_by_algo,
+            model_ids=all_model_ids,
+            feedback_profile=feedback.to_dict(),
+            cleaning_report=cleaning_report.__dict__,
+        )
+
+        elapsed = time.time() - t0
+        self._print_footer(best_algorithm, best_params, all_model_ids, elapsed)
+        return TrainingResult(
+            report=report,
+            tuning_results=ranked_tuning,
+            best_model_id=best_model_id,
+            best_algorithm=best_algorithm,
+            best_params=best_params,
+            elapsed_s=elapsed,
+            all_model_ids=all_model_ids,
+            resolved_mode=resolved_mode,
+            feedback_profile=feedback.to_dict(),
+            top_model_recommendations=recommendations,
+            ranking_logic=report.ranking_logic,
+            optuna_note=optuna_note,
+        )
+
+    def _rank_tuning_results(
+        self,
+        tuning_results: list[TuningResult],
+        report: BenchmarkReport,
+        bench_by_algo: dict[str, object],
+    ) -> list[TuningResult]:
+        direction = report.primary_metric_direction
+
+        def score(result: TuningResult) -> float:
+            if result.best_value is not None and math.isfinite(float(result.best_value)):
+                return float(result.best_value)
+            benchmark_result = bench_by_algo.get(result.algorithm)
+            if benchmark_result:
+                return self._benchmark_primary_value(report, benchmark_result)
+            return float("-inf") if direction == "maximize" else float("inf")
+
+        def key(result: TuningResult) -> tuple[int, float]:
+            status_rank = {"ok": 0, "fallback": 1, "skipped": 2, "failed": 3}.get(result.status, 4)
+            raw = score(result)
+            metric_key = -raw if direction == "maximize" else raw
+            return status_rank, metric_key
+
+        out = list(tuning_results)
+        out.sort(key=key)
+        return out
+
+    @staticmethod
+    def _benchmark_primary_value(report: BenchmarkReport, bench_result) -> float:
+        if not bench_result:
+            return 0.0
+        val = bench_result.metrics.get(report.primary_metric)
+        if val is None:
+            return 0.0
+        try:
+            return float(val)
+        except Exception:
+            return 0.0
+
+    def _save_model(
+        self,
+        tune_result: TuningResult,
+        report: BenchmarkReport,
+        rank: int,
+        total: int,
+        promote: bool,
+    ) -> str:
+        algo = tune_result.algorithm
+        meta = ALGORITHM_REGISTRY[algo]
+        params = tune_result.best_params or {}
+        print(f"  [{rank}/{total}] retraining {algo} with params={params}")
+
+        run_out = meta["fn"](
+            report.train,
+            report.test,
+            self.config.top_k,
+            **params,
+            return_model=True,
+        )
+        if len(run_out) != 3:
+            raise RuntimeError(
+                f"Algorithm '{algo}' did not return a trained model object with return_model=True"
+            )
+
+        _, _, model_obj = run_out
+        metrics = dict(next((r.metrics for r in report.results if r.algorithm == algo), {}))
+        if tune_result.best_value is not None:
+            metrics[tune_result.metric_name] = tune_result.best_value
+        metrics["Composite Score"] = next(
+            (
+                rec.get("Composite Score")
+                for rec in report.leaderboard().to_dict(orient="records")
+                if rec.get("Algorithm") == algo
+            ),
+            None,
+        )
+        model_id = self.registry.save(
+            model=model_obj,
+            algorithm=algo,
+            metrics=metrics,
+            params=params,
+            is_implicit=report.resolved_mode in {"implicit", "hybrid"},
+            notes=(
+                f"rank={rank}/{total} status={tune_result.status} "
+                f"trials={tune_result.n_trials} metric={tune_result.metric_name}"
+            ),
+        )
+        if promote:
+            self.registry.promote(model_id)
+        return model_id
+
+    def _build_model_recommendations(
+        self,
+        ranked_results: list[TuningResult],
+        report: BenchmarkReport,
+        bench_by_algo: dict[str, object],
+        model_ids: list[str],
+        feedback_profile: dict,
+        cleaning_report: dict,
+    ) -> list[dict]:
+        lb = report.leaderboard().set_index("Algorithm") if not report.leaderboard().empty else pd.DataFrame()
+        sparsity = cleaning_report.get("sparsity", 1.0)
+        sparse_label = "sparse" if sparsity >= 0.98 else "dense"
+        out: list[dict] = []
+
+        for idx, tune in enumerate(ranked_results, 1):
+            algo = tune.algorithm
+            meta = ALGORITHM_REGISTRY.get(algo, {})
+            row = lb.loc[algo] if not lb.empty and algo in lb.index else None
+            perf_value = (
+                tune.best_value
+                if tune.best_value is not None
+                else (float(row.get(report.primary_metric)) if row is not None else None)
+            )
+            elapsed_s = float(row.get("Time (s)")) if row is not None and pd.notna(row.get("Time (s)")) else None
+            reasons = [
+                f"Feedback fit: algorithm supports {meta.get('feedback', 'unknown')} mode; dataset resolved as {report.resolved_mode}.",
+                f"Expected performance: {report.primary_metric}={perf_value:.4f}."
+                if isinstance(perf_value, (int, float))
+                else f"Expected performance: benchmark primary metric is {report.primary_metric}.",
+                f"Scalability: {meta.get('scalability', 'medium')} with limits users={meta.get('max_users') or 'unbounded'}, items={meta.get('max_items') or 'unbounded'}.",
+                f"Training speed: {meta.get('training_speed', 'medium')}"
+                + (f" (observed {elapsed_s:.2f}s)." if elapsed_s is not None else "."),
+                f"Robustness: {meta.get('robustness', 'medium')} (tuning status={tune.status}).",
+                f"Data suitability: rated for {meta.get('sparsity_fit', 'medium')} sparsity; current dataset is {sparse_label} ({sparsity:.2%} sparsity).",
+                f"Interpretability: {meta.get('interpretability', 'medium')}.",
+                f"Production readiness: {meta.get('production_readiness', 'medium')}.",
+            ]
+            out.append(
+                {
+                    "rank": idx,
+                    "algorithm": algo,
+                    "model_id": model_ids[idx - 1] if idx - 1 < len(model_ids) else None,
+                    "metric_name": report.primary_metric,
+                    "metric_value": perf_value,
+                    "composite_score": float(row.get("Composite Score")) if row is not None else None,
+                    "status": tune.status,
+                    "trial_budget": tune.trial_budget,
+                    "reasons": reasons,
+                    "summary": " ".join(reasons[:3]),
+                    "feedback_profile": feedback_profile,
+                }
+            )
+        return out
+
+    @staticmethod
+    def _print_header() -> None:
+        print(f"\n{Fore.CYAN}{'=' * 72}")
+        print("  PROACTIVE AI - TRAINING PIPELINE")
+        print(f"{'=' * 72}{Style.RESET_ALL}")
+
+    @staticmethod
+    def _print_footer(algo, params, all_model_ids, elapsed):
+        print(f"\n{Fore.CYAN}{'=' * 72}")
+        print(f"TRAINING COMPLETE in {elapsed:.1f}s")
+        if algo:
+            print(f"Best algorithm: {algo}")
+            print(f"Best params   : {params}")
+        print(f"Models saved  : {len(all_model_ids)}")
+        print(f"{'=' * 72}{Style.RESET_ALL}\n")
+
+    @staticmethod
+    def _print_leaderboard(report: BenchmarkReport) -> None:
+        lb = report.leaderboard()
+        if lb.empty:
+            print(f"{Fore.RED}No benchmark results available.{Style.RESET_ALL}")
+            return
+        print("\nLeaderboard (composite ranking):")
+        cols = [
+            "Rank",
+            "Algorithm",
+            report.primary_metric,
+            "Time (s)",
+            "Scalability Score",
+            "Performance Score",
+            "Composite Score",
+        ]
+        view = lb[[c for c in cols if c in lb.columns]].head(15)
+        print(view.to_string(index=False))
+
