@@ -49,7 +49,14 @@ async function jfetch(url, opts = {}) {
   const text = await res.text();
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = text; }
-  if (!res.ok) throw new Error((data && (data.detail || data.message || data.error)) || text || `HTTP ${res.status}`);
+  const detail = data && (data.detail || data.message || data.error);
+  const message = Array.isArray(detail)
+    ? detail.map(item => {
+        const path = Array.isArray(item?.loc) ? item.loc.filter(part => part !== 'body').join('.') : '';
+        return [path, item?.msg].filter(Boolean).join(': ');
+      }).join('; ')
+    : detail;
+  if (!res.ok) throw new Error(message || text || `HTTP ${res.status}`);
   return data;
 }
 
@@ -87,6 +94,48 @@ function norm(c) {
     db_type: c.db_type || (c.cred && c.cred.db_type) || '?',
     database: c.database || (c.cred && c.cred.database) || '',
   };
+}
+
+function buildConnectionPayload(form) {
+  const payload = {
+    db_type: form.db_type,
+    name: (form.name || '').trim(),
+  };
+  const add = (key, value) => {
+    if (value !== '' && value != null) payload[key] = value;
+  };
+  const database = (form.database || '').trim();
+  const host = (form.host || '').trim();
+  const username = (form.username || '').trim();
+  const password = form.password || '';
+  const filepath = (form.filepath || '').trim();
+  const uri = (form.uri || '').trim();
+  const port = (form.port || '').trim();
+
+  add('database', database);
+
+  if (form.db_type === 'sqlite') {
+    add('filepath', filepath);
+    return payload;
+  }
+
+  if (!(form.db_type === 'mongodb' && uri)) {
+    add('host', host);
+    add('port', port ? Number(port) : null);
+  }
+
+  add('username', username);
+  add('password', password);
+  add('uri', uri);
+  return payload;
+}
+
+function validateConnectionPayload(payload) {
+  const needsHost = ['mysql', 'postgres', 'mssql'].includes(payload.db_type)
+    || (payload.db_type === 'mongodb' && !payload.uri);
+  if (needsHost && !payload.host) {
+    throw new Error(`Host is required for ${payload.db_type}.`);
+  }
 }
 
 // ── pages ────────────────────────────────────────────────────────────────────
@@ -150,7 +199,17 @@ function PageConnections({ connections, selected, schemas, onAdded, onRemove, on
 
   async function save() {
     try {
-      const payload = { ...form, port: form.port ? Number(form.port) : null };
+      const payload = buildConnectionPayload(form);
+      validateConnectionPayload(payload);
+      console.log('POST /smart-db-csv/api/connections payload', payload);
+      const tested = await jfetch(`${SMART}/connections/test`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload),
+      });
+      if (tested?.status && tested.status !== 'connected') {
+        throw new Error(tested.message || `Connection test failed for ${payload.db_type}.`);
+      }
       const res = await jfetch(`${SMART}/connections`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
       setMsg(`Connected: ${res.name}`);
       setForm(blank);
@@ -221,11 +280,25 @@ function PageConnections({ connections, selected, schemas, onAdded, onRemove, on
   );
 }
 
-function PageBuild({ selected, onBuilt, setMsg }) {
-  const [form, setForm] = useState({ rec_system_type:'hybrid', output_format:'csv', max_rows_per_table:50000, target_description:'' });
+function PageBuild({ selected, schemas, onBuilt, setMsg }) {
+  const [form, setForm] = useState({
+    mode:'query',
+    rec_system_type:'hybrid',
+    output_format:'csv',
+    max_rows_per_table:50000,
+    target_description:'',
+    query_text:'',
+    llm_prompt:'',
+    manual_config:{ tables:'', relationships:'', target_field:'', label_field:'', notes:'' },
+  });
   const [job, setJob] = useState(null);
   const [jobData, setJobData] = useState(null);
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
+  const setManual = (k,v) => setForm(p=>({...p,manual_config:{...p.manual_config,[k]:v}}));
+  const availableTables = useMemo(
+    ()=>selected.flatMap(id=>(schemas[id]?.tables||[]).map(t=>t.full_name||[t.schema_name,t.table_name].filter(Boolean).join('.'))),
+    [schemas, selected]
+  );
 
   useEffect(()=>{
     if (!job) return;
@@ -241,7 +314,35 @@ function PageBuild({ selected, onBuilt, setMsg }) {
 
   async function start() {
     try {
-      const payload = { ...form, connection_ids:selected, max_rows_per_table:Number(form.max_rows_per_table) };
+      const mode = form.mode || 'query';
+      const payload = {
+        connection_ids:selected,
+        mode,
+        rec_system_type:form.rec_system_type,
+        output_format:form.output_format,
+        max_rows_per_table:Number(form.max_rows_per_table),
+      };
+
+      if (mode==='query') {
+        const queryText = (form.query_text || form.target_description || '').trim();
+        if (!queryText) throw new Error('Query mode requires a query or prompt.');
+        payload.query_text = queryText;
+        payload.target_description = queryText;
+      } else if (mode==='llm') {
+        const llmPrompt = (form.llm_prompt || '').trim();
+        if (!llmPrompt) throw new Error('LLM Build mode requires instructions.');
+        payload.llm_prompt = llmPrompt;
+        payload.target_description = llmPrompt;
+      } else {
+        const manualConfig = Object.fromEntries(
+          Object.entries(form.manual_config || {}).map(([k,v])=>[k,(v||'').trim()])
+        );
+        if (!Object.values(manualConfig).some(Boolean)) {
+          throw new Error('Manual mode requires at least one configuration field.');
+        }
+        payload.manual_config = manualConfig;
+      }
+
       const res = await jfetch(`${SMART}/build`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
       setJob(res.job_id); setJobData({status:'pending',progress:0});
       setMsg('Dataset build started.');
@@ -272,27 +373,65 @@ function PageBuild({ selected, onBuilt, setMsg }) {
   return (
     <div className="panel">
       <h2>Build dataset</h2>
-      <p className="sub">LLM API keys are read from backend environment variables — nothing to enter here. Description is optional; the planner infers from schema.</p>
+      <p className="sub">LLM API keys are read from backend environment variables — nothing to enter here. Choose a mode, then build from selected connections.</p>
       <div className="stack">
         <div className="row">
+          <div><label>Build mode</label>
+            <select value={form.mode} onChange={e=>set('mode',e.target.value)}>
+              <option value="query">Query</option>
+              <option value="manual">Manual</option>
+              <option value="llm">LLM Build</option>
+            </select>
+          </div>
           <div><label>Recommendation type</label>
             <select value={form.rec_system_type} onChange={e=>set('rec_system_type',e.target.value)}>
               <option value="hybrid">Hybrid</option><option value="collaborative">Collaborative</option>
               <option value="content_based">Content based</option><option value="sequential">Sequential</option>
             </select>
           </div>
+        </div>
+        {form.mode==='query' && (
+          <div><label>Query / Prompt</label>
+            <textarea value={form.query_text} onChange={e=>set('query_text',e.target.value)}
+              placeholder="Build an e-commerce recommendation dataset from users, orders, and products" />
+          </div>
+        )}
+        {form.mode==='manual' && (
+          <>
+            <div><label>Tables / entities</label>
+              <textarea value={form.manual_config.tables} onChange={e=>setManual('tables',e.target.value)}
+                placeholder={"users\norders\nproducts"} />
+            </div>
+            {availableTables.length>0 && <div className="tiny muted">Available tables: {availableTables.join(', ')}</div>}
+            <div><label>Relationships / joins</label>
+              <textarea value={form.manual_config.relationships} onChange={e=>setManual('relationships',e.target.value)}
+                placeholder={"orders.user_id = users.id\norders.product_id = products.id"} />
+            </div>
+            <div className="row">
+              <div><label>Target field / primary id</label><input value={form.manual_config.target_field} onChange={e=>setManual('target_field',e.target.value)} placeholder="users.id" /></div>
+              <div><label>Label / interaction field</label><input value={form.manual_config.label_field} onChange={e=>setManual('label_field',e.target.value)} placeholder="orders.product_id" /></div>
+            </div>
+            <div><label>Notes</label>
+              <textarea value={form.manual_config.notes} onChange={e=>setManual('notes',e.target.value)}
+                placeholder="Optional notes about entities, filters, or expected dataset shape." />
+            </div>
+          </>
+        )}
+        {form.mode==='llm' && (
+          <div><label>LLM Instructions</label>
+            <textarea value={form.llm_prompt} onChange={e=>set('llm_prompt',e.target.value)}
+              placeholder="Use the selected schema to build a recommendation dataset with the key entity, joins, and interaction columns." />
+          </div>
+        )}
+        <div className="row">
           <div><label>Output format</label>
             <select value={form.output_format} onChange={e=>set('output_format',e.target.value)}>
               <option value="csv">CSV</option><option value="json">JSON</option>
             </select>
           </div>
-        </div>
-        <div><label>Target description / query (optional)</label>
-          <textarea value={form.target_description} onChange={e=>set('target_description',e.target.value)}
-            placeholder="e.g. Build an e-commerce recommendation dataset from users, orders, and products. Leave blank to auto-infer from schema." />
-        </div>
-        <div><label>Max rows per table</label>
-          <input type="number" value={form.max_rows_per_table} onChange={e=>set('max_rows_per_table',e.target.value)} />
+          <div><label>Max rows per table</label>
+            <input type="number" value={form.max_rows_per_table} onChange={e=>set('max_rows_per_table',e.target.value)} />
+          </div>
         </div>
         <div className="actions">
           <button disabled={selected.length===0} onClick={start}>Build dataset</button>
@@ -568,6 +707,7 @@ export default function App() {
         {page==='build' && (
           <PageBuild
             selected={selectedIds}
+            schemas={schemas}
             onBuilt={file=>{ setBuiltFile(file); setPage('train'); setMsg('Dataset ready — proceed to Train.'); }}
             setMsg={setMsg}
           />

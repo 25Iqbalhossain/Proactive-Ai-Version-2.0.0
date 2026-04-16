@@ -8,7 +8,7 @@ from __future__ import annotations
 import uuid
 from enum import Enum
 from typing import Any, Optional
-from pydantic import BaseModel, Field, model_validator, validator
+from pydantic import BaseModel, Field, model_validator
 
 
 # ── Enums ──────────────────────────────────────────────────────────────────
@@ -32,6 +32,12 @@ class JobStatus(str, Enum):
     RUNNING    = "running"
     DONE       = "done"
     FAILED     = "failed"
+
+
+class BuildMode(str, Enum):
+    QUERY = "query"
+    MANUAL = "manual"
+    LLM = "llm"
 
 
 class RecSystemType(str, Enum):
@@ -69,14 +75,29 @@ class ConnectionCredential(BaseModel):
     ssl:      bool = False
     options:  dict[str, str] = Field(default_factory=dict)
 
-    @validator("host", always=True)
-    def host_required_for_network_dbs(cls, v, values):
-        db_type = values.get("db_type")
-        if db_type in (DBType.MYSQL, DBType.POSTGRES, DBType.MSSQL, DBType.MONGODB):
-            uri = values.get("uri")
-            if not v and not uri:
-                raise ValueError(f"host is required for {db_type}")
-        return v
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_optional_strings(cls, data):
+        if not isinstance(data, dict):
+            return data
+
+        normalized = dict(data)
+        for key in ("host", "database", "filepath", "uri"):
+            value = normalized.get(key)
+            if isinstance(value, str):
+                value = value.strip()
+                normalized[key] = value or None
+        for key in ("username", "password"):
+            if normalized.get(key) == "":
+                normalized[key] = None
+        return normalized
+
+    @model_validator(mode="after")
+    def host_required_for_network_dbs(self):
+        if self.db_type in (DBType.MYSQL, DBType.POSTGRES, DBType.MSSQL, DBType.MONGODB):
+            if not self.host and not self.uri:
+                raise ValueError(f"host is required for {self.db_type}")
+        return self
 
 
 class ConnectionResponse(BaseModel):
@@ -139,6 +160,11 @@ class BuildRequest(BaseModel):
 
     connection_ids: list[str] = Field(..., min_items=1)
 
+    mode: Optional[BuildMode] = Field(
+        None,
+        description="Build mode. If omitted, preserves the legacy planner behaviour."
+    )
+
     rec_system_type: RecSystemType = RecSystemType.HYBRID
 
     output_format: OutputFormat = OutputFormat.CSV
@@ -148,6 +174,21 @@ class BuildRequest(BaseModel):
     target_description: Optional[str] = Field(
         None,
         description="Free-text hint, e.g. 'e-commerce product recs based on purchase history'"
+    )
+
+    query_text: Optional[str] = Field(
+        None,
+        description="Free-text query/instruction for query mode."
+    )
+
+    llm_prompt: Optional[str] = Field(
+        None,
+        description="Explicit LLM planner prompt for llm mode."
+    )
+
+    manual_config: Optional[dict[str, Optional[str]]] = Field(
+        None,
+        description="Minimal manual dataset configuration."
     )
 
     # 🔥 PRIMARY (Groq)
@@ -172,6 +213,11 @@ class BuildRequest(BaseModel):
     def populate_openai_fallback(self):
         if not self.openai_api_key and self.anthropic_api_key:
             self.openai_api_key = self.anthropic_api_key
+        if not self.target_description:
+            if self.mode == BuildMode.QUERY and self.query_text:
+                self.target_description = self.query_text
+            elif self.mode == BuildMode.LLM and self.llm_prompt:
+                self.target_description = self.llm_prompt
         return self
 
 class BuildResponse(BaseModel):

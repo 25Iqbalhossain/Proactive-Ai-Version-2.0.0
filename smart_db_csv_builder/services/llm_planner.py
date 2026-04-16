@@ -92,6 +92,9 @@ def _build_prompt(schemas, rec_type, target_description):
         schema_text.append("\n".join(lines))
 
     all_schemas = "\n".join(schema_text)
+    goal_text = ""
+    if target_description and target_description.strip():
+        goal_text = f"\nUSER GOAL:\n{target_description.strip()}\n"
 
     return f"""
 You are a senior data engineer.
@@ -100,6 +103,7 @@ IMPORTANT RULES:
 - You MUST ONLY use column names EXACTLY as shown below.
 - DO NOT guess or hallucinate column names.
 - If unsure, SKIP the column.
+{goal_text}
 
 {all_schemas}
 
@@ -202,6 +206,8 @@ def build_merge_plan(
     groq_model: str = "llama-3.3-70b-versatile",
     openai_model: str = DEFAULT_OPENAI_MODEL,
 ) -> MergePlan:
+    groq_api_key = groq_api_key or os.getenv("GROQ_API_KEY", "")
+    openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY", "")
 
     prompt = _build_prompt(schemas, rec_type, target_description)
     logger.info("Sending schema prompt to LLM")

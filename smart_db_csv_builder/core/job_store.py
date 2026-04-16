@@ -20,6 +20,14 @@ class Job:
     column_count: Optional[int] = None
     plan: Optional[dict] = None
 
+    def set_step(self, step: str, status: str, message: str = ""):
+        for item in self.steps:
+            if item["step"] == step:
+                item["status"] = status
+                item["message"] = message
+                return
+        self.steps.append({"step": step, "status": status, "message": message})
+
     def to_dict(self):
         return {
             'job_id': self.job_id,
