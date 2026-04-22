@@ -128,11 +128,29 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
             best_model_id="m_svd",
             best_algorithm="SVD",
             top_model_recommendations=[
-                {"rank": 1, "algorithm": "SVD", "model_id": "m_svd"},
-                {"rank": 2, "algorithm": "ALS", "model_id": "m_als"},
-                {"rank": 3, "algorithm": "BPR", "model_id": "m_bpr"},
-                {"rank": 4, "algorithm": "Temporal-SVD", "model_id": "m_temp"},
+                {"rank": 1, "algorithm": "SVD", "model_id": "m_svd", "selection_score_pct": 96.0, "summary": "SVD leads."},
+                {"rank": 2, "algorithm": "ALS", "model_id": "m_als", "selection_score_pct": 78.0, "summary": "ALS is competitive."},
+                {"rank": 3, "algorithm": "BPR", "model_id": "m_bpr", "selection_score_pct": 72.0, "summary": "BPR remains viable."},
+                {"rank": 4, "algorithm": "Temporal-SVD", "model_id": "m_temp", "selection_score_pct": 64.0, "summary": "Temporal-SVD fits temporal data."},
             ],
+            model_selection_policy={
+                "selection_type": "single_model",
+                "selected_count": 1,
+                "selected_models": [
+                    {
+                        "rank": 1,
+                        "algorithm": "SVD",
+                        "model_id": "m_svd",
+                        "selection_score_pct": 96.0,
+                        "metric_name": "NDCG@K",
+                        "metric_value": 0.91,
+                        "summary": "SVD leads.",
+                    }
+                ],
+                "reason": "SVD is clearly ahead, so the API returns one recommended model.",
+                "display_title": "Recommended single model",
+                "recommended_strategy": "single_model",
+            },
             report=_FakeReport(
                 [
                     {"Rank": 1, "Algorithm": "SVD", "NDCG@K": 0.91, "Composite Score": 0.95},
@@ -296,6 +314,8 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
         self.assertEqual(options["single_model_options"][0]["feedback_mode"], "both")
         self.assertTrue(options["has_recommendation_models"])
         self.assertEqual(options["model_id_map"]["SVD"], "m_svd")
+        self.assertEqual(options["selection_policy"]["selection_type"], "single_model")
+        self.assertEqual(options["recommended_models"][0]["algorithm"], "SVD")
 
     def test_serialise_training_result_includes_recommendation_options(self):
         from api import routes
@@ -312,7 +332,12 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
             feedback_profile={"detected_mode": "hybrid"},
             ranking_logic={"primary_metric": "NDCG@K"},
             optuna_note="adaptive",
+            optuna_policy={
+                "summary": "Optuna uses adaptive per-algorithm budgets.",
+                "top_k_definition": "Top-K=10 evaluates the top 10 ranked items.",
+            },
             top_model_recommendations=list(self.last_result.top_model_recommendations),
+            model_selection_policy=dict(self.last_result.model_selection_policy),
             tuning_results=[
                 SimpleNamespace(
                     algorithm="SVD",
@@ -334,6 +359,9 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
         self.assertIn("recommendation_options", payload)
         self.assertEqual(payload["recommendation_options"]["best_promoted_model"]["model_id"], "m_svd")
         self.assertEqual(payload["recommendation_options"]["single_model_options"][0]["feedback_mode"], "both")
+        self.assertEqual(payload["model_selection_policy"]["selection_type"], "single_model")
+        self.assertEqual(payload["top_model_candidates"][0]["algorithm"], "SVD")
+        self.assertIn("optuna_policy", payload)
 
 
 if __name__ == "__main__":

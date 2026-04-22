@@ -15,7 +15,7 @@
     "params": {},
     "is_implicit": true,
     "created_at": 1776321629.0867956,
-    "promoted": true,
+    "promoted": false,
     "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\user-knn_1_c22e5c0f-b14.pkl",
     "notes": "rank=1/5 status=ok trials=20 metric=NDCG@K",
     "tags": []
@@ -109,6 +109,2121 @@
     "promoted": false,
     "file_path": "C:\\Users\\hi\\Downloads\\proactive-ai-unified-react-v2-fixed\\model_store\\content-based_tf-idf_1_e07b645e-bb3.pkl",
     "notes": "rank=5/5 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "c408b0b2-986": {
+    "model_id": "c408b0b2-986",
+    "algorithm": "User-KNN",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9782
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776841821.9237275,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_2_c408b0b2-986.pkl",
+    "notes": "rank=1/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "5a638f54-522": {
+    "model_id": "5a638f54-522",
+    "algorithm": "EASE",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776841822.0031483,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_2_5a638f54-522.pkl",
+    "notes": "rank=2/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "7990a71c-e8d": {
+    "model_id": "7990a71c-e8d",
+    "algorithm": "BPR",
+    "version": 1,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.501,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 200,
+      "n_epochs": 100,
+      "lr": 0.004341699491386904,
+      "reg": 1.2025001201992181e-05
+    },
+    "is_implicit": true,
+    "created_at": 1776841831.6135898,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_1_7990a71c-e8d.pkl",
+    "notes": "rank=3/10 status=ok trials=15 metric=NDCG@K",
+    "tags": []
+  },
+  "85c4e7de-2c1": {
+    "model_id": "85c4e7de-2c1",
+    "algorithm": "LightFM",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6475
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776841832.2633176,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_1_85c4e7de-2c1.pkl",
+    "notes": "rank=4/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "e5da8fcd-e8b": {
+    "model_id": "e5da8fcd-e8b",
+    "algorithm": "SVD",
+    "version": 1,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4317
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776841832.3734581,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_1_e5da8fcd-e8b.pkl",
+    "notes": "rank=5/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "9740fc9a-e32": {
+    "model_id": "9740fc9a-e32",
+    "algorithm": "Autoencoder-CF",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4417,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8155
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 7.476312062252303e-05,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776841832.7622313,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_2_9740fc9a-e32.pkl",
+    "notes": "rank=6/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "a6008d1d-911": {
+    "model_id": "a6008d1d-911",
+    "algorithm": "Item-KNN",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8368
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776841832.8694904,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_2_a6008d1d-911.pkl",
+    "notes": "rank=7/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "6af11a72-cee": {
+    "model_id": "6af11a72-cee",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7691
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776841833.2250717,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_2_6af11a72-cee.pkl",
+    "notes": "rank=8/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "b9339aef-fd2": {
+    "model_id": "b9339aef-fd2",
+    "algorithm": "Temporal-SVD",
+    "version": 1,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.37,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3936
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 4
+    },
+    "is_implicit": true,
+    "created_at": 1776841833.3741605,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_1_b9339aef-fd2.pkl",
+    "notes": "rank=9/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "326f040f-870": {
+    "model_id": "326f040f-870",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 1,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5619
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776841833.484892,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_1_326f040f-870.pkl",
+    "notes": "rank=10/10 status=ok trials=10 metric=NDCG@K",
+    "tags": []
+  },
+  "8e19efc3-bc6": {
+    "model_id": "8e19efc3-bc6",
+    "algorithm": "User-KNN",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9782
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776841927.2228599,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_3_8e19efc3-bc6.pkl",
+    "notes": "rank=1/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "0e239fe9-58e": {
+    "model_id": "0e239fe9-58e",
+    "algorithm": "EASE",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776841927.322975,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_3_0e239fe9-58e.pkl",
+    "notes": "rank=2/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "feaef729-eb2": {
+    "model_id": "feaef729-eb2",
+    "algorithm": "BPR",
+    "version": 2,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.501,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 200,
+      "n_epochs": 100,
+      "lr": 0.004341699491386904,
+      "reg": 1.2025001201992181e-05
+    },
+    "is_implicit": true,
+    "created_at": 1776841937.1778843,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_2_feaef729-eb2.pkl",
+    "notes": "rank=3/10 status=ok trials=15 metric=NDCG@K",
+    "tags": []
+  },
+  "329afb3d-ac2": {
+    "model_id": "329afb3d-ac2",
+    "algorithm": "LightFM",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6471
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776841937.5990226,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_2_329afb3d-ac2.pkl",
+    "notes": "rank=4/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "1fd59e5f-92e": {
+    "model_id": "1fd59e5f-92e",
+    "algorithm": "SVD",
+    "version": 2,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4338
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776841937.6688273,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_2_1fd59e5f-92e.pkl",
+    "notes": "rank=5/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "59a3296e-08d": {
+    "model_id": "59a3296e-08d",
+    "algorithm": "Autoencoder-CF",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4417,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8145
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 7.476312062252303e-05,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776841937.8852193,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_3_59a3296e-08d.pkl",
+    "notes": "rank=6/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "5d72c1c9-a2b": {
+    "model_id": "5d72c1c9-a2b",
+    "algorithm": "Item-KNN",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8368
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776841937.9624965,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_3_5d72c1c9-a2b.pkl",
+    "notes": "rank=7/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "4b9d0b93-315": {
+    "model_id": "4b9d0b93-315",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.762
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776841938.1914158,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_3_4b9d0b93-315.pkl",
+    "notes": "rank=8/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "d6c303fe-835": {
+    "model_id": "d6c303fe-835",
+    "algorithm": "Temporal-SVD",
+    "version": 2,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.37,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3924
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 4
+    },
+    "is_implicit": true,
+    "created_at": 1776841938.2688622,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_2_d6c303fe-835.pkl",
+    "notes": "rank=9/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "cb4ee9f6-97d": {
+    "model_id": "cb4ee9f6-97d",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 2,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5619
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776841938.3915951,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_2_cb4ee9f6-97d.pkl",
+    "notes": "rank=10/10 status=ok trials=10 metric=NDCG@K",
+    "tags": []
+  },
+  "1e4b29f4-ef1": {
+    "model_id": "1e4b29f4-ef1",
+    "algorithm": "User-KNN",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9781
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776843713.7492962,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_4_1e4b29f4-ef1.pkl",
+    "notes": "rank=1/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "ef82e2de-fbf": {
+    "model_id": "ef82e2de-fbf",
+    "algorithm": "EASE",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776843713.9001021,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_4_ef82e2de-fbf.pkl",
+    "notes": "rank=2/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "9764b68d-dcb": {
+    "model_id": "9764b68d-dcb",
+    "algorithm": "BPR",
+    "version": 3,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.501,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 200,
+      "n_epochs": 100,
+      "lr": 0.004341699491386904,
+      "reg": 1.2025001201992181e-05
+    },
+    "is_implicit": true,
+    "created_at": 1776843723.9634507,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_3_9764b68d-dcb.pkl",
+    "notes": "rank=3/10 status=ok trials=15 metric=NDCG@K",
+    "tags": []
+  },
+  "7788c1b4-437": {
+    "model_id": "7788c1b4-437",
+    "algorithm": "LightFM",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6463
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776843724.3753815,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_3_7788c1b4-437.pkl",
+    "notes": "rank=4/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "dabc5bfe-7a4": {
+    "model_id": "dabc5bfe-7a4",
+    "algorithm": "SVD",
+    "version": 3,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4332
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776843724.4480653,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_3_dabc5bfe-7a4.pkl",
+    "notes": "rank=5/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "92811a4e-0a8": {
+    "model_id": "92811a4e-0a8",
+    "algorithm": "Autoencoder-CF",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4417,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8145
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 7.476312062252303e-05,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776843724.658345,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_4_92811a4e-0a8.pkl",
+    "notes": "rank=6/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "8ca4ccf9-2ff": {
+    "model_id": "8ca4ccf9-2ff",
+    "algorithm": "Item-KNN",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8373
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776843724.7230604,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_4_8ca4ccf9-2ff.pkl",
+    "notes": "rank=7/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "2d113d3b-bfc": {
+    "model_id": "2d113d3b-bfc",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7609
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776843724.9542377,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_4_2d113d3b-bfc.pkl",
+    "notes": "rank=8/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "d752614d-90d": {
+    "model_id": "d752614d-90d",
+    "algorithm": "Temporal-SVD",
+    "version": 3,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.37,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3934
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 4
+    },
+    "is_implicit": true,
+    "created_at": 1776843725.0290291,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_3_d752614d-90d.pkl",
+    "notes": "rank=9/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "cbf9b105-40e": {
+    "model_id": "cbf9b105-40e",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 3,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5624
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776843725.092019,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_3_cbf9b105-40e.pkl",
+    "notes": "rank=10/10 status=ok trials=10 metric=NDCG@K",
+    "tags": []
+  },
+  "3b17f29e-e63": {
+    "model_id": "3b17f29e-e63",
+    "algorithm": "User-KNN",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9782
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776844197.391122,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_5_3b17f29e-e63.pkl",
+    "notes": "rank=1/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "b54ef347-418": {
+    "model_id": "b54ef347-418",
+    "algorithm": "EASE",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9495
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776844197.4993453,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_5_b54ef347-418.pkl",
+    "notes": "rank=2/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "f47ee292-8cc": {
+    "model_id": "f47ee292-8cc",
+    "algorithm": "BPR",
+    "version": 4,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.501,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 200,
+      "n_epochs": 100,
+      "lr": 0.004341699491386904,
+      "reg": 1.2025001201992181e-05
+    },
+    "is_implicit": true,
+    "created_at": 1776844207.1819563,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_4_f47ee292-8cc.pkl",
+    "notes": "rank=3/10 status=ok trials=15 metric=NDCG@K",
+    "tags": []
+  },
+  "59c9f72b-373": {
+    "model_id": "59c9f72b-373",
+    "algorithm": "LightFM",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6437
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776844207.5910597,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_4_59c9f72b-373.pkl",
+    "notes": "rank=4/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "82959f06-2c8": {
+    "model_id": "82959f06-2c8",
+    "algorithm": "SVD",
+    "version": 4,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4333
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776844207.650375,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_4_82959f06-2c8.pkl",
+    "notes": "rank=5/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "65d6ba17-a15": {
+    "model_id": "65d6ba17-a15",
+    "algorithm": "Autoencoder-CF",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4417,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8147
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 7.476312062252303e-05,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776844207.9591706,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_5_65d6ba17-a15.pkl",
+    "notes": "rank=6/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "495a8c75-1c7": {
+    "model_id": "495a8c75-1c7",
+    "algorithm": "Item-KNN",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8373
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776844208.0247924,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_5_495a8c75-1c7.pkl",
+    "notes": "rank=7/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "1729bb86-d2c": {
+    "model_id": "1729bb86-d2c",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7665
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776844208.2689703,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_5_1729bb86-d2c.pkl",
+    "notes": "rank=8/10 status=ok trials=12 metric=NDCG@K",
+    "tags": []
+  },
+  "e21f1488-cb7": {
+    "model_id": "e21f1488-cb7",
+    "algorithm": "Temporal-SVD",
+    "version": 4,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.37,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3923
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 4
+    },
+    "is_implicit": true,
+    "created_at": 1776844208.3479254,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_4_e21f1488-cb7.pkl",
+    "notes": "rank=9/10 status=ok trials=20 metric=NDCG@K",
+    "tags": []
+  },
+  "7386964a-965": {
+    "model_id": "7386964a-965",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 4,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5613
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776844208.4218056,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_4_7386964a-965.pkl",
+    "notes": "rank=10/10 status=ok trials=10 metric=NDCG@K",
+    "tags": []
+  },
+  "bc7a11db-7e0": {
+    "model_id": "bc7a11db-7e0",
+    "algorithm": "User-KNN",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9782
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776848997.5001385,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_6_bc7a11db-7e0.pkl",
+    "notes": "rank=1/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "1aae1e3a-535": {
+    "model_id": "1aae1e3a-535",
+    "algorithm": "BPR",
+    "version": 5,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776849009.923411,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_5_1aae1e3a-535.pkl",
+    "notes": "rank=2/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "890d2d52-0a0": {
+    "model_id": "890d2d52-0a0",
+    "algorithm": "EASE",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776849009.9964657,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_6_890d2d52-0a0.pkl",
+    "notes": "rank=3/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "fbff9ca2-688": {
+    "model_id": "fbff9ca2-688",
+    "algorithm": "LightFM",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6459
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776849010.459157,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_5_fbff9ca2-688.pkl",
+    "notes": "rank=4/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "77783030-523": {
+    "model_id": "77783030-523",
+    "algorithm": "SVD",
+    "version": 5,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4328
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776849010.5438952,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_5_77783030-523.pkl",
+    "notes": "rank=5/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "870b6a80-5b2": {
+    "model_id": "870b6a80-5b2",
+    "algorithm": "Autoencoder-CF",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4419,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.814
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 0.00012981867447658423,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776849010.7801244,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_6_870b6a80-5b2.pkl",
+    "notes": "rank=6/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "435b9c67-cff": {
+    "model_id": "435b9c67-cff",
+    "algorithm": "Item-KNN",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8368
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776849010.8594635,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_6_435b9c67-cff.pkl",
+    "notes": "rank=7/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "248dd671-c5b": {
+    "model_id": "248dd671-c5b",
+    "algorithm": "Temporal-SVD",
+    "version": 5,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.4089,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3921
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 3
+    },
+    "is_implicit": true,
+    "created_at": 1776849010.9385386,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_5_248dd671-c5b.pkl",
+    "notes": "rank=8/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "b54efaf9-3d3": {
+    "model_id": "b54efaf9-3d3",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7688
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776849011.3039389,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_6_b54efaf9-3d3.pkl",
+    "notes": "rank=9/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "a9ab54f4-c8b": {
+    "model_id": "a9ab54f4-c8b",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 5,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5619
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776849011.393125,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_5_a9ab54f4-c8b.pkl",
+    "notes": "rank=10/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "eecb312f-257": {
+    "model_id": "eecb312f-257",
+    "algorithm": "User-KNN",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9787
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776852016.7211335,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_7_eecb312f-257.pkl",
+    "notes": "rank=1/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "afe3f648-8ee": {
+    "model_id": "afe3f648-8ee",
+    "algorithm": "BPR",
+    "version": 6,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776852031.1993384,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_6_afe3f648-8ee.pkl",
+    "notes": "rank=2/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "60eafd60-7d8": {
+    "model_id": "60eafd60-7d8",
+    "algorithm": "EASE",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776852031.2762587,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_7_60eafd60-7d8.pkl",
+    "notes": "rank=3/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "69c0e607-e8b": {
+    "model_id": "69c0e607-e8b",
+    "algorithm": "LightFM",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6437
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776852031.7541456,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_6_69c0e607-e8b.pkl",
+    "notes": "rank=4/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "088558ab-d22": {
+    "model_id": "088558ab-d22",
+    "algorithm": "SVD",
+    "version": 6,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4333
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776852032.4618359,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_6_088558ab-d22.pkl",
+    "notes": "rank=5/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "42f6c473-477": {
+    "model_id": "42f6c473-477",
+    "algorithm": "Autoencoder-CF",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4419,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8109
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 0.00012981867447658423,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776852032.9894524,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_7_42f6c473-477.pkl",
+    "notes": "rank=6/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "ffe82aea-924": {
+    "model_id": "ffe82aea-924",
+    "algorithm": "Item-KNN",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8362
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776852033.266927,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_7_ffe82aea-924.pkl",
+    "notes": "rank=7/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "cac000d9-25c": {
+    "model_id": "cac000d9-25c",
+    "algorithm": "Temporal-SVD",
+    "version": 6,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.4089,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3923
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 3
+    },
+    "is_implicit": true,
+    "created_at": 1776852033.524832,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_6_cac000d9-25c.pkl",
+    "notes": "rank=8/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "6a140dd8-382": {
+    "model_id": "6a140dd8-382",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7667
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776852034.3909714,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_7_6a140dd8-382.pkl",
+    "notes": "rank=9/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "138d6578-a67": {
+    "model_id": "138d6578-a67",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 6,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5624
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776852034.6182697,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_6_138d6578-a67.pkl",
+    "notes": "rank=10/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "5c191465-413": {
+    "model_id": "5c191465-413",
+    "algorithm": "User-KNN",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9781
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776852785.4169493,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_8_5c191465-413.pkl",
+    "notes": "rank=1/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "fe2603e5-3be": {
+    "model_id": "fe2603e5-3be",
+    "algorithm": "BPR",
+    "version": 7,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776852797.5248103,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_7_fe2603e5-3be.pkl",
+    "notes": "rank=2/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "0e1c00cf-d50": {
+    "model_id": "0e1c00cf-d50",
+    "algorithm": "EASE",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9488
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776852797.5888271,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_8_0e1c00cf-d50.pkl",
+    "notes": "rank=3/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "a9c1bfca-780": {
+    "model_id": "a9c1bfca-780",
+    "algorithm": "LightFM",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6417
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776852798.0232713,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_7_a9c1bfca-780.pkl",
+    "notes": "rank=4/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "23c1ddd3-de5": {
+    "model_id": "23c1ddd3-de5",
+    "algorithm": "SVD",
+    "version": 7,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4332
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776852798.105386,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_7_23c1ddd3-de5.pkl",
+    "notes": "rank=5/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "9d312248-039": {
+    "model_id": "9d312248-039",
+    "algorithm": "Autoencoder-CF",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4419,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.8138
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 0.00012981867447658423,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776852798.3380938,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_8_9d312248-039.pkl",
+    "notes": "rank=6/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "30ffcb4f-66e": {
+    "model_id": "30ffcb4f-66e",
+    "algorithm": "Item-KNN",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8373
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776852798.4174707,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_8_30ffcb4f-66e.pkl",
+    "notes": "rank=7/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "42450262-01d": {
+    "model_id": "42450262-01d",
+    "algorithm": "Temporal-SVD",
+    "version": 7,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.4089,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3934
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 3
+    },
+    "is_implicit": true,
+    "created_at": 1776852798.493797,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_7_42450262-01d.pkl",
+    "notes": "rank=8/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "3a6c9afb-107": {
+    "model_id": "3a6c9afb-107",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7673
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776852798.7264562,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_8_3a6c9afb-107.pkl",
+    "notes": "rank=9/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "d23dc73c-a94": {
+    "model_id": "d23dc73c-a94",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 7,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5618
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776852798.8125107,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_7_d23dc73c-a94.pkl",
+    "notes": "rank=10/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "edb4c55d-cb3": {
+    "model_id": "edb4c55d-cb3",
+    "algorithm": "User-KNN",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9787
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776853101.1755161,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_9_edb4c55d-cb3.pkl",
+    "notes": "rank=1/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "c2a3d867-5b7": {
+    "model_id": "c2a3d867-5b7",
+    "algorithm": "BPR",
+    "version": 8,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776853113.0497653,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_8_c2a3d867-5b7.pkl",
+    "notes": "rank=2/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "9209f790-6c4": {
+    "model_id": "9209f790-6c4",
+    "algorithm": "EASE",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776853113.118795,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_9_9209f790-6c4.pkl",
+    "notes": "rank=3/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "f2caaa8b-4f3": {
+    "model_id": "f2caaa8b-4f3",
+    "algorithm": "LightFM",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.644
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776853113.5437138,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_8_f2caaa8b-4f3.pkl",
+    "notes": "rank=4/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "db252b50-7af": {
+    "model_id": "db252b50-7af",
+    "algorithm": "SVD",
+    "version": 8,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4332
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776853113.6315958,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_8_db252b50-7af.pkl",
+    "notes": "rank=5/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "b4eb03fb-a4f": {
+    "model_id": "b4eb03fb-a4f",
+    "algorithm": "Autoencoder-CF",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4419,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.814
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 0.00012981867447658423,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776853113.8601124,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_9_b4eb03fb-a4f.pkl",
+    "notes": "rank=6/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "51f812af-1cc": {
+    "model_id": "51f812af-1cc",
+    "algorithm": "Item-KNN",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8367
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776853113.9707863,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_9_51f812af-1cc.pkl",
+    "notes": "rank=7/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "3f6be4a5-e57": {
+    "model_id": "3f6be4a5-e57",
+    "algorithm": "Temporal-SVD",
+    "version": 8,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.4089,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3934
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 3
+    },
+    "is_implicit": true,
+    "created_at": 1776853114.0508096,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_8_3f6be4a5-e57.pkl",
+    "notes": "rank=8/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "11d42cef-342": {
+    "model_id": "11d42cef-342",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7681
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776853114.366738,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_9_11d42cef-342.pkl",
+    "notes": "rank=9/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "f572f948-4b8": {
+    "model_id": "f572f948-4b8",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 8,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5618
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776853114.4538739,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_8_f572f948-4b8.pkl",
+    "notes": "rank=10/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "df76a616-243": {
+    "model_id": "df76a616-243",
+    "algorithm": "User-KNN",
+    "version": 10,
+    "metrics": {
+      "RMSE": 0.6891,
+      "MAE": 0.6676,
+      "Precision@K": 0.233,
+      "Recall@K": 0.688,
+      "NDCG@K": 0.519,
+      "MAP@K": 0.3841,
+      "Composite Score": 0.9781
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776853396.2173347,
+    "promoted": true,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\user-knn_10_df76a616-243.pkl",
+    "notes": "rank=1/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "df20d7d5-14a": {
+    "model_id": "df20d7d5-14a",
+    "algorithm": "BPR",
+    "version": 9,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.7484
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776853408.0904863,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_9_df20d7d5-14a.pkl",
+    "notes": "rank=2/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "24abb190-873": {
+    "model_id": "24abb190-873",
+    "algorithm": "EASE",
+    "version": 10,
+    "metrics": {
+      "RMSE": 0.8782,
+      "MAE": 0.874,
+      "Precision@K": 0.229,
+      "Recall@K": 0.6747,
+      "NDCG@K": 0.5027,
+      "MAP@K": 0.3663,
+      "Composite Score": 0.9501
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776853408.1540933,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ease_10_24abb190-873.pkl",
+    "notes": "rank=3/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "92f10c05-3f1": {
+    "model_id": "92f10c05-3f1",
+    "algorithm": "LightFM",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.4493,
+      "MAE": 0.4154,
+      "Precision@K": 0.155,
+      "Recall@K": 0.4682,
+      "NDCG@K": 0.47,
+      "MAP@K": 0.2202,
+      "Composite Score": 0.6459
+    },
+    "params": {
+      "n_components": 16,
+      "content_weight": 0.6693313223519999,
+      "user_feature_weight": 0.3879712115760958,
+      "max_features": 2500
+    },
+    "is_implicit": true,
+    "created_at": 1776853408.5946677,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\lightfm_9_92f10c05-3f1.pkl",
+    "notes": "rank=4/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "7ccf349d-2e4": {
+    "model_id": "7ccf349d-2e4",
+    "algorithm": "SVD",
+    "version": 9,
+    "metrics": {
+      "RMSE": 0.9914,
+      "MAE": 0.9882,
+      "Precision@K": 0.089,
+      "Recall@K": 0.2639,
+      "NDCG@K": 0.4617,
+      "MAP@K": 0.1209,
+      "Composite Score": 0.4333
+    },
+    "params": {
+      "n_components": 10
+    },
+    "is_implicit": true,
+    "created_at": 1776853408.6703231,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\svd_9_7ccf349d-2e4.pkl",
+    "notes": "rank=5/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "ccf1791d-ae0": {
+    "model_id": "ccf1791d-ae0",
+    "algorithm": "Autoencoder-CF",
+    "version": 10,
+    "metrics": {
+      "RMSE": 0.775,
+      "MAE": 0.7491,
+      "Precision@K": 0.189,
+      "Recall@K": 0.56,
+      "NDCG@K": 0.4419,
+      "MAP@K": 0.3092,
+      "Composite Score": 0.814
+    },
+    "params": {
+      "hidden_dim": 64,
+      "alpha": 0.00012981867447658423,
+      "max_iter": 150
+    },
+    "is_implicit": true,
+    "created_at": 1776853408.8932364,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\autoencoder-cf_10_ccf1791d-ae0.pkl",
+    "notes": "rank=6/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "08638091-547": {
+    "model_id": "08638091-547",
+    "algorithm": "Item-KNN",
+    "version": 10,
+    "metrics": {
+      "RMSE": 0.6957,
+      "MAE": 0.6819,
+      "Precision@K": 0.214,
+      "Recall@K": 0.6596,
+      "NDCG@K": 0.4387,
+      "MAP@K": 0.2884,
+      "Composite Score": 0.8367
+    },
+    "params": {},
+    "is_implicit": true,
+    "created_at": 1776853408.9688764,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\item-knn_10_08638091-547.pkl",
+    "notes": "rank=7/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "48ecc16b-756": {
+    "model_id": "48ecc16b-756",
+    "algorithm": "Temporal-SVD",
+    "version": 9,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.096,
+      "Recall@K": 0.2633,
+      "NDCG@K": 0.4089,
+      "MAP@K": 0.1087,
+      "Composite Score": 0.3928
+    },
+    "params": {
+      "n_components": 10,
+      "n_time_bins": 3
+    },
+    "is_implicit": true,
+    "created_at": 1776853409.0431237,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\temporal-svd_9_48ecc16b-756.pkl",
+    "notes": "rank=8/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "14c95bd5-61c": {
+    "model_id": "14c95bd5-61c",
+    "algorithm": "Content-Based TF-IDF",
+    "version": 10,
+    "metrics": {
+      "RMSE": 0.949,
+      "MAE": 0.9483,
+      "Precision@K": 0.186,
+      "Recall@K": 0.6051,
+      "NDCG@K": 0.4048,
+      "MAP@K": 0.2593,
+      "Composite Score": 0.7664
+    },
+    "params": {
+      "max_features": 2000,
+      "embedding_dim": 128
+    },
+    "is_implicit": true,
+    "created_at": 1776853409.2705348,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\content-based_tf-idf_10_14c95bd5-61c.pkl",
+    "notes": "rank=9/10 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "3b509448-44c": {
+    "model_id": "3b509448-44c",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 9,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5619
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776853409.3526826,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_9_3b509448-44c.pkl",
+    "notes": "rank=10/10 status=ok trials=30 metric=NDCG@K",
     "tags": []
   }
 }

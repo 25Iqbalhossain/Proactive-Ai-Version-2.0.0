@@ -31,7 +31,7 @@ from ingestion.csv_loader import FileLoader
 from ingestion.nosql_connector import NoSQLConnector
 from ingestion.sql_query_executor import SQLQueryExecutor
 from models.model_registry import ModelRegistry
-from optimization.optuna_tuner import OptunaTuner, TuningResult
+from optimization.optuna_tuner import OptunaTuner, TuningResult, get_optuna_trial_budgets
 from utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -75,6 +75,8 @@ class TrainingResult:
     top_model_recommendations: list[dict] = field(default_factory=list)
     ranking_logic: dict = field(default_factory=dict)
     optuna_note: str = ""
+    optuna_policy: dict = field(default_factory=dict)
+    model_selection_policy: dict = field(default_factory=dict)
 
     @property
     def all_tuning_results(self) -> list[TuningResult]:
@@ -180,7 +182,12 @@ class TrainingPipeline:
 
         bench_by_algo = {r.algorithm: r for r in report.results}
         tuning_results: list[TuningResult] = []
-        optuna_note = "OPTUNA_TRIALS_AUTO (-1) means adaptive per-algorithm trial budgets."
+        optuna_policy = self._build_optuna_policy(
+            selected_algorithms=top_algorithms,
+            primary_metric=report.primary_metric,
+            primary_metric_direction=report.primary_metric_direction,
+        )
+        optuna_note = optuna_policy.get("summary", "")
         if self.config.n_tuning_trials == 0:
             print("Optuna skipped (n_tuning_trials=0).")
             for algo in top_algorithms:
@@ -242,6 +249,11 @@ class TrainingPipeline:
             feedback_profile=feedback.to_dict(),
             cleaning_report=cleaning_report.__dict__,
         )
+        selection_policy = self._build_model_selection_policy(
+            recommendations=recommendations,
+            primary_metric=report.primary_metric,
+            primary_metric_direction=report.primary_metric_direction,
+        )
 
         elapsed = time.time() - t0
         self._print_footer(best_algorithm, best_params, all_model_ids, elapsed)
@@ -258,6 +270,8 @@ class TrainingPipeline:
             top_model_recommendations=recommendations,
             ranking_logic=report.ranking_logic,
             optuna_note=optuna_note,
+            optuna_policy=optuna_policy,
+            model_selection_policy=selection_policy,
         )
 
     def _rank_tuning_results(
@@ -363,6 +377,26 @@ class TrainingPipeline:
         sparsity = cleaning_report.get("sparsity", 1.0)
         sparse_label = "sparse" if sparsity >= 0.98 else "dense"
         out: list[dict] = []
+        metric_values = []
+        composite_values = []
+        for tune in ranked_results:
+            algo = tune.algorithm
+            row = lb.loc[algo] if not lb.empty and algo in lb.index else None
+            perf_value = (
+                tune.best_value
+                if tune.best_value is not None
+                else (float(row.get(report.primary_metric)) if row is not None else None)
+            )
+            composite_value = float(row.get("Composite Score")) if row is not None else None
+            if isinstance(perf_value, (int, float)) and math.isfinite(float(perf_value)):
+                metric_values.append(float(perf_value))
+            if isinstance(composite_value, (int, float)) and math.isfinite(float(composite_value)):
+                composite_values.append(float(composite_value))
+
+        metric_min = min(metric_values) if metric_values else None
+        metric_max = max(metric_values) if metric_values else None
+        composite_min = min(composite_values) if composite_values else None
+        composite_max = max(composite_values) if composite_values else None
 
         for idx, tune in enumerate(ranked_results, 1):
             algo = tune.algorithm
@@ -374,6 +408,28 @@ class TrainingPipeline:
                 else (float(row.get(report.primary_metric)) if row is not None else None)
             )
             elapsed_s = float(row.get("Time (s)")) if row is not None and pd.notna(row.get("Time (s)")) else None
+            composite_score = float(row.get("Composite Score")) if row is not None else None
+            selection_score_pct = self._estimate_selection_score_pct(
+                metric_name=report.primary_metric,
+                metric_value=perf_value,
+                metric_direction=report.primary_metric_direction,
+                composite_score=composite_score,
+                metric_min=metric_min,
+                metric_max=metric_max,
+                composite_min=composite_min,
+                composite_max=composite_max,
+            )
+            performance_summary = (
+                f"{report.primary_metric} reached {perf_value:.4f}."
+                if isinstance(perf_value, (int, float))
+                else f"{report.primary_metric} was not available after tuning."
+            )
+            fit_summary = (
+                f"{algo} matches the {report.resolved_mode} dataset mode and is rated {meta.get('sparsity_fit', 'medium')} for {sparse_label} data."
+            )
+            reliability_summary = (
+                f"Tuning finished with status '{tune.status}' and trial budget {tune.trial_budget or 'n/a'}."
+            )
             reasons = [
                 f"Feedback fit: algorithm supports {meta.get('feedback', 'unknown')} mode; dataset resolved as {report.resolved_mode}.",
                 f"Expected performance: {report.primary_metric}={perf_value:.4f}."
@@ -394,15 +450,230 @@ class TrainingPipeline:
                     "model_id": model_ids[idx - 1] if idx - 1 < len(model_ids) else None,
                     "metric_name": report.primary_metric,
                     "metric_value": perf_value,
-                    "composite_score": float(row.get("Composite Score")) if row is not None else None,
+                    "composite_score": composite_score,
                     "status": tune.status,
                     "trial_budget": tune.trial_budget,
                     "reasons": reasons,
-                    "summary": " ".join(reasons[:3]),
+                    "summary": " ".join([performance_summary, fit_summary, reliability_summary]),
+                    "performance_summary": performance_summary,
+                    "fit_summary": fit_summary,
+                    "reliability_summary": reliability_summary,
+                    "selection_score_pct": selection_score_pct,
                     "feedback_profile": feedback_profile,
                 }
             )
         return out
+
+    def _build_optuna_policy(
+        self,
+        selected_algorithms: list[str],
+        primary_metric: str,
+        primary_metric_direction: str,
+    ) -> dict:
+        requested_trials = int(self.config.n_tuning_trials)
+        adaptive_budgets = get_optuna_trial_budgets()
+        selected_budgets = {
+            algorithm: adaptive_budgets.get(algorithm)
+            for algorithm in selected_algorithms
+            if adaptive_budgets.get(algorithm) is not None
+        }
+        if requested_trials == OPTUNA_TRIALS_AUTO:
+            mode = "adaptive"
+            summary = (
+                "Optuna uses adaptive per-algorithm trial budgets because n_trials=-1. "
+                f"Each selected algorithm receives its own preset budget before ranking on {primary_metric}."
+            )
+        elif requested_trials == 0:
+            mode = "disabled"
+            summary = (
+                "Optuna is disabled because n_trials=0. "
+                "The system keeps benchmark scores and skips hyperparameter search."
+            )
+        else:
+            mode = "fixed"
+            summary = (
+                f"Optuna uses a fixed budget of {requested_trials} trials for every selected algorithm."
+            )
+
+        return {
+            "requested_trials": requested_trials,
+            "mode": mode,
+            "top_k": int(self.config.top_k),
+            "top_k_definition": (
+                f"Top-K={self.config.top_k} means ranking metrics evaluate whether relevant items appear "
+                f"in each user's top {self.config.top_k} recommendations."
+            ),
+            "objective_metric": primary_metric,
+            "objective_direction": primary_metric_direction,
+            "selected_algorithms": list(selected_algorithms),
+            "adaptive_trial_budgets": selected_budgets if requested_trials == OPTUNA_TRIALS_AUTO else {},
+            "rules": [
+                "n_trials=-1 uses adaptive trial budgets per algorithm.",
+                "n_trials=0 skips Optuna and keeps benchmark scores.",
+                "n_trials>0 applies the same fixed trial count to every selected algorithm.",
+                f"Implicit and hybrid datasets optimize {primary_metric} by ranking quality; explicit datasets minimize RMSE.",
+            ],
+            "summary": summary,
+        }
+
+    def _build_model_selection_policy(
+        self,
+        recommendations: list[dict],
+        primary_metric: str,
+        primary_metric_direction: str,
+    ) -> dict:
+        ranked = [dict(row) for row in recommendations if row.get("algorithm")]
+        if not ranked:
+            return {
+                "selection_type": "none",
+                "selected_count": 0,
+                "selected_models": [],
+                "reason": "No ranked models were available after training.",
+                "display_title": "No recommended models",
+                "recommended_strategy": None,
+            }
+
+        top = ranked[0]
+        runner_up = ranked[1] if len(ranked) > 1 else None
+        top_score = float(top.get("selection_score_pct") or 0.0)
+        runner_up_score = float(runner_up.get("selection_score_pct") or 0.0) if runner_up else 0.0
+        score_gap = round(top_score - runner_up_score, 2) if runner_up else 100.0
+        shortlist_count = max(1, min(len(ranked), int(self.config.top_model_count)))
+
+        if len(ranked) == 1 or top_score >= 90.0 or (top_score >= 75.0 and score_gap >= 10.0):
+            selection_type = "single_model"
+            selected = ranked[:1]
+            reason = (
+                f"{top['algorithm']} is the clear winner with a selection score of {top_score:.2f}%."
+                if runner_up is None
+                else (
+                    f"{top['algorithm']} is clearly ahead with a selection score of {top_score:.2f}% "
+                    f"and a {score_gap:.2f}-point lead over {runner_up['algorithm']}. "
+                    "The API will return one recommended model."
+                )
+            )
+            display_title = "Recommended single model"
+            recommended_strategy = "single_model"
+        else:
+            selection_type = "top_ranked_models"
+            selected = ranked[:shortlist_count]
+            reason = (
+                f"No single model separated enough from the pack. {top['algorithm']} leads with "
+                f"{top_score:.2f}% selection score, but the gap to {runner_up['algorithm']} is only "
+                f"{score_gap:.2f} points. The API will return the best {shortlist_count} models for comparison."
+                if runner_up is not None
+                else f"{top['algorithm']} is currently the only available model."
+            )
+            display_title = f"Top {len(selected)} recommended models"
+            recommended_strategy = "ensemble_weighted"
+
+        selected_algorithms = {row.get("algorithm") for row in selected}
+        for row in ranked:
+            row["selected_by_policy"] = row.get("algorithm") in selected_algorithms
+            if row["selected_by_policy"]:
+                row["decision_note"] = reason
+
+        return {
+            "selection_type": selection_type,
+            "selected_count": len(selected),
+            "selected_models": selected,
+            "reason": reason,
+            "display_title": display_title,
+            "recommended_strategy": recommended_strategy,
+            "primary_metric": primary_metric,
+            "primary_metric_direction": primary_metric_direction,
+            "top_model": {
+                "algorithm": top.get("algorithm"),
+                "model_id": top.get("model_id"),
+                "selection_score_pct": top.get("selection_score_pct"),
+                "metric_name": top.get("metric_name"),
+                "metric_value": top.get("metric_value"),
+            },
+            "runner_up": (
+                {
+                    "algorithm": runner_up.get("algorithm"),
+                    "model_id": runner_up.get("model_id"),
+                    "selection_score_pct": runner_up.get("selection_score_pct"),
+                    "metric_name": runner_up.get("metric_name"),
+                    "metric_value": runner_up.get("metric_value"),
+                }
+                if runner_up
+                else None
+            ),
+            "score_gap_pct": score_gap,
+            "decision_rules": [
+                "Return one model when the winner is dominant enough to stand on its own.",
+                f"Return the best {shortlist_count} models when several candidates remain competitive.",
+                "Dominance is estimated from the primary metric, composite score, and relative separation between models.",
+            ],
+        }
+
+    @staticmethod
+    def _estimate_selection_score_pct(
+        metric_name: str,
+        metric_value: Optional[float],
+        metric_direction: str,
+        composite_score: Optional[float],
+        metric_min: Optional[float],
+        metric_max: Optional[float],
+        composite_min: Optional[float],
+        composite_max: Optional[float],
+    ) -> float:
+        signals: list[tuple[float, float]] = []
+
+        bounded_metric = None
+        if isinstance(metric_value, (int, float)) and math.isfinite(float(metric_value)):
+            metric_value = float(metric_value)
+            if metric_direction == "maximize" and 0.0 <= metric_value <= 1.0:
+                bounded_metric = metric_value * 100.0
+            elif str(metric_name).upper() == "RMSE":
+                bounded_metric = 100.0 / (1.0 + max(metric_value, 0.0))
+        if bounded_metric is not None:
+            signals.append((bounded_metric, 0.5))
+
+        if isinstance(composite_score, (int, float)) and math.isfinite(float(composite_score)):
+            composite_score = float(composite_score)
+            if 0.0 <= composite_score <= 1.0:
+                signals.append((composite_score * 100.0, 0.25))
+
+        normalized_metric = None
+        if (
+            isinstance(metric_value, (int, float))
+            and metric_min is not None
+            and metric_max is not None
+            and math.isfinite(float(metric_min))
+            and math.isfinite(float(metric_max))
+        ):
+            span = float(metric_max) - float(metric_min)
+            if span <= 1e-12:
+                normalized_metric = 100.0
+            elif metric_direction == "minimize":
+                normalized_metric = ((float(metric_max) - float(metric_value)) / span) * 100.0
+            else:
+                normalized_metric = ((float(metric_value) - float(metric_min)) / span) * 100.0
+        if normalized_metric is not None:
+            signals.append((max(0.0, min(100.0, normalized_metric)), 0.25))
+
+        if (
+            isinstance(composite_score, (int, float))
+            and composite_min is not None
+            and composite_max is not None
+            and math.isfinite(float(composite_min))
+            and math.isfinite(float(composite_max))
+        ):
+            span = float(composite_max) - float(composite_min)
+            if span <= 1e-12:
+                normalized_composite = 100.0
+            else:
+                normalized_composite = ((float(composite_score) - float(composite_min)) / span) * 100.0
+            signals.append((max(0.0, min(100.0, normalized_composite)), 0.25))
+
+        if not signals:
+            return 0.0
+
+        weighted_total = sum(value * weight for value, weight in signals)
+        total_weight = sum(weight for _, weight in signals)
+        return round(weighted_total / total_weight, 2)
 
     @staticmethod
     def _print_header() -> None:

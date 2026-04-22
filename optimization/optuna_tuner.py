@@ -48,6 +48,10 @@ _ALGO_TRIAL_BUDGETS = {
 _DEFAULT_TRIALS = 20
 
 
+def get_optuna_trial_budgets() -> dict[str, int]:
+    return dict(_ALGO_TRIAL_BUDGETS)
+
+
 def _suggest_params(trial, algorithm: str) -> dict:
     spaces = {
         "SVD": lambda t: {"n_components": t.suggest_int("n_components", 10, 200, step=10)},

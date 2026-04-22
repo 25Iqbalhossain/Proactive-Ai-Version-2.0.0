@@ -110,6 +110,7 @@ class RecommendRequest(BaseModel):
     user_id: str
     top_n: int = 10
     strategy: Optional[str] = None
+    model_id: Optional[str] = None
     algorithm: Optional[str] = None
     models: list[WeightedModelRequest] = Field(default_factory=list)
     auto_normalize_weights: bool = True
@@ -144,6 +145,7 @@ class BatchRecommendRequest(BaseModel):
     user_ids: list[str] = Field(default_factory=list)
     top_n: int = 10
     strategy: Optional[str] = None
+    model_id: Optional[str] = None
     algorithm: Optional[str] = None
     models: list[WeightedModelRequest] = Field(default_factory=list)
     auto_normalize_weights: bool = True
@@ -398,6 +400,7 @@ def get_recommendations(req: RecommendRequest, _: dict = Depends(require_auth)):
         user_id=req.user_id,
         top_n=req.top_n,
         strategy=req.strategy,
+        model_id=req.model_id,
         algorithm=req.algorithm,
         models=[
             WeightedModelInput(algorithm=m.algorithm, weight=m.weight, model_id=m.model_id)
@@ -425,6 +428,7 @@ def get_batch_recommendations(req: BatchRecommendRequest, _: dict = Depends(requ
             user_id=user_id,
             top_n=req.top_n,
             strategy=req.strategy,
+            model_id=req.model_id,
             algorithm=req.algorithm,
             models=[
                 WeightedModelInput(algorithm=m.algorithm, weight=m.weight, model_id=m.model_id)
@@ -560,9 +564,14 @@ def _serialise_training_result(result) -> dict:
         "feedback_profile": result.feedback_profile,
         "ranking_logic": result.ranking_logic,
         "optuna_note": result.optuna_note,
+        "optuna_policy": getattr(result, "optuna_policy", {}),
         "top_model_recommendations": result.top_model_recommendations,
+        "model_selection_policy": getattr(result, "model_selection_policy", {}),
         "recommendation_options": _strategy_service.recommendation_options(last_result=result),
-        "top_model_candidates": (result.top_model_recommendations or [])[:5],
+        "top_model_candidates": (
+            (getattr(result, "model_selection_policy", {}) or {}).get("selected_models")
+            or (result.top_model_recommendations or [])[:5]
+        ),
         "tuning": [
             {
                 "algorithm": t.algorithm,

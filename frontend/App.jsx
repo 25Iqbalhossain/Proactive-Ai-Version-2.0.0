@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 
-const SMART = '/smart-db-csv/api';
+const SMART_API = '/smart-db-csv/api';
+const CORE_API = '';
+const TOKEN_KEY = 'proactive_ai_token';
 
 const DB_OPTS = [
   ['mysql','MySQL / MariaDB'],['postgres','PostgreSQL'],
@@ -9,40 +11,795 @@ const DB_OPTS = [
 
 const PORT_MAP = { postgres:'5432', mysql:'3306', mssql:'1433', mongodb:'27017', sqlite:'' };
 
+const DB_ICONS = {
+  mysql: '🐬', postgres: '🐘', mssql: '🪟', mongodb: '🍃', sqlite: '📦'
+};
+
+// ── Global Styles ─────────────────────────────────────────────────────────────
 const css = `
-  :root{--bg:#0b1020;--panel:#121a2d;--soft:#1b2742;--line:#2a3960;--text:#eef3ff;--muted:#9bb0d1;--accent:#6ea8fe;--ok:#42d392;--warn:#f7b955;--err:#ff7b7b;}
-  *{box-sizing:border-box;}body{margin:0;background:linear-gradient(180deg,#0b1020,#101a30);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;}
-  .wrap{max-width:860px;margin:0 auto;padding:24px;}
-  .hero{margin-bottom:24px;}.hero h1{margin:0 0 6px;font-size:26px;}.hero p{margin:0;color:var(--muted);line-height:1.5;font-size:14px;}
-  .steps{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
-  .step-btn{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;font-weight:600;}
-  .step-btn.active{background:var(--accent);color:#08111f;border-color:var(--accent);}
-  .panel{background:rgba(18,26,45,.94);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.18);margin-bottom:16px;}
-  .panel h2{margin:0 0 4px;font-size:18px;}.sub{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.45;}
-  .stack{display:grid;gap:14px;}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;}
-  input,select,textarea{width:100%;background:var(--soft);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 12px;font-size:14px;}
-  textarea{min-height:80px;resize:vertical;}
-  button{border:none;background:var(--accent);color:#08111f;font-weight:700;padding:10px 18px;border-radius:12px;cursor:pointer;font-size:14px;}
-  button.sec{background:transparent;color:var(--text);border:1px solid var(--line);}
-  button.ghost{background:#1a2440;color:var(--text);}
-  button:disabled{opacity:.5;cursor:not-allowed;}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-  .badge{display:inline-flex;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:#131d34;color:var(--muted);font-size:12px;font-weight:700;}
-  .badge.ok{color:var(--ok);border-color:rgba(66,211,146,.3);}
-  .badge.warn{color:var(--warn);border-color:rgba(247,185,85,.3);}
-  .badge.err{color:var(--err);border-color:rgba(255,123,123,.3);}
-  .cards{display:grid;gap:10px;}
-  .conn{border:1px solid var(--line);border-radius:14px;padding:12px;background:#11192c;display:flex;justify-content:space-between;align-items:center;gap:12px;}
-  .muted{color:var(--muted);}.tiny{font-size:12px;}.code{font-family:ui-monospace,monospace;font-size:12px;}
-  .log{background:#0d1426;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto;max-height:320px;white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:12px;}
-  .choice{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
-  .choice-card{border:2px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;text-align:center;transition:border-color .2s,background .2s;}
-  .choice-card:hover,.choice-card.sel{border-color:var(--accent);background:rgba(110,168,254,.07);}
-  .choice-card h3{margin:8px 0 4px;font-size:16px;}.choice-card p{margin:0;color:var(--muted);font-size:13px;}
-  .msg{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#131d34;margin-bottom:12px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
-  @media(max-width:700px){.row,.row3,.choice{grid-template-columns:1fr;}}
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #05080f;
+    --surface: #0c1120;
+    --surface2: #111827;
+    --surface3: #1a2235;
+    --border: rgba(99,130,195,0.15);
+    --border-hi: rgba(99,130,195,0.35);
+    --text: #e8eeff;
+    --muted: #6b7fa3;
+    --accent: #4f7cff;
+    --accent2: #7c3aed;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --cyan: #22d3ee;
+    --glow: rgba(79,124,255,0.15);
+    --glow2: rgba(124,58,237,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(79,124,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,58,237,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .logo-area { display: flex; flex-direction: column; gap: 6px; }
+
+  .logo-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: rgba(79,124,255,0.1);
+    border: 1px solid rgba(79,124,255,0.25);
+    border-radius: 100px;
+    font-size: 24px;
+    font-weight: 1000;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+
+  .logo-tag .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #e8eeff 0%, #a5b4fc 60%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 500px;
+  }
+
+  /* ── Stepper ── */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .stepper::-webkit-scrollbar { display: none; }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .step-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  .step-btn:hover:not(.active) {
+    border-color: var(--border-hi);
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .step-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(79,124,255,0.35);
+  }
+
+  .step-btn.done {
+    border-color: rgba(52,211,153,0.3);
+    color: var(--green);
+    background: rgba(52,211,153,0.06);
+  }
+
+  .step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+
+  .step-btn.active .step-num { background: rgba(255,255,255,0.25); }
+  .step-btn.done .step-num { background: rgba(52,211,153,0.2); }
+
+  .step-connector {
+    width: 24px;
+    height: 1px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ── Panel / Card ── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.35s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(79,124,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .panel + .panel { margin-top: 16px; }
+
+  .panel-header {
+    margin-bottom: 20px;
+  }
+
+  .panel-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .panel-header p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── Form elements ── */
+  .form-stack { display: flex; flex-direction: column; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: rgba(79,124,255,0.5);
+    box-shadow: 0 0 0 3px rgba(79,124,255,0.1);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7fa3' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  textarea { min-height: 90px; resize: vertical; line-height: 1.5; }
+
+  input[type="checkbox"] {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(79,124,255,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(79,124,255,0.45);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--border-hi);
+    background: var(--surface3);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-hi); }
+
+  .btn-danger {
+    background: rgba(248,113,113,0.1);
+    color: var(--red);
+    border: 1px solid rgba(248,113,113,0.2);
+  }
+
+  .btn-danger:hover {
+    background: rgba(248,113,113,0.18);
+    border-color: rgba(248,113,113,0.4);
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    white-space: nowrap;
+  }
+
+  .badge-green { color: var(--green); border-color: rgba(52,211,153,0.25); background: rgba(52,211,153,0.08); }
+  .badge-yellow { color: var(--yellow); border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.08); }
+  .badge-red { color: var(--red); border-color: rgba(248,113,113,0.25); background: rgba(248,113,113,0.08); }
+  .badge-blue { color: var(--accent); border-color: rgba(79,124,255,0.25); background: rgba(79,124,255,0.08); }
+  .badge-purple { color: #a78bfa; border-color: rgba(167,139,250,0.25); background: rgba(167,139,250,0.08); }
+
+  /* ── Connection cards ── */
+  .conn-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .conn-card:hover { border-color: var(--border-hi); }
+  .conn-card.selected { border-color: rgba(79,124,255,0.35); background: rgba(79,124,255,0.06); }
+
+  .conn-info { display: flex; align-items: center; gap: 12px; }
+
+  .conn-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .conn-name { font-weight: 600; font-size: 14px; }
+  .conn-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .conn-actions { display: flex; gap: 8px; align-items: center; }
+
+  /* ── Source mode cards ── */
+  .source-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .source-card {
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    padding: 28px 24px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s ease;
+    background: var(--surface2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .source-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .source-card.csv::before {
+    background: radial-gradient(ellipse at 50% 0%, rgba(79,124,255,0.12) 0%, transparent 70%);
+  }
+
+  .source-card.db::before {
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 70%);
+  }
+
+  .source-card:hover::before, .source-card.sel::before { opacity: 1; }
+
+  .source-card:hover, .source-card.sel {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(79,124,255,0.2);
+  }
+
+  .source-card.db:hover, .source-card.db.sel {
+    border-color: #7c3aed;
+    box-shadow: 0 12px 40px rgba(124,58,237,0.2);
+  }
+
+  .source-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+
+  .source-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .source-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── Log / Code ── */
+  .log-box {
+    background: #070b14;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    overflow: auto;
+    max-height: 300px;
+    white-space: pre-wrap;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: #7b93c4;
+    line-height: 1.6;
+  }
+
+  /* ── Messages ── */
+  .msg-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    animation: slideDown 0.25s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-bar.err { border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.07); color: var(--red); }
+  .msg-bar.ok { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.07); color: var(--green); }
+
+  /* ── Progress / Loading ── */
+  .loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .spinner-ring {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+    position: relative;
+  }
+
+  .spinner-ring::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: rgba(124,58,237,0.5);
+    animation: spin 1.2s linear infinite reverse;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .progress-track {
+    width: 100%;
+    height: 6px;
+    background: var(--surface3);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px;
+    transition: width 0.5s ease;
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 30px;
+    background: rgba(255,255,255,0.4);
+    filter: blur(6px);
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Segmented control ── */
+  .seg-control {
+    display: inline-flex;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .seg-btn {
+    padding: 7px 14px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .seg-btn.active {
+    background: var(--surface3);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  /* ── Recommendation card ── */
+  .rec-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .rec-card:hover { border-color: var(--border-hi); }
+
+  .rec-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .rec-card-rank {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  /* ── Model card ── */
+  .model-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    transition: all 0.2s;
+  }
+
+  .model-card:hover { border-color: var(--border-hi); }
+
+  .model-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .model-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .model-note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 6px; }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* ── Schema viewer ── */
+  .schema-wrap { margin-top: 12px; }
+
+  .schema-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  /* ── Cards grid ── */
+  .cards-stack { display: flex; flex-direction: column; gap: 10px; }
+  .mini-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.5; }
+
+  /* ── Status inline ── */
+  .status-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+
+  /* ── Responsive ── */
+  @media(max-width: 640px) {
+    .form-row, .form-row3, .source-grid { grid-template-columns: 1fr; }
+    .stepper { gap: 0; }
+    .step-connector { width: 12px; }
+    .step-btn { padding: 7px 10px; font-size: 11px; }
+  }
+
+  /* ── Tab indicator for build modes ── */
+  .build-modes {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .mode-tab {
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .mode-tab.active {
+    border-color: rgba(79,124,255,0.4);
+    color: var(--accent);
+    background: rgba(79,124,255,0.08);
+  }
+
+  .mode-tab:hover:not(.active) {
+    border-color: var(--border-hi);
+    color: var(--text);
+  }
+
+  /* ── Auto-advance banner ── */
+  .advance-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(52,211,153,0.07);
+    border: 1px solid rgba(52,211,153,0.25);
+    border-radius: 14px;
+    font-size: 13px;
+    color: var(--green);
+    margin-top: 16px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .advance-icon { font-size: 20px; flex-shrink: 0; }
+
+  /* ── Glow accents ── */
+  .glow-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .glow-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .glow-dot.blue { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .glow-dot.yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .glow-dot.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
 `;
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
 
 async function jfetch(url, opts = {}) {
   const res = await fetch(url, opts);
@@ -52,7 +809,7 @@ async function jfetch(url, opts = {}) {
   const detail = data && (data.detail || data.message || data.error);
   const message = Array.isArray(detail)
     ? detail.map(item => {
-        const path = Array.isArray(item?.loc) ? item.loc.filter(part => part !== 'body').join('.') : '';
+        const path = Array.isArray(item?.loc) ? item.loc.filter(p => p !== 'body').join('.') : '';
         return [path, item?.msg].filter(Boolean).join(': ');
       }).join('; ')
     : detail;
@@ -60,33 +817,6 @@ async function jfetch(url, opts = {}) {
   return data;
 }
 
-function Msg({ msg, clear }) {
-  if (!msg) return null;
-  return (
-    <div className="msg">
-      <span>{msg}</span>
-      <button className="sec" style={{padding:'3px 10px',fontSize:11}} onClick={clear}>✕</button>
-    </div>
-  );
-}
-
-function JobStatus({ data, label }) {
-  if (!data) return null;
-  const cls = data.status === 'done' ? 'ok' : data.status === 'failed' ? 'err' : 'warn';
-  return (
-    <div>
-      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:8}}>
-        <span className={`badge ${cls}`}>{label} — {data.status}</span>
-        {data.progress != null && <span className="badge">Progress {data.progress}%</span>}
-        {data.row_count && <span className="badge">Rows {data.row_count}</span>}
-        {data.result?.best_algorithm && <span className="badge ok">Best: {data.result.best_algorithm}</span>}
-      </div>
-      <div className="log">{JSON.stringify(data.plan || data.steps || data, null, 2)}</div>
-    </div>
-  );
-}
-
-// normalise connection records — backend may nest attrs under .cred
 function norm(c) {
   return {
     ...c,
@@ -97,13 +827,8 @@ function norm(c) {
 }
 
 function buildConnectionPayload(form) {
-  const payload = {
-    db_type: form.db_type,
-    name: (form.name || '').trim(),
-  };
-  const add = (key, value) => {
-    if (value !== '' && value != null) payload[key] = value;
-  };
+  const payload = { db_type: form.db_type, name: (form.name || '').trim() };
+  const add = (key, value) => { if (value !== '' && value != null) payload[key] = value; };
   const database = (form.database || '').trim();
   const host = (form.host || '').trim();
   const username = (form.username || '').trim();
@@ -111,19 +836,12 @@ function buildConnectionPayload(form) {
   const filepath = (form.filepath || '').trim();
   const uri = (form.uri || '').trim();
   const port = (form.port || '').trim();
-
   add('database', database);
-
-  if (form.db_type === 'sqlite') {
-    add('filepath', filepath);
-    return payload;
-  }
-
+  if (form.db_type === 'sqlite') { add('filepath', filepath); return payload; }
   if (!(form.db_type === 'mongodb' && uri)) {
     add('host', host);
     add('port', port ? Number(port) : null);
   }
-
   add('username', username);
   add('password', password);
   add('uri', uri);
@@ -133,30 +851,147 @@ function buildConnectionPayload(form) {
 function validateConnectionPayload(payload) {
   const needsHost = ['mysql', 'postgres', 'mssql'].includes(payload.db_type)
     || (payload.db_type === 'mongodb' && !payload.uri);
-  if (needsHost && !payload.host) {
-    throw new Error(`Host is required for ${payload.db_type}.`);
-  }
+  if (needsHost && !payload.host) throw new Error(`Host is required for ${payload.db_type}.`);
 }
 
-// ── pages ────────────────────────────────────────────────────────────────────
+function isTerminal(status) { return ['done', 'failed', 'error'].includes(status); }
+function num(v, d = 4) { const n = Number(v); return Number.isFinite(n) ? n.toFixed(d) : 'n/a'; }
+function pct(v, d = 2) { const n = Number(v); return Number.isFinite(n) ? `${n.toFixed(d)}%` : 'n/a'; }
+function recText(w) { if (!w) return ''; if (typeof w === 'string') return w; return w.message || w.detail || w.error || JSON.stringify(w); }
+
+function uniqueModels(rows = []) {
+  const seen = new Set();
+  return rows.filter(row => { const k = row?.model_id || row?.algorithm; if (!k || seen.has(k)) return false; seen.add(k); return true; });
+}
+
+// ── UI Atoms ──────────────────────────────────────────────────────────────────
+
+function Msg({ msg, clear }) {
+  if (!msg) return null;
+  const isErr = msg.toLowerCase().includes('error') || msg.toLowerCase().includes('fail') || msg.toLowerCase().includes('required');
+  return (
+    <div className={`msg-bar ${isErr ? 'err' : 'ok'}`}>
+      <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <span>{isErr ? '⚠' : '✓'}</span>
+        <span>{msg}</span>
+      </div>
+      <button className="btn btn-ghost btn-sm" onClick={clear}>✕</button>
+    </div>
+  );
+}
+
+function LoadingSpinner({ label, progress }) {
+  return (
+    <div className="loading-wrapper">
+      <div className="spinner-ring" />
+      <div>
+        <div style={{fontWeight:600,marginBottom:4}}>{label || 'Processing…'}</div>
+        {progress != null && (
+          <>
+            <div style={{fontSize:12,color:'var(--muted)',marginBottom:8}}>{progress}% complete</div>
+            <div className="progress-track" style={{width:200}}>
+              <div className="progress-fill" style={{width:`${progress}%`}} />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatusDot({ status }) {
+  const map = { done:'green', pending:'yellow', running:'blue', failed:'red', error:'red' };
+  return <span className={`glow-dot ${map[status]||'blue'}`} />;
+}
+
+// ── JobStatus ─────────────────────────────────────────────────────────────────
+
+function JobStatus({ data, label }) {
+  if (!data) return null;
+  const isRunning = !isTerminal(data.status);
+  const training = data.result || null;
+  const selectionPolicy = training?.model_selection_policy || null;
+  const optunaPolicy = training?.optuna_policy || null;
+  const selectedModels = selectionPolicy?.selected_models || [];
+
+  const badgeClass = data.status === 'done' ? 'badge-green' : (data.status === 'failed' || data.status === 'error') ? 'badge-red' : 'badge-yellow';
+
+  return (
+    <div style={{marginTop:16}}>
+      {isRunning && <LoadingSpinner label={`${label} in progress…`} progress={data.progress} />}
+      <div className="status-row">
+        <span className={`badge ${badgeClass}`}><StatusDot status={data.status} /> {label} — {data.status}</span>
+        {data.progress != null && !isTerminal(data.status) && <span className="badge">{data.progress}%</span>}
+        {data.row_count && <span className="badge badge-blue">Rows: {data.row_count}</span>}
+        {data.result?.best_algorithm && <span className="badge badge-green">Best: {data.result.best_algorithm}</span>}
+      </div>
+
+      {training && (
+        <div style={{display:'flex',flexDirection:'column',gap:12,marginBottom:12}}>
+          {optunaPolicy?.summary && (
+            <div className="panel" style={{padding:'14px 16px'}}>
+              <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.06em'}}>Optuna policy</div>
+              <div style={{fontSize:13}}>{optunaPolicy.summary}</div>
+              {optunaPolicy.top_k_definition && <div style={{fontSize:12,color:'var(--muted)',marginTop:6}}>{optunaPolicy.top_k_definition}</div>}
+            </div>
+          )}
+          {selectionPolicy?.reason && (
+            <div className="panel" style={{padding:'14px 16px'}}>
+              <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.06em'}}>{selectionPolicy.display_title || 'Model decision'}</div>
+              <div style={{fontSize:13}}>{selectionPolicy.reason}</div>
+            </div>
+          )}
+          {selectedModels.length > 0 && (
+            <div className="cards-stack">
+              {selectedModels.map(model => (
+                <div key={model.model_id || model.algorithm} className="model-card">
+                  <div className="model-card-header">
+                    <div className="model-title">#{model.rank} {model.algorithm}</div>
+                    <span className="badge badge-green">Score {Number(model.selection_score_pct||0).toFixed(2)}%</span>
+                  </div>
+                  <div className="model-note">
+                    {(model.metric_name||'Metric')} {model.metric_value != null ? Number(model.metric_value).toFixed(4) : 'n/a'} · Composite {model.composite_score != null ? Number(model.composite_score).toFixed(4) : 'n/a'}
+                  </div>
+                  {model.summary && <div style={{fontSize:13,lineHeight:1.5,marginTop:8,color:'var(--text)'}}>{model.summary}</div>}
+                  {model.decision_note && <div style={{fontSize:12,color:'var(--muted)',marginTop:6}}>{model.decision_note}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {data.error && <div className="panel" style={{padding:'14px 16px',borderColor:'rgba(248,113,113,0.3)'}}><strong style={{color:'var(--red)'}}>Error:</strong> {data.error}</div>}
+      <div className="log-box">{JSON.stringify(data.plan || data.steps || data, null, 2)}</div>
+    </div>
+  );
+}
+
+// ── PageMode ──────────────────────────────────────────────────────────────────
 
 function PageMode({ onSelect }) {
   const [hover, setHover] = useState('');
-  const cards = [
-    ['csv','📄','Upload CSV','Directly upload an existing CSV to train recommendation models.'],
-    ['db','🗄️','Database','Connect to a DB, build a dataset with the smart planner, then train.'],
-  ];
   return (
     <div className="panel">
-      <h2>Choose data source</h2>
-      <p className="sub">How would you like to supply training data?</p>
-      <div className="choice">
-        {cards.map(([k,icon,title,desc]) => (
-          <div key={k} className={`choice-card ${hover===k?'sel':''}`}
+      <div className="panel-header">
+        <h2>Choose data source</h2>
+        <p>How would you like to supply training data for your recommendation models?</p>
+      </div>
+      <div className="source-grid">
+        {[
+          ['csv','📄','Upload CSV','Directly upload an existing CSV to train recommendation models instantly.',false],
+          ['db','🗄️','Live Database','Connect to a DB, build a smart dataset with AI, then train models.',true],
+        ].map(([k,icon,title,desc,isDb]) => (
+          <div key={k} className={`source-card ${k} ${hover===k?'sel':''}`}
             onMouseEnter={()=>setHover(k)} onMouseLeave={()=>setHover('')}
             onClick={()=>onSelect(k)}>
-            <div style={{fontSize:34}}>{icon}</div>
-            <h3>{title}</h3><p>{desc}</p>
+            <span className="source-icon">{icon}</span>
+            <h3>{title}</h3>
+            <p>{desc}</p>
+            <div style={{marginTop:16}}>
+              <span className="badge" style={{fontSize:11}}>
+                {k==='csv' ? '⚡ Quick start' : '🔗 Multi-source'}
+              </span>
+            </div>
           </div>
         ))}
       </div>
@@ -164,121 +999,113 @@ function PageMode({ onSelect }) {
   );
 }
 
-async function save() {
-  try {
-    const payload = {
-      ...form,
-      port: form.port ? Number(form.port) : null,
-    };
+// ── PageConnections ───────────────────────────────────────────────────────────
 
-    await jfetch(`${SMART}/connections/test`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    const res = await jfetch(`${SMART}/connections`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    setMsg(`Connected: ${res.name}`);
-    setForm(blank);
-    onAdded(res.id);
-  } catch (e) {
-    setMsg(e.message);
-  }
-}
 function PageConnections({ connections, selected, schemas, onAdded, onRemove, onToggle, onSchema, setMsg }) {
   const blank = { db_type:'postgres', name:'', host:'', port:'5432', database:'', username:'', password:'', filepath:'', uri:'' };
   const [form, setForm] = useState(blank);
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
+  const [saving, setSaving] = useState(false);
 
   function changeType(t) { setForm(p=>({...p, db_type:t, port: PORT_MAP[t]||''})); }
 
   async function save() {
+    setSaving(true);
     try {
       const payload = buildConnectionPayload(form);
       validateConnectionPayload(payload);
-      console.log('POST /smart-db-csv/api/connections payload', payload);
-      const tested = await jfetch(`${SMART}/connections/test`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload),
-      });
-      if (tested?.status && tested.status !== 'connected') {
-        throw new Error(tested.message || `Connection test failed for ${payload.db_type}.`);
-      }
-      const res = await jfetch(`${SMART}/connections`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      setMsg(`Connected: ${res.name}`);
+      const tested = await jfetch(`${SMART_API}/connections/test`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      if (tested?.status && tested.status !== 'connected') throw new Error(tested.message || `Connection test failed.`);
+      const res = await jfetch(`${SMART_API}/connections`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      setMsg(`✓ Connected: ${res.name}`);
       setForm(blank);
-      onAdded(res.id); // auto-select the new connection
+      onAdded(res.id);
     } catch(e) { setMsg(e.message); }
+    finally { setSaving(false); }
   }
 
+  const isMongo = form.db_type === 'mongodb';
+  const isSqlite = form.db_type === 'sqlite';
+
   return (
-    <div className="stack">
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
       <div className="panel">
-        <h2>Add connection</h2>
-        <p className="sub">Credentials are stored on the backend. New connections are auto-selected.</p>
-        <div className="stack">
-          <div><label>Database type</label>
+        <div className="panel-header">
+          <h2>Add connection</h2>
+          <p>Credentials are stored securely on the backend. New connections are auto-selected.</p>
+        </div>
+        <div className="form-stack">
+          <div className="form-group">
+            <label>Database type</label>
             <select value={form.db_type} onChange={e=>changeType(e.target.value)}>
-              {DB_OPTS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              {DB_OPTS.map(([v,l])=><option key={v} value={v}>{DB_ICONS[v]||''} {l}</option>)}
             </select>
           </div>
-          <div className="row">
-            <div><label>Connection name</label><input value={form.name} onChange={e=>set('name',e.target.value)} placeholder="sales-db" /></div>
-            <div><label>Database</label><input value={form.database} onChange={e=>set('database',e.target.value)} placeholder="analytics" /></div>
+          <div className="form-row">
+            <div className="form-group"><label>Connection name</label><input value={form.name} onChange={e=>set('name',e.target.value)} placeholder="e.g. sales-db" /></div>
+            <div className="form-group"><label>Database</label><input value={form.database} onChange={e=>set('database',e.target.value)} placeholder="e.g. analytics" /></div>
           </div>
-          {form.db_type !== 'sqlite' && (
-            <div className="row3">
-              <div><label>Host</label><input value={form.host} onChange={e=>set('host',e.target.value)} placeholder="localhost" /></div>
-              <div><label>Port</label><input value={form.port} onChange={e=>set('port',e.target.value)} /></div>
-              <div><label>User</label><input value={form.username} onChange={e=>set('username',e.target.value)} /></div>
+          {!isSqlite && (
+            <div className="form-row3">
+              <div className="form-group"><label>Host</label><input value={form.host} onChange={e=>set('host',e.target.value)} placeholder="localhost" /></div>
+              <div className="form-group"><label>Port</label><input value={form.port} onChange={e=>set('port',e.target.value)} /></div>
+              <div className="form-group"><label>Username</label><input value={form.username} onChange={e=>set('username',e.target.value)} /></div>
             </div>
           )}
-          {form.db_type === 'sqlite'
-            ? <div><label>SQLite file path</label><input value={form.filepath} onChange={e=>set('filepath',e.target.value)} placeholder="/data/db.sqlite" /></div>
-            : <div><label>Password</label><input type="password" value={form.password} onChange={e=>set('password',e.target.value)} /></div>}
-          {form.db_type === 'mongodb' && <div><label>MongoDB URI (optional)</label><input value={form.uri} onChange={e=>set('uri',e.target.value)} placeholder="mongodb://user:pass@host:27017/db" /></div>}
-          <div className="actions"><button onClick={save}>Save connection</button></div>
+          {isSqlite
+            ? <div className="form-group"><label>SQLite file path</label><input value={form.filepath} onChange={e=>set('filepath',e.target.value)} placeholder="/data/db.sqlite" /></div>
+            : <div className="form-group"><label>Password</label><input type="password" value={form.password} onChange={e=>set('password',e.target.value)} placeholder="••••••••" /></div>}
+          {isMongo && <div className="form-group"><label>MongoDB URI (optional)</label><input value={form.uri} onChange={e=>set('uri',e.target.value)} placeholder="mongodb://user:pass@host:27017/db" /></div>}
+          <div className="actions">
+            <button className="btn btn-primary" onClick={save} disabled={saving}>
+              {saving ? '⏳ Testing…' : '⚡ Save & test connection'}
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="panel">
-        <h2>Saved connections</h2>
-        <p className="sub">Check to include in the build step.</p>
-        <div className="cards">
-          {connections.length === 0 && <div className="muted tiny">No connections yet.</div>}
+        <div className="panel-header">
+          <h2>Saved connections</h2>
+          <p>Check the connections you want to include in the build step.</p>
+        </div>
+        <div className="cards-stack">
+          {connections.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-icon">🔌</div>
+              <div>No connections yet — add one above</div>
+            </div>
+          )}
           {connections.map(c=>(
-            <div key={c.id} className="conn">
-              <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <div key={c.id} className={`conn-card ${selected.includes(c.id)?'selected':''}`}>
+              <div className="conn-info">
                 <input type="checkbox" checked={selected.includes(c.id)}
-                  onChange={e=>{ onToggle(c.id, e.target.checked); if(e.target.checked) onSchema(c.id); }} />
+                  onChange={e=>{ onToggle(c.id,e.target.checked); if(e.target.checked) onSchema(c.id); }} />
+                <div className="conn-icon">{DB_ICONS[c.db_type]||'🗄️'}</div>
                 <div>
-                  <strong>{c.name}</strong> <span className="badge ok" style={{marginLeft:4}}>{c.db_type}</span>
-                  <div className="tiny muted">{c.database||'—'}</div>
+                  <div className="conn-name">{c.name} <span className="badge badge-blue" style={{marginLeft:4,fontSize:10}}>{c.db_type}</span></div>
+                  <div className="conn-detail">{c.database||'—'}</div>
                 </div>
               </div>
-              <div className="actions">
-                <button className="ghost" style={{padding:'6px 12px'}} onClick={()=>onSchema(c.id)}>Schema</button>
-                <button className="sec" style={{padding:'6px 12px'}} onClick={()=>onRemove(c.id)}>Remove</button>
+              <div className="conn-actions">
+                <button className="btn btn-secondary btn-sm" onClick={()=>onSchema(c.id)}>Schema</button>
+                <button className="btn btn-danger btn-sm" onClick={()=>onRemove(c.id)}>Remove</button>
               </div>
             </div>
           ))}
         </div>
         {Object.entries(schemas).map(([id,s])=>(
-          <div key={id} style={{marginTop:12}}>
-            <div className="tiny muted" style={{marginBottom:4}}>{connections.find(c=>c.id===id)?.name||id} — schema</div>
-            <div className="log">{JSON.stringify((s.tables||[]).slice(0,8).map(t=>({table:t.table_name,cols:(t.columns||[]).map(c=>`${c.name}:${c.data_type}`)})),null,2)}</div>
+          <div key={id} className="schema-wrap">
+            <div className="schema-label">{connections.find(c=>c.id===id)?.name||id} — schema</div>
+            <div className="log-box">{JSON.stringify((s.tables||[]).slice(0,8).map(t=>({table:t.table_name,cols:(t.columns||[]).map(c=>`${c.name}:${c.data_type}`)})),null,2)}</div>
           </div>
         ))}
       </div>
     </div>
   );
 }
+
+// ── PageBuild ─────────────────────────────────────────────────────────────────
 
 function PageBuild({ selected, schemas, onBuilt, setMsg }) {
   const [form, setForm] = useState({
@@ -293,8 +1120,10 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
   });
   const [job, setJob] = useState(null);
   const [jobData, setJobData] = useState(null);
+  const [autoLoadedJobId, setAutoLoadedJobId] = useState('');
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
   const setManual = (k,v) => setForm(p=>({...p,manual_config:{...p.manual_config,[k]:v}}));
+
   const availableTables = useMemo(
     ()=>selected.flatMap(id=>(schemas[id]?.tables||[]).map(t=>t.full_name||[t.schema_name,t.table_name].filter(Boolean).join('.'))),
     [schemas, selected]
@@ -304,13 +1133,19 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
     if (!job) return;
     const t = setInterval(async()=>{
       try {
-        const d = await jfetch(`${SMART}/jobs/${job}`);
+        const d = await jfetch(`${SMART_API}/jobs/${job}`);
         setJobData(d);
-        if (d.status==='done'||d.status==='failed') clearInterval(t);
+        if (isTerminal(d.status)) clearInterval(t);
       } catch(e){ setMsg(e.message); clearInterval(t); }
     }, 2000);
     return ()=>clearInterval(t);
   },[job]);
+
+  useEffect(()=>{
+    if (!job || jobData?.status !== 'done' || form.output_format !== 'csv' || autoLoadedJobId === job) return;
+    setAutoLoadedJobId(job);
+    loadForTraining(true);
+  },[autoLoadedJobId, form.output_format, job, jobData?.status]);
 
   async function start() {
     try {
@@ -322,38 +1157,35 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
         output_format:form.output_format,
         max_rows_per_table:Number(form.max_rows_per_table),
       };
-
       if (mode==='query') {
-        const queryText = (form.query_text || form.target_description || '').trim();
-        if (!queryText) throw new Error('Query mode requires a query or prompt.');
-        payload.query_text = queryText;
-        payload.target_description = queryText;
+        const qt = (form.query_text || form.target_description || '').trim();
+        if (!qt) throw new Error('Query mode requires a query or prompt.');
+        payload.query_text = qt;
+        payload.target_description = qt;
       } else if (mode==='llm') {
-        const llmPrompt = (form.llm_prompt || '').trim();
-        if (!llmPrompt) throw new Error('LLM Build mode requires instructions.');
-        payload.llm_prompt = llmPrompt;
-        payload.target_description = llmPrompt;
+        const lp = (form.llm_prompt || '').trim();
+        if (!lp) throw new Error('LLM Build mode requires instructions.');
+        payload.llm_prompt = lp;
+        payload.target_description = lp;
       } else {
-        const manualConfig = Object.fromEntries(
-          Object.entries(form.manual_config || {}).map(([k,v])=>[k,(v||'').trim()])
-        );
-        if (!Object.values(manualConfig).some(Boolean)) {
-          throw new Error('Manual mode requires at least one configuration field.');
-        }
-        payload.manual_config = manualConfig;
+        const mc = Object.fromEntries(Object.entries(form.manual_config||{}).map(([k,v])=>[k,(v||'').trim()]));
+        if (!Object.values(mc).some(Boolean)) throw new Error('Manual mode requires at least one configuration field.');
+        payload.manual_config = mc;
       }
-
-      const res = await jfetch(`${SMART}/build`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      setJob(res.job_id); setJobData({status:'pending',progress:0});
+      const res = await jfetch(`${SMART_API}/build`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      setAutoLoadedJobId('');
+      setJob(res.job_id);
+      setJobData({status:'pending',progress:0});
       setMsg('Dataset build started.');
     } catch(e){ setMsg(e.message); }
   }
 
-  async function loadForTraining() {
+  async function loadForTraining(autoAdvance = false) {
     try {
-      const res = await fetch(`${SMART}/jobs/${job}/download?output_format=csv`);
+      const res = await fetch(`${SMART_API}/jobs/${job}/download?output_format=csv`);
       if (!res.ok) throw new Error(await res.text());
       const blob = await res.blob();
+      if (autoAdvance) setMsg('Dataset ready — advancing to Train. ✓');
       onBuilt(new File([blob],'built_dataset.csv',{type:'text/csv'}));
     } catch(e){ setMsg(e.message); }
   }
@@ -361,7 +1193,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
   async function download() {
     try {
       const fmt = form.output_format||'csv';
-      const res = await fetch(`${SMART}/jobs/${job}/download?output_format=${fmt}`);
+      const res = await fetch(`${SMART_API}/jobs/${job}/download?output_format=${fmt}`);
       if (!res.ok) throw new Error(await res.text());
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -370,276 +1202,553 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
     } catch(e){ setMsg(e.message); }
   }
 
+  const isDone = jobData?.status === 'done';
+
   return (
     <div className="panel">
-      <h2>Build dataset</h2>
-      <p className="sub">LLM API keys are read from backend environment variables — nothing to enter here. Choose a mode, then build from selected connections.</p>
-      <div className="stack">
-        <div className="row">
-          <div><label>Build mode</label>
-            <select value={form.mode} onChange={e=>set('mode',e.target.value)}>
-              <option value="query">Query</option>
-              <option value="manual">Manual</option>
-              <option value="llm">LLM Build</option>
-            </select>
-          </div>
-          <div><label>Recommendation type</label>
-            <select value={form.rec_system_type} onChange={e=>set('rec_system_type',e.target.value)}>
-              <option value="hybrid">Hybrid</option><option value="collaborative">Collaborative</option>
-              <option value="content_based">Content based</option><option value="sequential">Sequential</option>
-            </select>
-          </div>
-        </div>
-        {form.mode==='query' && (
-          <div><label>Query / Prompt</label>
-            <textarea value={form.query_text} onChange={e=>set('query_text',e.target.value)}
-              placeholder="Build an e-commerce recommendation dataset from users, orders, and products" />
-          </div>
-        )}
-        {form.mode==='manual' && (
-          <>
-            <div><label>Tables / entities</label>
-              <textarea value={form.manual_config.tables} onChange={e=>setManual('tables',e.target.value)}
-                placeholder={"users\norders\nproducts"} />
-            </div>
-            {availableTables.length>0 && <div className="tiny muted">Available tables: {availableTables.join(', ')}</div>}
-            <div><label>Relationships / joins</label>
-              <textarea value={form.manual_config.relationships} onChange={e=>setManual('relationships',e.target.value)}
-                placeholder={"orders.user_id = users.id\norders.product_id = products.id"} />
-            </div>
-            <div className="row">
-              <div><label>Target field / primary id</label><input value={form.manual_config.target_field} onChange={e=>setManual('target_field',e.target.value)} placeholder="users.id" /></div>
-              <div><label>Label / interaction field</label><input value={form.manual_config.label_field} onChange={e=>setManual('label_field',e.target.value)} placeholder="orders.product_id" /></div>
-            </div>
-            <div><label>Notes</label>
-              <textarea value={form.manual_config.notes} onChange={e=>setManual('notes',e.target.value)}
-                placeholder="Optional notes about entities, filters, or expected dataset shape." />
-            </div>
-          </>
-        )}
-        {form.mode==='llm' && (
-          <div><label>LLM Instructions</label>
-            <textarea value={form.llm_prompt} onChange={e=>set('llm_prompt',e.target.value)}
-              placeholder="Use the selected schema to build a recommendation dataset with the key entity, joins, and interaction columns." />
-          </div>
-        )}
-        <div className="row">
-          <div><label>Output format</label>
-            <select value={form.output_format} onChange={e=>set('output_format',e.target.value)}>
-              <option value="csv">CSV</option><option value="json">JSON</option>
-            </select>
-          </div>
-          <div><label>Max rows per table</label>
-            <input type="number" value={form.max_rows_per_table} onChange={e=>set('max_rows_per_table',e.target.value)} />
-          </div>
-        </div>
-        <div className="actions">
-          <button disabled={selected.length===0} onClick={start}>Build dataset</button>
-          {jobData?.status==='done' && <button className="sec" onClick={download}>Download</button>}
-          {jobData?.status==='done' && <button className="ghost" onClick={loadForTraining}>Load for training →</button>}
-        </div>
-        <JobStatus data={jobData} label="Build" />
+      <div className="panel-header">
+        <h2>Build dataset</h2>
+        <p>LLM API keys are read from backend environment. Choose a build mode, configure options, then build from your selected connections.</p>
       </div>
+
+      {selected.length === 0 && (
+        <div style={{padding:'12px 16px',background:'rgba(251,191,36,0.07)',border:'1px solid rgba(251,191,36,0.25)',borderRadius:12,fontSize:13,color:'var(--yellow)',marginBottom:16}}>
+          ⚠ No connections selected — go back and select at least one connection.
+        </div>
+      )}
+
+      <div className="build-modes">
+        {[['query','🔍 Query / Prompt'],['llm','🤖 LLM Build'],['manual','⚙️ Manual']].map(([m,l])=>(
+          <button key={m} className={`mode-tab ${form.mode===m?'active':''}`} onClick={()=>set('mode',m)}>{l}</button>
+        ))}
+      </div>
+
+      <div className="form-stack">
+        {form.mode === 'query' && (
+          <div className="form-group">
+            <label>Target description or query</label>
+            <textarea value={form.target_description} onChange={e=>set('target_description',e.target.value)}
+              placeholder="e.g. Build a user-item interaction dataset for product recommendations based on purchase history" />
+          </div>
+        )}
+        {form.mode === 'llm' && (
+          <div className="form-group">
+            <label>LLM build instructions</label>
+            <textarea value={form.llm_prompt} onChange={e=>set('llm_prompt',e.target.value)}
+              placeholder="Describe what kind of recommendation dataset you want the AI to build…" />
+          </div>
+        )}
+        {form.mode === 'manual' && (
+          <div className="form-stack">
+            <div className="form-row">
+              <div className="form-group"><label>Tables (comma-separated)</label><input value={form.manual_config.tables} onChange={e=>setManual('tables',e.target.value)} placeholder={availableTables.slice(0,2).join(',') || 'users,items,events'} /></div>
+              <div className="form-group"><label>Target field</label><input value={form.manual_config.target_field} onChange={e=>setManual('target_field',e.target.value)} placeholder="user_id" /></div>
+            </div>
+            <div className="form-row">
+              <div className="form-group"><label>Label field</label><input value={form.manual_config.label_field} onChange={e=>setManual('label_field',e.target.value)} placeholder="item_id" /></div>
+              <div className="form-group"><label>Relationships</label><input value={form.manual_config.relationships} onChange={e=>setManual('relationships',e.target.value)} placeholder="users.id=events.user_id" /></div>
+            </div>
+            <div className="form-group"><label>Notes</label><textarea value={form.manual_config.notes} onChange={e=>setManual('notes',e.target.value)} placeholder="Any additional context…" style={{minHeight:60}} /></div>
+          </div>
+        )}
+
+        <div className="form-row">
+          <div className="form-group">
+            <label>Recommendation type</label>
+            <select value={form.rec_system_type} onChange={e=>set('rec_system_type',e.target.value)}>
+              <option value="hybrid">Hybrid</option>
+              <option value="collaborative">Collaborative Filtering</option>
+              <option value="content">Content-Based</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Output format</label>
+            <select value={form.output_format} onChange={e=>set('output_format',e.target.value)}>
+              <option value="csv">CSV</option>
+              <option value="parquet">Parquet</option>
+              <option value="json">JSON</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-group">
+          <label>Max rows per table</label>
+          <input type="number" value={form.max_rows_per_table} onChange={e=>set('max_rows_per_table',e.target.value)} />
+        </div>
+
+        <div className="actions">
+          <button className="btn btn-primary" onClick={start} disabled={selected.length===0}>
+            🚀 Start build
+          </button>
+          {job && isDone && (
+            <>
+              <button className="btn btn-secondary" onClick={()=>loadForTraining(false)}>→ Use for training</button>
+              <button className="btn btn-ghost" onClick={download}>⬇ Download</button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {jobData && <JobStatus data={jobData} label="Build" />}
+
+      {isDone && (
+        <div className="advance-banner">
+          <span className="advance-icon">✅</span>
+          <div>
+            <strong>Dataset ready!</strong> Automatically advancing to the Training step…
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
+// ── PageTrain ─────────────────────────────────────────────────────────────────
+
 function PageTrain({ file, setFile, onTrained, setMsg }) {
-  const [form, setForm] = useState({ top_k:10, n_trials:-1, top_models:10, algorithm_mode:'auto' });
   const [job, setJob] = useState(null);
   const [jobData, setJobData] = useState(null);
+  const [form, setForm] = useState({
+    user_col:'user_id',
+    item_col:'item_id',
+    rating_col:'rating',
+    target_metric:'NDCG@K',
+    top_k:10,
+    test_size:0.2,
+    n_trials:30,
+    n_top_models:10,
+    algorithm_mode:'auto',
+    format:'auto',
+  });
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
 
   useEffect(()=>{
     if (!job) return;
     const t = setInterval(async()=>{
       try {
-        const d = await jfetch(`/jobs/${job}`);
+        const d = await jfetch(`${CORE_API}/jobs/${job}`);
         setJobData(d);
-        if (d.status==='done'||d.status==='failed'){ clearInterval(t); if(d.status==='done') onTrained(); }
+        if (isTerminal(d.status)) clearInterval(t);
       } catch(e){ setMsg(e.message); clearInterval(t); }
-    }, 2500);
+    }, 2000);
     return ()=>clearInterval(t);
   },[job]);
 
-  async function train() {
-    if (!file) return;
+  useEffect(()=>{
+    if (jobData?.status !== 'done') return;
+    const t = setTimeout(()=>{ onTrained(jobData); }, 1200);
+    return ()=>clearTimeout(t);
+  },[jobData?.status]);
+
+  async function start() {
+    if (!file) { setMsg('No dataset file — complete the Build step or upload a CSV.'); return; }
     try {
       const fd = new FormData();
-      fd.append('file', file, file.name||'dataset.csv');
-      fd.append('top_k', String(form.top_k));
-      fd.append('n_trials', String(form.n_trials));
-      fd.append('top_models', String(form.top_models));
+      fd.append('file', file);
+      fd.append('top_k', form.top_k);
+      fd.append('n_trials', form.n_trials);
+      fd.append('top_models', form.n_top_models);
       fd.append('algorithm_mode', form.algorithm_mode);
-      fd.append('format', 'csv');
-      const res = await fetch('/train/file',{method:'POST',body:fd});
-      const text = await res.text();
-      const data = text ? JSON.parse(text) : null;
-      if (!res.ok) throw new Error(data?.detail||text||`HTTP ${res.status}`);
-      setJob(data.job_id); setJobData({status:'pending'}); setMsg('Training started.');
+      fd.append('format', form.format);
+      const res = await jfetch(`${CORE_API}/train/file`, { method:'POST', body:fd });
+      setJob(res.job_id);
+      setJobData({status:'pending',progress:0});
+      setMsg('Training started.');
     } catch(e){ setMsg(e.message); }
+  }
+
+  async function pickFile(e) {
+    const f = e.target.files?.[0];
+    if (f) { setFile(f); setMsg(`File loaded: ${f.name}`); }
+  }
+
+  const isDone = jobData?.status === 'done';
+
+  return (
+    <div className="panel">
+      <div className="panel-header">
+        <h2>Train models</h2>
+        <p>Optuna-powered hyperparameter search across multiple algorithms. The best model is promoted automatically.</p>
+      </div>
+
+      <div className="form-stack">
+        <div>
+          <div style={{padding:'16px',background:'var(--surface2)',border:`1px solid ${file?'rgba(52,211,153,0.3)':'var(--border)'}`,borderRadius:14,display:'flex',alignItems:'center',gap:14,transition:'border-color 0.2s'}}>
+            <div style={{fontSize:28}}>📋</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontWeight:600,fontSize:14,marginBottom:2}}>{file ? file.name : 'No file selected'}</div>
+              <div style={{fontSize:12,color:'var(--muted)'}}>
+                {file ? `${(file.size/1024).toFixed(1)} KB` : 'Upload a CSV dataset or complete the Build step'}
+              </div>
+            </div>
+            <label className="btn btn-secondary btn-sm" style={{cursor:'pointer'}}>
+              Browse <input type="file" accept=".csv" onChange={pickFile} style={{display:'none'}} />
+            </label>
+          </div>
+        </div>
+
+        <div className="form-row3">
+          <div className="form-group"><label>User column</label><input value={form.user_col} onChange={e=>set('user_col',e.target.value)} /></div>
+          <div className="form-group"><label>Item column</label><input value={form.item_col} onChange={e=>set('item_col',e.target.value)} /></div>
+          <div className="form-group"><label>Rating column</label><input value={form.rating_col} onChange={e=>set('rating_col',e.target.value)} /></div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Target metric</label>
+            <select value={form.target_metric} onChange={e=>set('target_metric',e.target.value)}>
+              {['NDCG@K','Precision@K','Recall@K','MAP@K','RMSE'].map(m=><option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+          <div className="form-group"><label>Top K</label><input type="number" value={form.top_k} onChange={e=>set('top_k',e.target.value)} min={1} max={100} /></div>
+        </div>
+        <div className="form-row3">
+          <div className="form-group"><label>Test size</label><input type="number" value={form.test_size} onChange={e=>set('test_size',e.target.value)} step="0.05" min="0.05" max="0.5" /></div>
+          <div className="form-group"><label>Optuna trials</label><input type="number" value={form.n_trials} onChange={e=>set('n_trials',e.target.value)} min={5} max={200} /></div>
+          <div className="form-group"><label>Top models</label><input type="number" value={form.n_top_models} onChange={e=>set('n_top_models',e.target.value)} min={1} max={10} /></div>
+        </div>
+
+        <div className="actions">
+          <button className="btn btn-primary" onClick={start} disabled={!file}>
+            🧠 Start training
+          </button>
+        </div>
+      </div>
+
+      {jobData && <JobStatus data={jobData} label="Training" />}
+
+      {isDone && (
+        <div className="advance-banner">
+          <span className="advance-icon">🎉</span>
+          <div>
+            <strong>Training complete!</strong> Automatically advancing to Recommendations…
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── PageRecommend ─────────────────────────────────────────────────────────────
+
+function PageRecommend({ setMsg, trainingResult }) {
+  const training = trainingResult?.result || null;
+  const [loginForm, setLoginForm] = useState({ username:'admin', password:'admin123' });
+  const [token, setToken] = useState(()=> localStorage.getItem(TOKEN_KEY) || '');
+  const [catalog, setCatalog] = useState([]);
+  const [options, setOptions] = useState(training?.recommendation_options || null);
+  const [form, setForm] = useState({
+    user_id:'',
+    top_n:10,
+    model_id: training?.best_model_id || '',
+    strategy:'best_promoted_model',
+  });
+  const set = (k,v) => setForm(p=>({...p,[k]:v}));
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [authBusy, setAuthBusy] = useState(false);
+
+  const models = useMemo(() => uniqueModels([
+    ...(options?.single_model_options || []),
+    ...(training?.model_selection_policy?.selected_models || []),
+    ...catalog.map(model => ({
+      ...model,
+      metric_name: Object.keys(model.metrics || {})[0] || '',
+      metric_value: Object.values(model.metrics || {})[0],
+      summary: model.notes || '',
+    })),
+  ]), [catalog, options, training]);
+  const recommendedModels = options?.recommended_models || training?.model_selection_policy?.selected_models || [];
+  const bestPromoted = options?.best_promoted_model || null;
+  const recommendations = result?.recommendations || result?.items || [];
+  const warnings = result?.warnings || [];
+  const contributionBreakdown = result?.contribution_breakdown || [];
+
+  useEffect(()=>{
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  },[token]);
+
+  useEffect(()=>{
+    if (training?.recommendation_options) setOptions(training.recommendation_options);
+    if (training?.best_model_id) {
+      setForm(prev => prev.model_id ? prev : { ...prev, model_id: training.best_model_id });
+    }
+  },[training]);
+
+  useEffect(()=>{
+    if (!token) return;
+    loadRecommendationContext(token);
+  },[token]);
+
+  async function loadRecommendationContext(activeToken = token) {
+    try {
+      const headers = { Authorization:`Bearer ${activeToken}` };
+      const opt = await jfetch(`${CORE_API}/recommend/options`, { headers });
+      setOptions(opt);
+      const modelData = await jfetch(`${CORE_API}/models`, { headers });
+      setCatalog(modelData.models || []);
+    } catch (e) {
+      const message = String(e.message || '');
+      if (message.toLowerCase().includes('token') || message.toLowerCase().includes('bearer')) {
+        setToken('');
+      }
+      setMsg(message);
+    }
+  }
+
+  async function login() {
+    if (!loginForm.username.trim() || !loginForm.password.trim()) {
+      setMsg('Enter username and password to unlock recommendations.');
+      return;
+    }
+    setAuthBusy(true);
+    try {
+      const auth = await jfetch(`${CORE_API}/auth/login`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          username: loginForm.username.trim(),
+          password: loginForm.password,
+        }),
+      });
+      setToken(auth.access_token || '');
+      setMsg('Recommendation access is ready.');
+    } catch (e) {
+      setMsg(e.message);
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  async function query() {
+    if (!form.user_id.trim()) { setMsg('Please enter a user ID.'); return; }
+    if (!token) { setMsg('Login first to call the recommendation API.'); return; }
+    setLoading(true);
+    try {
+      const strategy = form.strategy === 'single_model' && !form.model_id ? 'best_promoted_model' : form.strategy;
+      const payload = {
+        user_id: form.user_id.trim(),
+        top_n: Number(form.top_n) || 10,
+        strategy,
+      };
+
+      if (strategy === 'single_model') {
+        const chosen = models.find(model => model.model_id === form.model_id);
+        if (!chosen?.model_id) throw new Error('Choose a trained model before using single model mode.');
+        payload.model_id = chosen.model_id;
+        if (chosen.algorithm) payload.algorithm = chosen.algorithm;
+      }
+
+      if (strategy === 'ensemble_weighted') {
+        const ensemble = recommendedModels
+          .filter(model => model.model_id || model.algorithm)
+          .map((model, index) => ({
+            model_id: model.model_id || null,
+            algorithm: model.algorithm,
+            weight: Number(model.selection_score_pct || model.normalized_weight || 0) || (recommendedModels.length - index),
+          }));
+        if (ensemble.length < 2) {
+          throw new Error('This training run does not have enough eligible models for ensemble recommendations.');
+        }
+        payload.models = ensemble;
+      }
+
+      const d = await jfetch(`${CORE_API}/recommend`, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          Authorization:`Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      setResult(d);
+    } catch(e){ setMsg(e.message); }
+    finally { setLoading(false); }
   }
 
   return (
     <div className="panel">
-      <h2>Train recommendation models</h2>
-      <p className="sub">Upload a CSV, or use a dataset built from a database in the previous step.</p>
-      <div className="stack">
-        <div>
-          <label>Dataset file (CSV)</label>
-          <input type="file" accept=".csv" onChange={e=>{ if(e.target.files[0]) setFile(e.target.files[0]); }} />
-          {file && <div className="tiny muted" style={{marginTop:4}}>Loaded: {file.name}</div>}
-        </div>
-        <div className="row3">
-          <div><label>Top K</label>
-            <select value={form.top_k} onChange={e=>set('top_k',Number(e.target.value))}>
-              <option value={10}>10</option><option value={5}>5</option>
-            </select>
-          </div>
-          <div><label>Top models</label>
-            <select value={form.top_models} onChange={e=>set('top_models',Number(e.target.value))}>
-              <option value={10}>10</option><option value={5}>5</option>
-            </select>
-          </div>
-          <div><label>Algorithm mode</label>
-            <select value={form.algorithm_mode} onChange={e=>set('algorithm_mode',e.target.value)}>
-              <option value="auto">Auto</option><option value="explicit">Explicit</option><option value="implicit">Implicit</option>
-            </select>
-          </div>
-        </div>
-        <div><label>Optuna trials (-1 = adaptive)</label>
-          <input type="number" value={form.n_trials} onChange={e=>set('n_trials',Number(e.target.value))} />
-        </div>
-        <div className="actions"><button disabled={!file} onClick={train}>Train</button></div>
-        <JobStatus data={jobData} label="Training" />
-      </div>
-    </div>
-  );
-}
-
-function PageRecommend({ setMsg }) {
-  const [loginForm, setLoginForm] = useState({username:'admin',password:'admin123'});
-  const [token, setToken] = useState(()=>localStorage.getItem('proactive_token')||'');
-  const [models, setModels] = useState([]);
-  const [recForm, setRecForm] = useState({user_id:'',top_n:10,algorithm:''});
-  const [result, setResult] = useState(null);
-  const setL = (k,v) => setLoginForm(p=>({...p,[k]:v}));
-  const setR = (k,v) => setRecForm(p=>({...p,[k]:v}));
-  const promoted = useMemo(()=>models.find(m=>m.is_promoted||m.promoted),[models]);
-
-  useEffect(()=>{ localStorage.setItem('proactive_token', token||''); },[token]);
-  useEffect(()=>{ if(token) loadModels(token); },[]);
-
-  async function login() {
-    try {
-      const d = await jfetch('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(loginForm)});
-      setToken(d.access_token); setMsg('Login successful.');
-      await loadModels(d.access_token);
-    } catch(e){ setMsg(e.message); }
-  }
-
-  async function loadModels(tok) {
-    const auth = tok||token; if (!auth) return;
-    try {
-      const d = await jfetch('/models',{headers:{Authorization:`Bearer ${auth}`}});
-      setModels(d.models||[]);
-    } catch(e){ setMsg(e.message); }
-  }
-
-  async function recommend() {
-    try {
-      const payload = {user_id:recForm.user_id,top_n:Number(recForm.top_n),strategy:'single_model',algorithm:recForm.algorithm||promoted?.algorithm||undefined};
-      const d = await jfetch('/recommend',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
-      setResult(d);
-    } catch(e){ setMsg(e.message); }
-  }
-
-  return (
-    <div className="stack">
-      <div className="panel">
-        <h2>Login</h2>
-        <div className="stack">
-          <div className="row">
-            <div><label>Username</label><input value={loginForm.username} onChange={e=>setL('username',e.target.value)} /></div>
-            <div><label>Password</label><input type="password" value={loginForm.password} onChange={e=>setL('password',e.target.value)} /></div>
-          </div>
-          <div className="actions">
-            <button onClick={login}>Login</button>
-            <button className="sec" onClick={()=>loadModels()}>Refresh models</button>
-            {token && <span className="badge ok">Authenticated</span>}
-          </div>
-        </div>
+      <div className="panel-header">
+        <h2>Get recommendations</h2>
+        <p>Use the trained model set to generate personalised recommendations for any user.</p>
       </div>
 
-      <div className="panel">
-        <h2>Trained models</h2>
-        <div className="cards">
-          {models.length===0 && <div className="muted tiny">No models yet — train first, then login.</div>}
-          {models.slice(0,10).map((m,i)=>(
-            <div key={m.model_id||i} className="conn">
-              <div>
-                <strong>{m.algorithm}</strong>
-                {(m.is_promoted||m.promoted) && <span className="badge ok" style={{marginLeft:6}}>Promoted</span>}
-                <div className="tiny muted code">{m.model_id}</div>
+      {training && (
+        <div style={{marginBottom:20,padding:'14px 16px',background:'var(--surface2)',borderRadius:14,border:'1px solid var(--border)'}}>
+          <div style={{fontSize:11,fontWeight:700,color:'var(--muted)',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>Training summary</div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            {training.best_algorithm && <span className="badge badge-green">Best: {training.best_algorithm}</span>}
+            {training.metric && <span className="badge badge-blue">{training.target_metric} {num(training.metric)}</span>}
+            {models.length > 0 && <span className="badge">{models.length} models available</span>}
+            {recommendedModels.length > 0 && <span className="badge badge-blue">Shortlisted: {recommendedModels.length}</span>}
+          </div>
+          {training.model_selection_policy?.reason && (
+            <div style={{fontSize:13,lineHeight:1.6,color:'var(--muted)',marginTop:10}}>
+              {training.model_selection_policy.reason}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="form-stack">
+        {!token ? (
+          <div className="panel" style={{padding:'16px'}}>
+            <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.06em'}}>Recommendation login</div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Username</label>
+                <input value={loginForm.username} onChange={e=>setLoginForm(prev=>({...prev, username:e.target.value}))} />
               </div>
-              <div className="tiny muted">score: {m.validation_score??m.score??'n/a'}</div>
+              <div className="form-group">
+                <label>Password</label>
+                <input type="password" value={loginForm.password} onChange={e=>setLoginForm(prev=>({...prev, password:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&login()} />
+              </div>
+            </div>
+            <div className="actions">
+              <button className="btn btn-secondary" onClick={login} disabled={authBusy}>
+                {authBusy ? 'Signing in...' : 'Unlock recommendations'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={{padding:'12px 14px',background:'rgba(52,211,153,0.06)',border:'1px solid rgba(52,211,153,0.25)',borderRadius:12,fontSize:13}}>
+            Recommendation API connected.
+            {bestPromoted?.algorithm ? ` Current promoted model: ${bestPromoted.algorithm}.` : ''}
+          </div>
+        )}
+
+        <div className="form-row">
+          <div className="form-group">
+            <label>User ID</label>
+            <input value={form.user_id} onChange={e=>set('user_id',e.target.value)} placeholder="e.g. user_42" onKeyDown={e=>e.key==='Enter'&&query()} />
+          </div>
+          <div className="form-group">
+            <label>Number of results</label>
+            <input type="number" value={form.top_n} onChange={e=>set('top_n',e.target.value)} min={1} max={100} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Recommendation mode</label>
+            <select value={form.strategy} onChange={e=>set('strategy',e.target.value)}>
+              <option value="best_promoted_model">Use promoted best model</option>
+              <option value="single_model">Pick one trained model</option>
+              <option value="ensemble_weighted">Blend shortlisted models</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Model override</label>
+            <select value={form.model_id} onChange={e=>set('model_id',e.target.value)}>
+              <option value="">Use promoted best model</option>
+              {models.map(m=>(
+                <option key={m.model_id||m.algorithm} value={m.model_id||''}>
+                  {m.algorithm}{m.promoted ? ' (promoted)' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.6}}>
+          {form.strategy === 'best_promoted_model' && 'Best for most users: it uses the promoted model that training marked as the safest default choice.'}
+          {form.strategy === 'single_model' && 'Best for comparison: it runs one exact trained model so you can inspect that model on its own.'}
+          {form.strategy === 'ensemble_weighted' && `Best for broader coverage: it blends the shortlisted models from this training run${recommendedModels.length ? ` (${recommendedModels.length} available)` : ''}.`}
+        </div>
+        <div className="actions">
+          <button className="btn btn-primary" onClick={query} disabled={loading || !token}>
+            {loading ? '⏳ Querying…' : '✨ Get recommendations'}
+          </button>
+        </div>
+      </div>
+
+      {loading && <LoadingSpinner label="Fetching recommendations…" />}
+
+      {result && !loading && (
+        <div style={{marginTop:24,display:'flex',flexDirection:'column',gap:12,animation:'fadeUp 0.35s ease'}}>
+          <div style={{padding:'14px 16px',background:'var(--surface2)',borderRadius:14,border:'1px solid var(--border)'}}>
+            <strong>Summary:</strong> {recommendations.length} items using {result.strategy === 'ensemble_weighted' ? 'weighted ensemble' : (result.algorithm||'selected model')}.
+          </div>
+
+          {warnings.length > 0 && warnings.map((w,i)=>(
+            <div key={i} style={{padding:'12px 14px',background:'rgba(251,191,36,0.06)',border:'1px solid rgba(251,191,36,0.2)',borderRadius:12,fontSize:13,color:'var(--yellow)'}}>
+              ⚠ {recText(w)}
             </div>
           ))}
-        </div>
-      </div>
 
-      <div className="panel">
-        <h2>Get recommendations</h2>
-        <div className="stack">
-          <div className="row3">
-            <div><label>User ID</label><input value={recForm.user_id} onChange={e=>setR('user_id',e.target.value)} placeholder="user_123" /></div>
-            <div><label>Top N</label>
-              <select value={recForm.top_n} onChange={e=>setR('top_n',Number(e.target.value))}>
-                <option value={10}>10</option><option value={5}>5</option>
-              </select>
+          {contributionBreakdown.length > 0 && (
+            <div className="mini-grid">
+              {contributionBreakdown.map(row=>(
+                <div key={row.model_id||row.algorithm} style={{background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:14,padding:'14px 16px'}}>
+                  <div style={{fontFamily:'Syne,sans-serif',fontWeight:700,fontSize:14,marginBottom:6}}>{row.algorithm}</div>
+                  <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.5}}>
+                    Influenced {row.item_count||0} items · {pct(row.share_pct)} of ranking
+                  </div>
+                </div>
+              ))}
             </div>
-            <div><label>Algorithm</label>
-              <select value={recForm.algorithm} onChange={e=>setR('algorithm',e.target.value)}>
-                <option value="">Promoted / default</option>
-                {[...new Set(models.map(m=>m.algorithm))].map(a=><option key={a} value={a}>{a}</option>)}
-              </select>
+          )}
+
+          {recommendations.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-icon">🎯</div>
+              <div>No recommendations returned for this user.</div>
             </div>
+          )}
+
+          <div className="cards-stack">
+            {recommendations.map(item=>(
+              <div key={`${item.item_id}-${item.rank}`} className="rec-card">
+                <div className="rec-card-header">
+                  <div className="rec-card-rank">#{item.rank} Item {item.item_id}</div>
+                  <span className="badge badge-green">Score {num(item.final_score??item.score, 6)}</span>
+                </div>
+                {item.explanation && <div style={{fontSize:13,lineHeight:1.5,color:'var(--muted)'}}>{item.explanation}</div>}
+                {item.contributions?.length > 0 && (
+                  <div style={{fontSize:11,color:'var(--muted)',marginTop:8,fontFamily:'DM Mono,monospace'}}>
+                    {item.contributions.slice(0,3).map(p=>`${p.algorithm} ${pct(p.share_pct)}`).join(' · ')}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="actions">
-            <button disabled={!token||!recForm.user_id} onClick={recommend}>Get recommendations</button>
-          </div>
-          <div className="log">{result ? JSON.stringify(result,null,2) : 'Results will appear here.'}</div>
         </div>
-      </div>
+      )}
+
+      {!result && !loading && (
+        <div className="empty-state" style={{marginTop:24}}>
+          <div className="empty-icon">🎯</div>
+          <div>Enter a user ID above and hit Get recommendations</div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ── App shell ────────────────────────────────────────────────────────────────
+// ── App Shell ─────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [mode, setMode]         = useState(null);   // 'csv' | 'db'
-  const [page, setPage]         = useState('mode');
+  const [mode, setMode] = useState(null);
+  const [page, setPage] = useState('mode');
   const [connections, setConnections] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [schemas, setSchemas]   = useState({});
+  const [schemas, setSchemas] = useState({});
   const [builtFile, setBuiltFile] = useState(null);
-  const [msg, setMsg]           = useState('');
+  const [trainingResult, setTrainingResult] = useState(null);
+  const [msg, setMsg] = useState('');
+  const [donePages, setDonePages] = useState(new Set());
 
-  useEffect(()=>{ loadConnections(); },[]);
+  useEffect(()=>{ loadConnections(); }, []);
 
   async function loadConnections(autoSelectId) {
     try {
-      const raw = await jfetch(`${SMART}/connections`);
+      const raw = await jfetch(`${SMART_API}/connections`);
       const list = raw.map(norm);
       setConnections(list);
-      if (autoSelectId) setSelectedIds(p => p.includes(autoSelectId) ? p : [...p, autoSelectId]);
+      if (autoSelectId) setSelectedIds(p=>p.includes(autoSelectId)?p:[...p,autoSelectId]);
     } catch(e){ setMsg(e.message); }
   }
 
   async function removeConnection(id) {
     try {
-      await jfetch(`${SMART}/connections/${id}`,{method:'DELETE'});
+      await jfetch(`${SMART_API}/connections/${id}`,{method:'DELETE'});
       setSelectedIds(p=>p.filter(x=>x!==id));
       setSchemas(p=>{ const n={...p}; delete n[id]; return n; });
       await loadConnections();
@@ -648,79 +1757,95 @@ export default function App() {
 
   async function loadSchema(id) {
     if (schemas[id]) return;
-    try {
-      const d = await jfetch(`${SMART}/schema/${id}`);
-      setSchemas(p=>({...p,[id]:d}));
-    } catch(e){ setMsg(e.message); }
+    try { const d = await jfetch(`${SMART_API}/schema/${id}`); setSchemas(p=>({...p,[id]:d})); }
+    catch(e){ setMsg(e.message); }
   }
+
+  function markDone(p) { setDonePages(prev => new Set([...prev, p])); }
 
   function selectMode(m) {
     setMode(m);
+    markDone('mode');
     setPage(m==='csv' ? 'train' : 'connections');
   }
 
   const PAGES_DB  = ['mode','connections','build','train','recommend'];
   const PAGES_CSV = ['mode','train','recommend'];
   const pages = mode==='csv' ? PAGES_CSV : PAGES_DB;
-  const labels = {mode:'Source',connections:'Connections',build:'Build dataset',train:'Train',recommend:'Recommend'};
+  const labels = { mode:'Source', connections:'Connections', build:'Build', train:'Train', recommend:'Recommend' };
+  const stepIcons = { mode:'◎', connections:'🔗', build:'🛠', train:'🧠', recommend:'✨' };
 
   return (
     <>
       <style>{css}</style>
-      <div className="wrap">
-        <div className="hero">
-          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:8}}>
-            <span className="badge">Proactive AI</span>
-            {mode && <span className="badge ok">{mode==='csv'?'CSV mode':'Database mode'}</span>}
+      <div className="app-wrap">
+
+        {/* Header */}
+        <div className="header">
+          <div className="logo-area">
+            <div className="logo-tag"><span className="dot" />{mode ? (mode==='csv'?'CSV Mode':'Database Mode') : 'Proactive AI'}</div>
+    
+            <p>Train recommendation models from a CSV or live database, then query the promoted model — all in one seamless workflow.</p>
           </div>
-          <h1>Proactive AI Unified Dashboard</h1>
-          <p>Train recommendation models from a CSV or a live database, then query the promoted model — all from one place.</p>
+          {mode && (
+            <button className="btn btn-ghost btn-sm" onClick={()=>{ setMode(null); setPage('mode'); setDonePages(new Set()); }}>
+              ↩ Change source
+            </button>
+          )}
         </div>
 
-        <div className="steps">
-          {pages.map(p=>(
-            <button key={p} className={`step-btn${page===p?' active':''}`} onClick={()=>setPage(p)}>
-              {labels[p]}
-            </button>
+        {/* Step indicator */}
+        <div className="stepper">
+          {pages.map((p, i) => (
+            <div key={p} className="step-item">
+              {i > 0 && <div className="step-connector" />}
+              <button
+                className={`step-btn ${page===p?'active':''} ${donePages.has(p)&&page!==p?'done':''}`}
+                onClick={()=>setPage(p)}
+              >
+                <span className="step-num">{donePages.has(p)&&page!==p ? '✓' : i+1}</span>
+                {stepIcons[p]} {labels[p]}
+              </button>
+            </div>
           ))}
-          {mode && (
-            <button className="sec" style={{marginLeft:'auto',padding:'7px 14px',borderRadius:999,border:'1px solid var(--line)',background:'transparent',color:'var(--muted)',fontSize:13,cursor:'pointer'}}
-              onClick={()=>{ setMode(null); setPage('mode'); }}>↩ Change source</button>
-          )}
         </div>
 
         <Msg msg={msg} clear={()=>setMsg('')} />
 
-        {page==='mode'        && <PageMode onSelect={selectMode} />}
+        {page==='mode' && <PageMode onSelect={selectMode} />}
+
         {page==='connections' && (
           <PageConnections
             connections={connections.map(norm)}
             selected={selectedIds}
             schemas={schemas}
-            onAdded={id=>loadConnections(id)}
+            onAdded={id=>{ loadConnections(id); markDone('connections'); }}
             onRemove={removeConnection}
             onToggle={(id,checked)=>setSelectedIds(p=>checked?[...p,id]:p.filter(x=>x!==id))}
             onSchema={loadSchema}
             setMsg={setMsg}
           />
         )}
+
         {page==='build' && (
           <PageBuild
             selected={selectedIds}
             schemas={schemas}
-            onBuilt={file=>{ setBuiltFile(file); setPage('train'); setMsg('Dataset ready — proceed to Train.'); }}
+            onBuilt={f=>{ setBuiltFile(f); markDone('build'); setPage('train'); setMsg('Dataset ready — proceeding to Train. ✓'); }}
             setMsg={setMsg}
           />
         )}
+
         {page==='train' && (
           <PageTrain
             file={builtFile}
             setFile={setBuiltFile}
-            onTrained={()=>setMsg('Training complete — go to Recommend.')}
+            onTrained={r=>{ setTrainingResult(r); markDone('train'); setPage('recommend'); setMsg('Training complete — check your recommendations. 🎉'); }}
             setMsg={setMsg}
           />
         )}
-        {page==='recommend' && <PageRecommend setMsg={setMsg} />}
+
+        {page==='recommend' && <PageRecommend setMsg={setMsg} trainingResult={trainingResult} />}
       </div>
     </>
   );

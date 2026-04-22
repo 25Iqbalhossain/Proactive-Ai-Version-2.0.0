@@ -181,6 +181,7 @@ class RecommendationStrategyService:
         best_promoted_model = self._best_promoted_option(last_result=last_result, option_rows=option_rows)
         single_model_options = [dict(row) for row in option_rows if row.get("recommendation_eligible")]
         ensemble_top_models = [dict(row) for row in single_model_options[:5]]
+        selection_policy = self._selection_policy(last_result=last_result, option_rows=single_model_options)
 
         return {
             "resolved_mode": getattr(last_result, "resolved_mode", None) if last_result else None,
@@ -189,6 +190,8 @@ class RecommendationStrategyService:
             "best_promoted_model": best_promoted_model,
             "single_model_options": single_model_options,
             "ensemble_top_models": ensemble_top_models,
+            "recommended_models": list((selection_policy or {}).get("selected_models", [])),
+            "selection_policy": selection_policy,
             "strategies": sorted(RECOMMEND_STRATEGIES),
             "has_recommendation_models": bool(single_model_options),
             "top_models": single_model_options,
@@ -700,6 +703,13 @@ class RecommendationStrategyService:
             "recommendation_eligible": compatible,
             "feedback_mode": feedback_mode,
             "status": status,
+            "summary": raw.get("summary"),
+            "performance_summary": raw.get("performance_summary"),
+            "fit_summary": raw.get("fit_summary"),
+            "reliability_summary": raw.get("reliability_summary"),
+            "selection_score_pct": self._coerce_float(raw.get("selection_score_pct")),
+            "reasons": list(raw.get("reasons") or []),
+            "decision_note": raw.get("decision_note"),
         }
 
     _normalise_option_row = _normalize_option_row
@@ -938,6 +948,26 @@ class RecommendationStrategyService:
     def _latest_promoted_record(self) -> Optional[ModelRecord]:
         promoted = self.registry.list_models(promoted_only=True)
         return promoted[0] if promoted else None
+
+    def _selection_policy(self, last_result=None, option_rows: Optional[list[dict]] = None) -> Optional[dict]:
+        if last_result is not None:
+            existing = getattr(last_result, "model_selection_policy", None)
+            if existing:
+                return existing
+
+        rows = [dict(row) for row in (option_rows or []) if row.get("algorithm")]
+        if not rows:
+            return None
+
+        selected = rows[:1]
+        return {
+            "selection_type": "single_model",
+            "selected_count": 1,
+            "selected_models": selected,
+            "reason": f"{selected[0].get('algorithm')} is the highest-ranked available model.",
+            "display_title": "Recommended single model",
+            "recommended_strategy": "single_model",
+        }
 
     def _option_sort_key(self, row: dict) -> tuple:
         rank = self._coerce_int(row.get("rank"))

@@ -440,6 +440,7 @@
       const singleSelect = document.getElementById("recSingleModel");
       const ensembleContainer = document.getElementById("ensembleModels");
       const topModels = (options && options.top_models) ? options.top_models.slice(0,5) : [];
+      const selectionPolicy = options ? options.selection_policy : null;
 
       if (!topModels.length){
         singleSelect.innerHTML = `<option value="">No models available</option>`;
@@ -453,6 +454,10 @@
       singleSelect.innerHTML = topModels.map(m =>
         `<option value="${m.algorithm}">${m.rank ? `#${m.rank} ` : ""}${m.algorithm}${m.metric_value !== null && m.metric_value !== undefined ? ` (${fmt(Number(m.metric_value))})` : ""}</option>`
       ).join("");
+
+      if (selectionPolicy && selectionPolicy.selection_type === "single_model" && selectionPolicy.selected_models && selectionPolicy.selected_models[0]){
+        singleSelect.value = selectionPolicy.selected_models[0].algorithm || "";
+      }
 
       ensembleContainer.innerHTML = topModels.map((m, idx) => `
         <div class="ens-row" data-algo="${m.algorithm}" data-model-id="${m.model_id || ""}">
@@ -658,21 +663,27 @@
       if (appState.recommendationOptions){
         renderRecommendationOptionState(appState.recommendationOptions);
       }
+      const optunaPolicy = result.optuna_policy || {};
+      const selectionPolicy = result.model_selection_policy || {};
+      const selectedCount = selectionPolicy.selected_count || 0;
       const summary = `
         <div><strong>Best Algorithm:</strong> ${result.best_algorithm || "-"}</div>
         <div><strong>Best Model ID:</strong> ${result.best_model_id || "-"}</div>
         <div><strong>Resolved Mode:</strong> ${result.resolved_mode || "-"}</div>
         <div><strong>Elapsed:</strong> ${result.elapsed_s || "-"}s</div>
-        <div><strong>Optuna:</strong> ${result.optuna_note || "-"}</div>
+        <div><strong>Optuna:</strong> ${optunaPolicy.summary || result.optuna_note || "-"}</div>
+        <div><strong>Top-K meaning:</strong> ${optunaPolicy.top_k_definition || "-"}</div>
+        <div><strong>Model selection:</strong> ${selectionPolicy.reason || "-"}</div>
+        <div><strong>API decision:</strong> ${selectionPolicy.selection_type === "single_model" ? "Return one best model" : (selectedCount ? `Return top ${selectedCount} models` : "-")}</div>
       `;
       document.getElementById("summary").innerHTML = summary;
 
-      renderLeaderboard(result.leaderboard || [], result.ranking_logic || {});
-      renderModelReasons(result.top_model_recommendations || []);
+      renderLeaderboard(result.leaderboard || [], result.ranking_logic || {}, optunaPolicy);
+      renderModelReasons(result.top_model_recommendations || [], selectionPolicy);
       renderTuning(result.tuning || []);
     }
 
-    function renderLeaderboard(rows, rankingLogic){
+    function renderLeaderboard(rows, rankingLogic, optunaPolicy){
       if (!rows.length){
         document.getElementById("leaderboard").innerHTML = "No leaderboard rows.";
         return;
@@ -698,23 +709,35 @@
         </table>
         <div class="hint" style="margin-top:8px">
           Ranking logic: primary metric=${rankingLogic.primary_metric || "-"},
-          weights=${JSON.stringify((rankingLogic.weights || {}))}
+          weights=${JSON.stringify((rankingLogic.weights || {}))}<br />
+          ${optunaPolicy && optunaPolicy.top_k_definition ? `Selection context: ${optunaPolicy.top_k_definition}` : ""}
         </div>
       `;
       document.getElementById("leaderboard").innerHTML = table;
     }
 
-    function renderModelReasons(rows){
+    function renderModelReasons(rows, selectionPolicy){
       if (!rows.length){
         document.getElementById("modelReasons").innerHTML = '<div class="status">No model recommendations yet.</div>';
         return;
       }
-      document.getElementById("modelReasons").innerHTML = rows.map(r => `
+      const displayRows = (selectionPolicy && selectionPolicy.selected_models && selectionPolicy.selected_models.length)
+        ? selectionPolicy.selected_models
+        : rows.slice(0, 5);
+      const leadNote = selectionPolicy && selectionPolicy.reason
+        ? `<div class="status" style="grid-column:1/-1"><strong>${selectionPolicy.display_title || "Recommended models"}:</strong> ${selectionPolicy.reason}</div>`
+        : "";
+      document.getElementById("modelReasons").innerHTML = leadNote + displayRows.map(r => `
         <div class="mini">
           <h4>#${r.rank} ${r.algorithm}</h4>
           <p><strong>Model ID:</strong> ${r.model_id || "-"}</p>
-          <p><strong>${r.metric_name || "Metric"}:</strong> ${fmt(r.metric_value)} | <strong>Composite:</strong> ${fmt(r.composite_score)}</p>
+          <p><strong>${r.metric_name || "Metric"}:</strong> ${fmt(r.metric_value)} | <strong>Composite:</strong> ${fmt(r.composite_score)} | <strong>Selection score:</strong> ${fmt(r.selection_score_pct)}%</p>
           <p><strong>Status:</strong> ${r.status || "-"}</p>
+          <p>${r.summary || "This model ranked highly on benchmark quality, fit, and tuning reliability."}</p>
+          ${r.performance_summary ? `<p><strong>Performance insight:</strong> ${r.performance_summary}</p>` : ""}
+          ${r.fit_summary ? `<p><strong>Fit insight:</strong> ${r.fit_summary}</p>` : ""}
+          ${r.reliability_summary ? `<p><strong>Reliability insight:</strong> ${r.reliability_summary}</p>` : ""}
+          ${r.decision_note ? `<p><strong>Why selected now:</strong> ${r.decision_note}</p>` : ""}
           <ul class="list">${(r.reasons || []).map(x => `<li>${x}</li>`).join("")}</ul>
         </div>
       `).join("");
