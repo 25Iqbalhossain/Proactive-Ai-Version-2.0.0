@@ -772,7 +772,9 @@ const css = `
   .advance-banner {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
+    flex-wrap: wrap;
     padding: 14px 18px;
     background: rgba(52,211,153,0.07);
     border: 1px solid rgba(52,211,153,0.25);
@@ -912,7 +914,7 @@ function JobStatus({ data, label }) {
   const training = data.result || null;
   const selectionPolicy = training?.model_selection_policy || null;
   const optunaPolicy = training?.optuna_policy || null;
-  const selectedModels = selectionPolicy?.selected_models || [];
+  const selectedModels = [];
 
   const badgeClass = data.status === 'done' ? 'badge-green' : (data.status === 'failed' || data.status === 'error') ? 'badge-red' : 'badge-yellow';
 
@@ -1001,11 +1003,12 @@ function PageMode({ onSelect }) {
 
 // ── PageConnections ───────────────────────────────────────────────────────────
 
-function PageConnections({ connections, selected, schemas, onAdded, onRemove, onToggle, onSchema, setMsg }) {
+function PageConnections({ connections, selected, schemas, onAdded, onRemove, onToggle, onSchema, onAdvance, setMsg }) {
   const blank = { db_type:'postgres', name:'', host:'', port:'5432', database:'', username:'', password:'', filepath:'', uri:'' };
   const [form, setForm] = useState(blank);
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
   const [saving, setSaving] = useState(false);
+  const canAdvance = selected.length > 0;
 
   function changeType(t) { setForm(p=>({...p, db_type:t, port: PORT_MAP[t]||''})); }
 
@@ -1100,6 +1103,14 @@ function PageConnections({ connections, selected, schemas, onAdded, onRemove, on
             <div className="log-box">{JSON.stringify((s.tables||[]).slice(0,8).map(t=>({table:t.table_name,cols:(t.columns||[]).map(c=>`${c.name}:${c.data_type}`)})),null,2)}</div>
           </div>
         ))}
+        <div className="actions" style={{justifyContent:'space-between',marginTop:16}}>
+          <div style={{fontSize:13,color:'var(--muted)'}}>
+            {canAdvance
+              ? `${selected.length} connection${selected.length === 1 ? '' : 's'} selected. Continue to Build.`
+              : 'Select at least one connection to continue.'}
+          </div>
+          <button className="btn btn-primary" onClick={onAdvance} disabled={!canAdvance}>Next</button>
+        </div>
       </div>
     </div>
   );
@@ -1304,7 +1315,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
 
 // ── PageTrain ─────────────────────────────────────────────────────────────────
 
-function PageTrain({ file, setFile, onTrained, setMsg }) {
+function PageTrain({ file, setFile, onTrainFinished, onAdvance, setMsg }) {
   const [job, setJob] = useState(null);
   const [jobData, setJobData] = useState(null);
   const [form, setForm] = useState({
@@ -1335,9 +1346,8 @@ function PageTrain({ file, setFile, onTrained, setMsg }) {
 
   useEffect(()=>{
     if (jobData?.status !== 'done') return;
-    const t = setTimeout(()=>{ onTrained(jobData); }, 1200);
-    return ()=>clearTimeout(t);
-  },[jobData?.status]);
+    onTrainFinished(jobData);
+  },[jobData?.status, jobData, onTrainFinished]);
 
   async function start() {
     if (!file) { setMsg('No dataset file — complete the Build step or upload a CSV.'); return; }
@@ -1398,12 +1408,35 @@ function PageTrain({ file, setFile, onTrained, setMsg }) {
               {['NDCG@K','Precision@K','Recall@K','MAP@K','RMSE'].map(m=><option key={m} value={m}>{m}</option>)}
             </select>
           </div>
-          <div className="form-group"><label>Top K</label><input type="number" value={form.top_k} onChange={e=>set('top_k',e.target.value)} min={1} max={100} /></div>
+          <div className="form-group">
+            <label>Top K</label>
+            <select value={form.top_k} onChange={e=>set('top_k',e.target.value)}>
+              <option value="10">Top 10</option>
+              <option value="5">Top 5</option>
+            </select>
+          </div>
         </div>
         <div className="form-row3">
           <div className="form-group"><label>Test size</label><input type="number" value={form.test_size} onChange={e=>set('test_size',e.target.value)} step="0.05" min="0.05" max="0.5" /></div>
           <div className="form-group"><label>Optuna trials</label><input type="number" value={form.n_trials} onChange={e=>set('n_trials',e.target.value)} min={5} max={200} /></div>
-          <div className="form-group"><label>Top models</label><input type="number" value={form.n_top_models} onChange={e=>set('n_top_models',e.target.value)} min={1} max={10} /></div>
+          <div className="form-group">
+            <label>Top models</label>
+            <select value={form.n_top_models} onChange={e=>set('n_top_models',e.target.value)}>
+              <option value="10">Top 10</option>
+              <option value="5">Top 5</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-group">
+          <label>Algorithm mode</label>
+          <select value={form.algorithm_mode} onChange={e=>set('algorithm_mode',e.target.value)}>
+            <option value="auto">Auto detect</option>
+            <option value="explicit">Explicit only</option>
+            <option value="implicit">Implicit only</option>
+          </select>
+          <div style={{fontSize:12,color:'var(--muted)',marginTop:6,lineHeight:1.5}}>
+            Auto detects the dataset type. Explicit runs only explicit-feedback algorithms. Implicit runs only implicit-feedback algorithms.
+          </div>
         </div>
 
         <div className="actions">
@@ -1417,12 +1450,14 @@ function PageTrain({ file, setFile, onTrained, setMsg }) {
 
       {isDone && (
         <div className="advance-banner">
-          <span className="advance-icon">🎉</span>
           <div>
-            <strong>Training complete!</strong> Automatically advancing to Recommendations…
+            <strong>Training complete!</strong>
+            <span style={{display:'block',marginTop:4}}>Use Next to continue to Recommendations.</span>
           </div>
+          <button className="btn btn-primary btn-sm" onClick={onAdvance}>Next</button>
         </div>
       )}
+
     </div>
   );
 }
@@ -1433,8 +1468,8 @@ function PageRecommend({ setMsg, trainingResult }) {
   const training = trainingResult?.result || null;
   const [loginForm, setLoginForm] = useState({ username:'admin', password:'admin123' });
   const [token, setToken] = useState(()=> localStorage.getItem(TOKEN_KEY) || '');
-  const [catalog, setCatalog] = useState([]);
   const [options, setOptions] = useState(training?.recommendation_options || null);
+  const [rankingLimit, setRankingLimit] = useState(1);
   const [form, setForm] = useState({
     user_id:'',
     top_n:10,
@@ -1446,18 +1481,32 @@ function PageRecommend({ setMsg, trainingResult }) {
   const [loading, setLoading] = useState(false);
   const [authBusy, setAuthBusy] = useState(false);
 
-  const models = useMemo(() => uniqueModels([
-    ...(options?.single_model_options || []),
-    ...(training?.model_selection_policy?.selected_models || []),
-    ...catalog.map(model => ({
-      ...model,
-      metric_name: Object.keys(model.metrics || {})[0] || '',
-      metric_value: Object.values(model.metrics || {})[0],
-      summary: model.notes || '',
-    })),
-  ]), [catalog, options, training]);
-  const recommendedModels = options?.recommended_models || training?.model_selection_policy?.selected_models || [];
+  const models = useMemo(() => uniqueModels(
+    options?.supported_models
+    || options?.single_model_options
+    || training?.recommendation_options?.supported_models
+    || training?.recommendation_options?.single_model_options
+    || training?.model_selection_policy?.selected_models
+    || []
+  ), [options, training]);
+  const recommendedModels = options?.recommended_models
+    || training?.recommendation_options?.recommended_models
+    || training?.model_selection_policy?.serving_selected_models
+    || training?.model_selection_policy?.selected_models
+    || [];
+  const rankedModels = options?.ranked_models
+    || training?.recommendation_options?.ranked_models
+    || training?.model_selection_policy?.selected_models
+    || [];
+  const supportedModelCount = options?.supported_model_count
+    ?? training?.recommendation_options?.supported_model_count
+    ?? models.length;
   const bestPromoted = options?.best_promoted_model || null;
+  const bestModelExplanation = options?.best_model_explanation
+    || training?.recommendation_options?.best_model_explanation
+    || training?.model_selection_policy?.best_model_explanation
+    || training?.model_selection_policy?.reason
+    || '';
   const recommendations = result?.recommendations || result?.items || [];
   const warnings = result?.warnings || [];
   const contributionBreakdown = result?.contribution_breakdown || [];
@@ -1469,6 +1518,7 @@ function PageRecommend({ setMsg, trainingResult }) {
 
   useEffect(()=>{
     if (training?.recommendation_options) setOptions(training.recommendation_options);
+    setRankingLimit(1);
     if (training?.best_model_id) {
       setForm(prev => prev.model_id ? prev : { ...prev, model_id: training.best_model_id });
     }
@@ -1477,15 +1527,16 @@ function PageRecommend({ setMsg, trainingResult }) {
   useEffect(()=>{
     if (!token) return;
     loadRecommendationContext(token);
-  },[token]);
+  },[token, rankingLimit]);
 
   async function loadRecommendationContext(activeToken = token) {
     try {
       const headers = { Authorization:`Bearer ${activeToken}` };
-      const opt = await jfetch(`${CORE_API}/recommend/options`, { headers });
+      const opt = await jfetch(`${CORE_API}/recommend/options?top_n_models=${rankingLimit}`, { headers });
       setOptions(opt);
-      const modelData = await jfetch(`${CORE_API}/models`, { headers });
-      setCatalog(modelData.models || []);
+      if (!form.model_id && opt?.best_promoted_model?.model_id) {
+        setForm(prev => prev.model_id ? prev : { ...prev, model_id: opt.best_promoted_model.model_id });
+      }
     } catch (e) {
       const message = String(e.message || '');
       if (message.toLowerCase().includes('token') || message.toLowerCase().includes('bearer')) {
@@ -1578,14 +1629,64 @@ function PageRecommend({ setMsg, trainingResult }) {
           <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
             {training.best_algorithm && <span className="badge badge-green">Best: {training.best_algorithm}</span>}
             {training.metric && <span className="badge badge-blue">{training.target_metric} {num(training.metric)}</span>}
-            {models.length > 0 && <span className="badge">{models.length} models available</span>}
-            {recommendedModels.length > 0 && <span className="badge badge-blue">Shortlisted: {recommendedModels.length}</span>}
+            {supportedModelCount > 0 && <span className="badge">{supportedModelCount} API-supported models</span>}
+            {recommendedModels.length > 0 && <span className="badge badge-blue">Default serving set: {recommendedModels.length}</span>}
           </div>
-          {training.model_selection_policy?.reason && (
+          {bestModelExplanation && (
             <div style={{fontSize:13,lineHeight:1.6,color:'var(--muted)',marginTop:10}}>
-              {training.model_selection_policy.reason}
+              {bestModelExplanation}
             </div>
           )}
+        </div>
+      )}
+
+      {supportedModelCount > 0 && (
+        <div style={{marginBottom:20,padding:'14px 16px',background:'var(--surface2)',borderRadius:14,border:'1px solid var(--border)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',gap:12,flexWrap:'wrap',alignItems:'end'}}>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:'var(--muted)',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>Model ranking</div>
+              <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.6}}>
+                Showing only models that the recommendation API can actually serve.
+              </div>
+            </div>
+            <div className="form-group" style={{minWidth:180,marginBottom:0}}>
+              <label>Explain top N models</label>
+              <input
+                type="number"
+                min={1}
+                max={Math.max(1, supportedModelCount)}
+                value={rankingLimit}
+                onChange={e=>setRankingLimit(Math.max(1, Math.min(Math.max(1, supportedModelCount), Number(e.target.value) || 1)))}
+              />
+            </div>
+          </div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:12}}>
+            <span className="badge badge-blue">Visible ranks: {rankedModels.length}</span>
+            {bestPromoted?.algorithm && <span className="badge">Promoted default: {bestPromoted.algorithm}</span>}
+          </div>
+          <div className="cards-stack" style={{marginTop:14}}>
+            {rankedModels.map(model=>(
+              <div key={model.model_id||model.algorithm} className="rec-card">
+                <div className="rec-card-header">
+                  <div className="rec-card-rank">Top {model.rank}: {model.algorithm}</div>
+                  <span className="badge badge-green">Score {pct(model.selection_score_pct)}</span>
+                </div>
+                <div style={{fontSize:13,lineHeight:1.6,color:'var(--muted)'}}>
+                  {model.reason || model.summary || 'No ranking explanation was provided.'}
+                </div>
+                {model.comparison_to_next && (
+                  <div style={{fontSize:12,lineHeight:1.6,color:'var(--text)',marginTop:8}}>
+                    Why #{model.rank} beats #{model.rank + 1}: {model.comparison_to_next}
+                  </div>
+                )}
+                {model.metric_name && model.metric_value != null && (
+                  <div style={{fontSize:11,color:'var(--muted)',marginTop:8,fontFamily:'DM Mono,monospace'}}>
+                    {model.metric_name} {num(model.metric_value)} {model.composite_score != null ? `· Composite ${num(model.composite_score)}` : ''}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -1650,7 +1751,7 @@ function PageRecommend({ setMsg, trainingResult }) {
         <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.6}}>
           {form.strategy === 'best_promoted_model' && 'Best for most users: it uses the promoted model that training marked as the safest default choice.'}
           {form.strategy === 'single_model' && 'Best for comparison: it runs one exact trained model so you can inspect that model on its own.'}
-          {form.strategy === 'ensemble_weighted' && `Best for broader coverage: it blends the shortlisted models from this training run${recommendedModels.length ? ` (${recommendedModels.length} available)` : ''}.`}
+          {form.strategy === 'ensemble_weighted' && `Best for broader coverage: it blends the default serving set${recommendedModels.length ? ` (${recommendedModels.length} available)` : ''}.`}
         </div>
         <div className="actions">
           <button className="btn btn-primary" onClick={query} disabled={loading || !token}>
@@ -1823,6 +1924,7 @@ export default function App() {
             onRemove={removeConnection}
             onToggle={(id,checked)=>setSelectedIds(p=>checked?[...p,id]:p.filter(x=>x!==id))}
             onSchema={loadSchema}
+            onAdvance={()=>{ markDone('connections'); setPage('build'); setMsg('Connections selected. Continue with dataset build.'); }}
             setMsg={setMsg}
           />
         )}
@@ -1840,7 +1942,8 @@ export default function App() {
           <PageTrain
             file={builtFile}
             setFile={setBuiltFile}
-            onTrained={r=>{ setTrainingResult(r); markDone('train'); setPage('recommend'); setMsg('Training complete — check your recommendations. 🎉'); }}
+            onTrainFinished={r=>{ setTrainingResult(r); markDone('train'); setMsg('Training complete. Review the result, then use Next to continue.'); }}
+            onAdvance={()=>{ setPage('recommend'); setMsg('Training result loaded. Continue with recommendations.'); }}
             setMsg={setMsg}
           />
         )}

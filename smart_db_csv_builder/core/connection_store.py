@@ -10,6 +10,18 @@ class ConnectionRecord:
     cred: object
     driver: object
 
+    @property
+    def name(self):
+        return getattr(self.cred, "name", "")
+
+    @property
+    def db_type(self):
+        return getattr(self.cred, "db_type", None)
+
+    @property
+    def database(self):
+        return getattr(self.cred, "database", None)
+
 class ConnectionStore:
     def __init__(self):
         self._lock = threading.RLock()

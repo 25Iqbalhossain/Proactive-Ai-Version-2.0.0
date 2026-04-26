@@ -79,9 +79,10 @@ class _FakeRecommender:
 
 
 class _FakeReport:
-    def __init__(self, rows, primary_metric="NDCG@K"):
+    def __init__(self, rows, primary_metric="NDCG@K", primary_metric_direction="maximize"):
         self._rows = list(rows)
         self.primary_metric = primary_metric
+        self.primary_metric_direction = primary_metric_direction
 
     def leaderboard(self):
         return pd.DataFrame(self._rows)
@@ -134,9 +135,51 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
                 {"rank": 4, "algorithm": "Temporal-SVD", "model_id": "m_temp", "selection_score_pct": 64.0, "summary": "Temporal-SVD fits temporal data."},
             ],
             model_selection_policy={
-                "selection_type": "single_model",
-                "selected_count": 1,
+                "selection_type": "top_ranked_models",
+                "selected_count": 4,
                 "selected_models": [
+                    {
+                        "rank": 1,
+                        "algorithm": "SVD",
+                        "model_id": "m_svd",
+                        "selection_score_pct": 96.0,
+                        "metric_name": "NDCG@K",
+                        "metric_value": 0.91,
+                        "summary": "SVD leads.",
+                    },
+                    {
+                        "rank": 2,
+                        "algorithm": "ALS",
+                        "model_id": "m_als",
+                        "selection_score_pct": 78.0,
+                        "metric_name": "NDCG@K",
+                        "metric_value": 0.72,
+                        "summary": "ALS is competitive.",
+                    },
+                    {
+                        "rank": 3,
+                        "algorithm": "BPR",
+                        "model_id": "m_bpr",
+                        "selection_score_pct": 72.0,
+                        "metric_name": "NDCG@K",
+                        "metric_value": 0.68,
+                        "summary": "BPR remains viable.",
+                    },
+                    {
+                        "rank": 4,
+                        "algorithm": "Temporal-SVD",
+                        "model_id": "m_temp",
+                        "selection_score_pct": 64.0,
+                        "metric_name": "NDCG@K",
+                        "metric_value": 0.63,
+                        "summary": "Temporal-SVD fits temporal data.",
+                    },
+                ],
+                "reason": "SVD is clearly ahead, so the API returns one recommended model by default. Showing the top 4 ranked models so you can compare why each one scored well.",
+                "display_title": "Top 4 model recommendations and reasons",
+                "recommended_strategy": "single_model",
+                "serving_selected_count": 1,
+                "serving_selected_models": [
                     {
                         "rank": 1,
                         "algorithm": "SVD",
@@ -147,9 +190,7 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
                         "summary": "SVD leads.",
                     }
                 ],
-                "reason": "SVD is clearly ahead, so the API returns one recommended model.",
-                "display_title": "Recommended single model",
-                "recommended_strategy": "single_model",
+                "serving_reason": "SVD is clearly ahead, so the API returns one recommended model by default.",
             },
             report=_FakeReport(
                 [
@@ -314,8 +355,27 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
         self.assertEqual(options["single_model_options"][0]["feedback_mode"], "both")
         self.assertTrue(options["has_recommendation_models"])
         self.assertEqual(options["model_id_map"]["SVD"], "m_svd")
-        self.assertEqual(options["selection_policy"]["selection_type"], "single_model")
+        self.assertEqual(options["selection_policy"]["selection_type"], "top_ranked_models")
         self.assertEqual(options["recommended_models"][0]["algorithm"], "SVD")
+        self.assertEqual(len(options["recommended_models"]), 1)
+        self.assertEqual(options["supported_model_count"], 4)
+        self.assertEqual(options["ranked_model_count"], 1)
+        self.assertEqual(options["ranked_models"][0]["algorithm"], "SVD")
+        self.assertIn("selection score", options["best_model_explanation"].lower())
+        self.assertIn("comparison_to_next", options["supported_models"][0])
+
+    def test_recommendation_options_can_return_requested_top_n_ranked_models(self):
+        svc = self._service()
+        options = svc.recommendation_options(last_result=self.last_result, top_n_models=3)
+
+        self.assertEqual(options["ranked_model_limit"], 3)
+        self.assertEqual(len(options["ranked_models"]), 3)
+        self.assertEqual(
+            [row["algorithm"] for row in options["ranked_models"]],
+            ["SVD", "ALS", "BPR"],
+        )
+        self.assertIn("Top 1", options["ranked_models"][0]["reason"])
+        self.assertIn("selection score", options["ranked_models"][0]["comparison_to_next"])
 
     def test_serialise_training_result_includes_recommendation_options(self):
         from api import routes
@@ -359,8 +419,9 @@ class RecommendationStrategyServiceTests(unittest.TestCase):
         self.assertIn("recommendation_options", payload)
         self.assertEqual(payload["recommendation_options"]["best_promoted_model"]["model_id"], "m_svd")
         self.assertEqual(payload["recommendation_options"]["single_model_options"][0]["feedback_mode"], "both")
-        self.assertEqual(payload["model_selection_policy"]["selection_type"], "single_model")
+        self.assertEqual(payload["model_selection_policy"]["selection_type"], "top_ranked_models")
         self.assertEqual(payload["top_model_candidates"][0]["algorithm"], "SVD")
+        self.assertEqual(len(payload["top_model_candidates"]), 4)
         self.assertIn("optuna_policy", payload)
 
 

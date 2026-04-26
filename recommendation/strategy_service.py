@@ -24,8 +24,8 @@ _METRIC_PRIORITY = (
     "Composite Score",
 )
 _MODE_TO_ALLOWED_FEEDBACK = {
-    "explicit": {"explicit", "both"},
-    "implicit": {"implicit", "both"},
+    "explicit": {"explicit"},
+    "implicit": {"implicit"},
     "hybrid": {"explicit", "implicit", "both"},
     "auto": {"explicit", "implicit", "both"},
 }
@@ -176,12 +176,28 @@ class RecommendationStrategyService:
             response["algorithm"] = "ensemble"
         return response
 
-    def recommendation_options(self, last_result=None) -> dict:
+    def recommendation_options(self, last_result=None, top_n_models: int = 1) -> dict:
         option_rows = self._build_recommendation_option_rows(last_result=last_result)
         best_promoted_model = self._best_promoted_option(last_result=last_result, option_rows=option_rows)
         single_model_options = [dict(row) for row in option_rows if row.get("recommendation_eligible")]
-        ensemble_top_models = [dict(row) for row in single_model_options[:5]]
         selection_policy = self._selection_policy(last_result=last_result, option_rows=single_model_options)
+        single_model_options = self._decorate_ranked_models(single_model_options, last_result=last_result)
+        selection_policy = self._apply_rank_details_to_policy(
+            selection_policy=selection_policy,
+            ranked_rows=single_model_options,
+        )
+        ensemble_top_models = [dict(row) for row in single_model_options[:5]]
+        requested_rank_limit = max(1, self._coerce_int(top_n_models) or 1)
+        ranked_models = [dict(row) for row in single_model_options[:requested_rank_limit]]
+        recommended_models = list(
+            (selection_policy or {}).get("serving_selected_models")
+            or (selection_policy or {}).get("selected_models", [])
+        )
+        best_model_explanation = None
+        if ranked_models:
+            best_model_explanation = ranked_models[0].get("reason")
+        if not best_model_explanation and selection_policy:
+            best_model_explanation = selection_policy.get("best_model_explanation") or selection_policy.get("reason")
 
         return {
             "resolved_mode": getattr(last_result, "resolved_mode", None) if last_result else None,
@@ -189,8 +205,14 @@ class RecommendationStrategyService:
             "best_algorithm": getattr(last_result, "best_algorithm", None) if last_result else None,
             "best_promoted_model": best_promoted_model,
             "single_model_options": single_model_options,
+            "supported_models": single_model_options,
+            "supported_model_count": len(single_model_options),
             "ensemble_top_models": ensemble_top_models,
-            "recommended_models": list((selection_policy or {}).get("selected_models", [])),
+            "recommended_models": recommended_models,
+            "ranked_models": ranked_models,
+            "ranked_model_count": len(ranked_models),
+            "ranked_model_limit": requested_rank_limit,
+            "best_model_explanation": best_model_explanation,
             "selection_policy": selection_policy,
             "strategies": sorted(RECOMMEND_STRATEGIES),
             "has_recommendation_models": bool(single_model_options),
@@ -953,7 +975,7 @@ class RecommendationStrategyService:
         if last_result is not None:
             existing = getattr(last_result, "model_selection_policy", None)
             if existing:
-                return existing
+                return dict(existing)
 
         rows = [dict(row) for row in (option_rows or []) if row.get("algorithm")]
         if not rows:
@@ -968,6 +990,36 @@ class RecommendationStrategyService:
             "display_title": "Recommended single model",
             "recommended_strategy": "single_model",
         }
+
+    def _apply_rank_details_to_policy(self, selection_policy: Optional[dict], ranked_rows: list[dict]) -> Optional[dict]:
+        if not selection_policy:
+            return selection_policy
+        row_map = {
+            (row.get("model_id") or f"algorithm:{row.get('algorithm')}"): dict(row)
+            for row in ranked_rows
+        }
+        enriched = dict(selection_policy)
+        for key in ("selected_models", "serving_selected_models"):
+            current = list(enriched.get(key) or [])
+            updated = []
+            for row in current:
+                row_key = row.get("model_id") or f"algorithm:{row.get('algorithm')}"
+                merged = dict(row)
+                merged.update(row_map.get(row_key) or {})
+                updated.append(merged)
+            enriched[key] = updated
+        if enriched.get("selected_models"):
+            enriched["best_model_explanation"] = (
+                enriched.get("best_model_explanation")
+                or enriched["selected_models"][0].get("reason")
+                or enriched.get("reason")
+            )
+            enriched["comparison_explanations"] = [
+                row["comparison_to_next"]
+                for row in enriched["selected_models"]
+                if row.get("comparison_to_next")
+            ]
+        return enriched
 
     def _option_sort_key(self, row: dict) -> tuple:
         rank = self._coerce_int(row.get("rank"))
@@ -1009,3 +1061,152 @@ class RecommendationStrategyService:
     @staticmethod
     def _format_metric(value: float) -> str:
         return f"{float(value):.4f}"
+
+    def _decorate_ranked_models(self, rows: list[dict], last_result=None) -> list[dict]:
+        ordered = [dict(row) for row in rows]
+        primary_metric, metric_direction = self._resolve_primary_metric(last_result=last_result, rows=ordered)
+        for index, row in enumerate(ordered):
+            previous_row = ordered[index - 1] if index > 0 else None
+            next_row = ordered[index + 1] if index + 1 < len(ordered) else None
+            row["comparison_to_previous"] = (
+                self._build_rank_comparison(previous_row, row, primary_metric, metric_direction)
+                if previous_row
+                else None
+            )
+            row["comparison_to_next"] = (
+                self._build_rank_comparison(row, next_row, primary_metric, metric_direction)
+                if next_row
+                else None
+            )
+            row["reason"] = self._build_rank_reason(
+                row=row,
+                previous_row=previous_row,
+                next_row=next_row,
+                primary_metric=primary_metric,
+                metric_direction=metric_direction,
+            )
+        return ordered
+
+    def _resolve_primary_metric(self, last_result=None, rows: Optional[list[dict]] = None) -> tuple[str, str]:
+        policy = getattr(last_result, "model_selection_policy", None) if last_result is not None else None
+        primary_metric = (policy or {}).get("primary_metric")
+        direction = (policy or {}).get("primary_metric_direction")
+        report = getattr(last_result, "report", None) if last_result is not None else None
+        if not primary_metric and report is not None:
+            primary_metric = getattr(report, "primary_metric", None)
+        if not direction and report is not None:
+            direction = getattr(report, "primary_metric_direction", None)
+        if not primary_metric and rows:
+            for row in rows:
+                if row.get("metric_name"):
+                    primary_metric = row.get("metric_name")
+                    break
+        if not primary_metric:
+            primary_metric = "RMSE" if any((row.get("metric_name") == "RMSE") for row in (rows or [])) else "NDCG@K"
+        if not direction:
+            direction = "minimize" if primary_metric == "RMSE" else "maximize"
+        return str(primary_metric), str(direction)
+
+    def _build_rank_reason(
+        self,
+        row: dict,
+        previous_row: Optional[dict],
+        next_row: Optional[dict],
+        primary_metric: str,
+        metric_direction: str,
+    ) -> str:
+        rank = self._coerce_int(row.get("rank")) or 0
+        score = self._coerce_float(row.get("selection_score_pct"))
+        algorithm = row.get("algorithm") or "Unknown model"
+        parts = []
+        if rank == 1:
+            if score is not None:
+                parts.append(f"Top 1: {algorithm} leads with a selection score of {score:.2f}%.")
+            else:
+                parts.append(f"Top 1: {algorithm} is the highest-ranked supported model.")
+        else:
+            if score is not None:
+                parts.append(f"Top {rank}: {algorithm} follows with a selection score of {score:.2f}%.")
+            else:
+                parts.append(f"Top {rank}: {algorithm} remains in the supported ranking.")
+
+        if next_row:
+            parts.append(self._build_rank_comparison(row, next_row, primary_metric, metric_direction))
+        elif previous_row:
+            previous_rank = self._coerce_int(previous_row.get("rank")) or max(rank - 1, 1)
+            previous_algorithm = previous_row.get("algorithm") or "the higher-ranked model"
+            parts.append(
+                f"It trails #{previous_rank} {previous_algorithm} and is the lowest-ranked supported model in this list."
+            )
+
+        performance_summary = row.get("performance_summary")
+        fit_summary = row.get("fit_summary")
+        reliability_summary = row.get("reliability_summary")
+        if performance_summary:
+            parts.append(str(performance_summary))
+        if fit_summary:
+            parts.append(str(fit_summary))
+        if reliability_summary:
+            parts.append(str(reliability_summary))
+        elif row.get("summary"):
+            parts.append(str(row.get("summary")))
+        return " ".join(part for part in parts if part)
+
+    def _build_rank_comparison(
+        self,
+        higher: Optional[dict],
+        lower: Optional[dict],
+        primary_metric: str,
+        metric_direction: str,
+    ) -> str:
+        if not higher or not lower:
+            return ""
+        higher_name = higher.get("algorithm") or "Higher-ranked model"
+        lower_name = lower.get("algorithm") or "Lower-ranked model"
+        lower_rank = self._coerce_int(lower.get("rank")) or 0
+        higher_score = self._coerce_float(higher.get("selection_score_pct"))
+        lower_score = self._coerce_float(lower.get("selection_score_pct"))
+        if higher_score is not None and lower_score is not None:
+            score_text = (
+                f"It stays above #{lower_rank} {lower_name} because its selection score is "
+                f"{higher_score:.2f}% versus {lower_score:.2f}% ({higher_score - lower_score:+.2f} points)."
+            )
+        else:
+            score_text = f"It stays above #{lower_rank} {lower_name} on the current ranking inputs."
+
+        details = []
+        metric_detail = self._metric_comparison_detail(
+            higher=higher,
+            lower=lower,
+            primary_metric=primary_metric,
+            metric_direction=metric_direction,
+        )
+        if metric_detail:
+            details.append(metric_detail)
+        higher_composite = self._coerce_float(higher.get("composite_score"))
+        lower_composite = self._coerce_float(lower.get("composite_score"))
+        if higher_composite is not None and lower_composite is not None:
+            details.append(f"Composite Score is also stronger ({higher_composite:.4f} vs {lower_composite:.4f}).")
+        return " ".join([score_text, *details]).strip()
+
+    def _metric_comparison_detail(
+        self,
+        higher: dict,
+        lower: dict,
+        primary_metric: str,
+        metric_direction: str,
+    ) -> str:
+        higher_metric = self._coerce_float(higher.get("metric_value"))
+        lower_metric = self._coerce_float(lower.get("metric_value"))
+        if higher_metric is None or lower_metric is None:
+            return ""
+
+        direction = (metric_direction or "").strip().lower()
+        minimizing = direction.startswith("min") or primary_metric == "RMSE"
+        if minimizing:
+            if higher_metric > lower_metric:
+                return ""
+            return f"It also has lower {primary_metric} ({higher_metric:.4f} vs {lower_metric:.4f})."
+        if higher_metric < lower_metric:
+            return ""
+        return f"It also has higher {primary_metric} ({higher_metric:.4f} vs {lower_metric:.4f})."

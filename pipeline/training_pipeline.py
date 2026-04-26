@@ -462,6 +462,11 @@ class TrainingPipeline:
                     "feedback_profile": feedback_profile,
                 }
             )
+        self._annotate_ranked_recommendations(
+            ranked=out,
+            primary_metric=report.primary_metric,
+            primary_metric_direction=report.primary_metric_direction,
+        )
         return out
 
     def _build_optuna_policy(
@@ -533,41 +538,61 @@ class TrainingPipeline:
                 "recommended_strategy": None,
             }
 
+        self._annotate_ranked_recommendations(
+            ranked=ranked,
+            primary_metric=primary_metric,
+            primary_metric_direction=primary_metric_direction,
+        )
+
         top = ranked[0]
         runner_up = ranked[1] if len(ranked) > 1 else None
         top_score = float(top.get("selection_score_pct") or 0.0)
         runner_up_score = float(runner_up.get("selection_score_pct") or 0.0) if runner_up else 0.0
         score_gap = round(top_score - runner_up_score, 2) if runner_up else 100.0
         shortlist_count = max(1, min(len(ranked), int(self.config.top_model_count)))
+        display_selected = ranked[:shortlist_count]
 
         if len(ranked) == 1 or top_score >= 90.0 or (top_score >= 75.0 and score_gap >= 10.0):
-            selection_type = "single_model"
-            selected = ranked[:1]
-            reason = (
+            serving_selected = ranked[:1]
+            serving_reason = (
                 f"{top['algorithm']} is the clear winner with a selection score of {top_score:.2f}%."
                 if runner_up is None
                 else (
                     f"{top['algorithm']} is clearly ahead with a selection score of {top_score:.2f}% "
                     f"and a {score_gap:.2f}-point lead over {runner_up['algorithm']}. "
-                    "The API will return one recommended model."
+                    "The API will return one recommended model by default."
                 )
             )
-            display_title = "Recommended single model"
-            recommended_strategy = "single_model"
         else:
-            selection_type = "top_ranked_models"
-            selected = ranked[:shortlist_count]
-            reason = (
+            serving_selected = ranked[: min(shortlist_count, 5)]
+            serving_reason = (
                 f"No single model separated enough from the pack. {top['algorithm']} leads with "
                 f"{top_score:.2f}% selection score, but the gap to {runner_up['algorithm']} is only "
-                f"{score_gap:.2f} points. The API will return the best {shortlist_count} models for comparison."
+                f"{score_gap:.2f} points. The API will return the best {len(serving_selected)} models for comparison."
                 if runner_up is not None
                 else f"{top['algorithm']} is currently the only available model."
             )
-            display_title = f"Top {len(selected)} recommended models"
-            recommended_strategy = "ensemble_weighted"
 
-        selected_algorithms = {row.get("algorithm") for row in selected}
+        selection_type = "single_model" if len(display_selected) == 1 else "top_ranked_models"
+        display_title = (
+            "Recommended single model"
+            if len(display_selected) == 1
+            else f"Top {len(display_selected)} model recommendations and reasons"
+        )
+        recommended_strategy = "single_model" if len(serving_selected) == 1 else "ensemble_weighted"
+        reason = (
+            f"{serving_reason} Showing the top {len(display_selected)} ranked models so you can compare why each one scored well."
+            if len(display_selected) > 1
+            else serving_reason
+        )
+        best_model_explanation = top.get("reason") or serving_reason
+        comparison_explanations = [
+            row["comparison_to_next"]
+            for row in display_selected
+            if row.get("comparison_to_next")
+        ]
+
+        selected_algorithms = {row.get("algorithm") for row in display_selected}
         for row in ranked:
             row["selected_by_policy"] = row.get("algorithm") in selected_algorithms
             if row["selected_by_policy"]:
@@ -575,11 +600,16 @@ class TrainingPipeline:
 
         return {
             "selection_type": selection_type,
-            "selected_count": len(selected),
-            "selected_models": selected,
+            "selected_count": len(display_selected),
+            "selected_models": display_selected,
             "reason": reason,
             "display_title": display_title,
             "recommended_strategy": recommended_strategy,
+            "serving_selected_count": len(serving_selected),
+            "serving_selected_models": serving_selected,
+            "serving_reason": serving_reason,
+            "best_model_explanation": best_model_explanation,
+            "comparison_explanations": comparison_explanations,
             "primary_metric": primary_metric,
             "primary_metric_direction": primary_metric_direction,
             "top_model": {
@@ -602,11 +632,180 @@ class TrainingPipeline:
             ),
             "score_gap_pct": score_gap,
             "decision_rules": [
-                "Return one model when the winner is dominant enough to stand on its own.",
-                f"Return the best {shortlist_count} models when several candidates remain competitive.",
+                "Always show the full requested top-model count in the training results so the user can compare ranked candidates.",
+                "Use one serving model when the winner is dominant enough to stand on its own.",
+                f"Use up to {min(shortlist_count, 5)} serving models when several candidates remain competitive because the ensemble API accepts at most 5 models.",
                 "Dominance is estimated from the primary metric, composite score, and relative separation between models.",
             ],
         }
+
+    def _annotate_ranked_recommendations(
+        self,
+        ranked: list[dict],
+        primary_metric: str,
+        primary_metric_direction: str,
+    ) -> None:
+        ordered = sorted(
+            ranked,
+            key=lambda row: (
+                int(row.get("rank") or 10**9),
+                -float(row.get("selection_score_pct") or 0.0),
+                str(row.get("algorithm") or ""),
+            ),
+        )
+        for index, row in enumerate(ordered):
+            previous_row = ordered[index - 1] if index > 0 else None
+            next_row = ordered[index + 1] if index + 1 < len(ordered) else None
+            row["comparison_to_previous"] = (
+                self._build_rank_comparison(
+                    higher=previous_row,
+                    lower=row,
+                    primary_metric=primary_metric,
+                    primary_metric_direction=primary_metric_direction,
+                )
+                if previous_row
+                else None
+            )
+            row["comparison_to_next"] = (
+                self._build_rank_comparison(
+                    higher=row,
+                    lower=next_row,
+                    primary_metric=primary_metric,
+                    primary_metric_direction=primary_metric_direction,
+                )
+                if next_row
+                else None
+            )
+            row["reason"] = self._build_rank_reason(
+                row=row,
+                previous_row=previous_row,
+                next_row=next_row,
+                primary_metric=primary_metric,
+                primary_metric_direction=primary_metric_direction,
+            )
+
+    def _build_rank_reason(
+        self,
+        row: dict,
+        previous_row: Optional[dict],
+        next_row: Optional[dict],
+        primary_metric: str,
+        primary_metric_direction: str,
+    ) -> str:
+        rank = int(row.get("rank") or 0)
+        algorithm = row.get("algorithm") or "Unknown model"
+        score = self._safe_float(row.get("selection_score_pct"))
+        parts = []
+        if rank == 1:
+            if score is not None:
+                parts.append(f"Ranked #{rank} because it has the highest selection score at {score:.2f}%.")
+            else:
+                parts.append(f"Ranked #{rank} because it is the highest-scoring supported model.")
+        else:
+            if score is not None:
+                parts.append(f"Ranked #{rank} with a selection score of {score:.2f}%.")
+            else:
+                parts.append(f"Ranked #{rank} in the supported model list.")
+
+        if next_row is not None:
+            parts.append(
+                self._build_rank_comparison(
+                    higher=row,
+                    lower=next_row,
+                    primary_metric=primary_metric,
+                    primary_metric_direction=primary_metric_direction,
+                )
+            )
+        elif previous_row is not None:
+            parts.append(
+                f"It remains behind #{int(previous_row.get('rank') or rank - 1)} {previous_row.get('algorithm')} and has no lower-ranked supported competitor below it."
+            )
+
+        if row.get("performance_summary"):
+            parts.append(str(row["performance_summary"]))
+        if row.get("fit_summary"):
+            parts.append(str(row["fit_summary"]))
+        if row.get("reliability_summary"):
+            parts.append(str(row["reliability_summary"]))
+        return " ".join(part for part in parts if part)
+
+    def _build_rank_comparison(
+        self,
+        higher: Optional[dict],
+        lower: Optional[dict],
+        primary_metric: str,
+        primary_metric_direction: str,
+    ) -> str:
+        if not higher or not lower:
+            return ""
+        higher_name = higher.get("algorithm") or "Higher-ranked model"
+        lower_name = lower.get("algorithm") or "Lower-ranked model"
+        higher_rank = int(higher.get("rank") or 0)
+        lower_rank = int(lower.get("rank") or 0)
+
+        higher_score = self._safe_float(higher.get("selection_score_pct"))
+        lower_score = self._safe_float(lower.get("selection_score_pct"))
+        score_text = ""
+        if higher_score is not None and lower_score is not None:
+            gap = higher_score - lower_score
+            score_text = (
+                f"{higher_name} stays ahead of #{lower_rank} {lower_name} because its selection score is "
+                f"{higher_score:.2f}% versus {lower_score:.2f}% ({gap:+.2f} points)."
+            )
+        else:
+            score_text = f"{higher_name} stays ahead of #{lower_rank} {lower_name} on the ranking composite."
+
+        detail_parts = []
+        metric_sentence = self._metric_comparison_sentence(
+            higher=higher,
+            lower=lower,
+            primary_metric=primary_metric,
+            primary_metric_direction=primary_metric_direction,
+        )
+        if metric_sentence:
+            detail_parts.append(metric_sentence)
+
+        higher_composite = self._safe_float(higher.get("composite_score"))
+        lower_composite = self._safe_float(lower.get("composite_score"))
+        if higher_composite is not None and lower_composite is not None:
+            detail_parts.append(
+                f"Composite Score is also stronger ({higher_composite:.4f} vs {lower_composite:.4f})."
+            )
+        return " ".join([score_text, *detail_parts]).strip()
+
+    def _metric_comparison_sentence(
+        self,
+        higher: dict,
+        lower: dict,
+        primary_metric: str,
+        primary_metric_direction: str,
+    ) -> str:
+        higher_metric = self._safe_float(higher.get("metric_value"))
+        lower_metric = self._safe_float(lower.get("metric_value"))
+        if higher_metric is None or lower_metric is None:
+            return ""
+        direction = (primary_metric_direction or "").strip().lower()
+        if direction.startswith("min"):
+            better_text = f"lower {primary_metric}"
+            higher_is_better = higher_metric <= lower_metric
+        else:
+            better_text = f"higher {primary_metric}"
+            higher_is_better = higher_metric >= lower_metric
+        if not higher_is_better:
+            return ""
+        return f"It also posts {better_text} ({higher_metric:.4f} vs {lower_metric:.4f})."
+
+    @staticmethod
+    def _safe_float(value: object) -> Optional[float]:
+        try:
+            if value in (None, ""):
+                return None
+            out = float(value)
+        except (TypeError, ValueError):
+            return None
+        if not math.isfinite(out):
+            return None
+        return out
 
     @staticmethod
     def _estimate_selection_score_pct(

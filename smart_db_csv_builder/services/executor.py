@@ -10,7 +10,7 @@ from typing import Callable
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 
-from smart_db_csv_builder.connectors.drivers import MongoDBConnector
+from smart_db_csv_builder.connectors.drivers import build_select_sql
 from smart_db_csv_builder.core.connection_store import connection_store
 from smart_db_csv_builder.models.schemas import OutputFormat
 from smart_db_csv_builder.services.llm_planner import CollectionFetch, MergePlan, TableQuery
@@ -36,25 +36,6 @@ def _make_unique_column_name(base: str, taken: set[str]) -> str:
     while f"{base}_{i}" in taken:
         i += 1
     return f"{base}_{i}"
-
-
-def _build_select_sql(tq: TableQuery, db_type: str, limit: int) -> str:
-    if tq.columns:
-        if db_type.lower() == "mysql":
-            cols = ", ".join(f"`{c}`" for c in tq.columns)
-        else:
-            cols = ", ".join(f'"{c}"' for c in tq.columns)
-    else:
-        cols = "*"
-
-    table = _normalize_table_name(tq.table)
-    where = f"WHERE {tq.where}" if tq.where.strip() else ""
-
-    if db_type.lower() == "mssql":
-        return f"SELECT TOP {limit} {cols} FROM {table} {where}"
-    if db_type.lower() == "mysql":
-        return f"SELECT {cols} FROM `{table}` {where} LIMIT {limit}"
-    return f"SELECT {cols} FROM {table} {where} LIMIT {limit}"
 
 
 def _apply_aliases(df: pd.DataFrame, alias_map: dict[str, str]) -> pd.DataFrame:
@@ -172,7 +153,13 @@ def execute_plan(
         if not conn:
             continue
 
-        sql = _build_select_sql(tq, conn.db_type.value, max_rows_per_table)
+        sql = build_select_sql(
+            db_type=conn.db_type,
+            table=tq.table,
+            columns=tq.columns,
+            where=tq.where,
+            limit=max_rows_per_table,
+        )
 
         try:
             rows = conn.driver.execute(sql)
@@ -193,8 +180,7 @@ def execute_plan(
             continue
 
         try:
-            driver: MongoDBConnector = conn.driver
-            docs = driver.fetch_collection(cf.collection)
+            docs = conn.driver.fetch_collection(cf.collection)
             df = pd.json_normalize(docs)
 
             df = _apply_aliases(df, cf.alias_map)

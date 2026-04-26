@@ -1738,3 +1738,802 @@ ValueError: With n_samples=0, test_size=0.25 and train_size=None, the resulting 
 2026-04-22 16:23:29 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
 2026-04-22 16:23:29 | INFO     | models.model_registry | Model saved | id=3b509448-44c algo=Ecommerce-Popularity version=9 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_9_3b509448-44c.pkl
 2026-04-22 16:23:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:34:19 | WARNING  | recommendation.strategy_service | Model recommendation failed | algorithm=Temporal-SVD error=inference failure
+2026-04-23 09:34:49 | WARNING  | recommendation.strategy_service | Model recommendation failed | algorithm=Temporal-SVD error=inference failure
+2026-04-23 09:35:16 | WARNING  | recommendation.strategy_service | Model recommendation failed | algorithm=Temporal-SVD error=inference failure
+2026-04-23 09:56:56 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 09:56:57 | INFO     | ingestion.csv_loader | Loaded 289 rows × 8 columns
+2026-04-23 09:56:57 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-23 09:56:57 | ERROR    | api.routes | Job a2c580c5-fc8 failed: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 161, in _run
+    train, test = self.cleaner.split(clean_df)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\data_cleaning.py", line 153, in split
+    train, test = train_test_split(df, test_size=test_ratio, random_state=seed)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2924, in train_test_split
+    n_train, n_test = _validate_shuffle_split(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2504, in _validate_shuffle_split
+    raise ValueError(
+ValueError: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+2026-04-23 09:57:09 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 09:57:09 | INFO     | ingestion.csv_loader | Loaded 289 rows × 8 columns
+2026-04-23 09:57:09 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-23 09:57:09 | ERROR    | api.routes | Job b8846949-894 failed: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 161, in _run
+    train, test = self.cleaner.split(clean_df)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\data_cleaning.py", line 153, in split
+    train, test = train_test_split(df, test_size=test_ratio, random_state=seed)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2924, in train_test_split
+    n_train, n_test = _validate_shuffle_split(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2504, in _validate_shuffle_split
+    raise ValueError(
+ValueError: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+2026-04-23 09:57:20 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 09:57:20 | INFO     | ingestion.csv_loader | Loaded 289 rows × 8 columns
+2026-04-23 09:57:20 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-23 09:57:20 | ERROR    | api.routes | Job 918729f7-7dd failed: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 161, in _run
+    train, test = self.cleaner.split(clean_df)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\data_cleaning.py", line 153, in split
+    train, test = train_test_split(df, test_size=test_ratio, random_state=seed)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2924, in train_test_split
+    n_train, n_test = _validate_shuffle_split(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2504, in _validate_shuffle_split
+    raise ValueError(
+ValueError: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+2026-04-23 09:57:54 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 09:57:54 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 09:57:54 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 09:57:54 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 09:57:54 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:57:54 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:57:54 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:57:55 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 09:57:55 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:57:55 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 09:57:59 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 09:57:59 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:57:59 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 09:57:59 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:57:59 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:57:59 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:01 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 09:58:03 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:03 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:06 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=80 iters=29
+2026-04-23 09:58:07 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:07 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:07 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=40 iters=9
+2026-04-23 09:58:08 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:08 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:16 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=130 iters=23
+2026-04-23 09:58:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:16 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:20 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=170 iters=10
+2026-04-23 09:58:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:20 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:22 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=70 iters=18
+2026-04-23 09:58:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:22 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:25 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=130 iters=8
+2026-04-23 09:58:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:25 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:33 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=100 iters=25
+2026-04-23 09:58:33 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:33 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:35 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=120 iters=6
+2026-04-23 09:58:36 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:36 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:38 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=20 iters=29
+2026-04-23 09:58:38 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:38 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:39 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=70 iters=7
+2026-04-23 09:58:39 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:39 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:41 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=17
+2026-04-23 09:58:41 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:41 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:42 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 09:58:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:43 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:44 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=14
+2026-04-23 09:58:44 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:44 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:45 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=40 iters=16
+2026-04-23 09:58:45 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:45 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:47 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=40 iters=20
+2026-04-23 09:58:47 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:47 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:53 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=190 iters=13
+2026-04-23 09:58:53 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:53 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:55 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 09:58:55 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:55 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:57 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=22
+2026-04-23 09:58:57 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:57 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:58:59 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=30 iters=19
+2026-04-23 09:58:59 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:58:59 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:00 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=60 iters=12
+2026-04-23 09:59:00 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:00 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:04 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=90 iters=24
+2026-04-23 09:59:04 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:04 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:05 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=16
+2026-04-23 09:59:05 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:05 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:07 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=21
+2026-04-23 09:59:07 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:07 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:09 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=30 iters=17
+2026-04-23 09:59:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:09 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:11 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=20 iters=26
+2026-04-23 09:59:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:11 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:16 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=150 iters=11
+2026-04-23 09:59:16 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:16 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:17 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=18
+2026-04-23 09:59:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:18 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:19 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=20 iters=16
+2026-04-23 09:59:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:19 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:20 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=60 iters=14
+2026-04-23 09:59:21 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:21 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:23 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=80 iters=20
+2026-04-23 09:59:23 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:23 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:26 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=80 iters=29
+2026-04-23 09:59:27 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:27 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:27 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=40 iters=9
+2026-04-23 09:59:28 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:28 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:35 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=130 iters=23
+2026-04-23 09:59:36 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:36 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:36 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:39 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=170 iters=10
+2026-04-23 09:59:39 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:39 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:39 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:42 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=70 iters=18
+2026-04-23 09:59:42 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:42 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:42 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:46 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=130 iters=8
+2026-04-23 09:59:46 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:46 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:46 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:53 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=100 iters=25
+2026-04-23 09:59:53 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:53 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:53 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:56 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=120 iters=6
+2026-04-23 09:59:56 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:56 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:56 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 09:59:59 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=20 iters=29
+2026-04-23 09:59:59 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 09:59:59 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 09:59:59 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:00 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=70 iters=7
+2026-04-23 10:00:00 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:00 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:00 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:02 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=17
+2026-04-23 10:00:02 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:02 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:02 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:04 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 10:00:04 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:04 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:04 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:07 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=14
+2026-04-23 10:00:07 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:07 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:07 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:08 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=40 iters=15
+2026-04-23 10:00:08 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:08 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:08 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:10 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=40 iters=14
+2026-04-23 10:00:10 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:10 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:23 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=190 iters=12
+2026-04-23 10:00:23 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:23 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:24 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=19
+2026-04-23 10:00:24 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:24 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:24 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:27 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=21
+2026-04-23 10:00:27 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:27 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:28 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=30 iters=13
+2026-04-23 10:00:28 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:28 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:29 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=60 iters=11
+2026-04-23 10:00:29 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:29 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:31 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=90 iters=16
+2026-04-23 10:00:32 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:32 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:32 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:33 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 10:00:33 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:33 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:33 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:35 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=19
+2026-04-23 10:00:35 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:35 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:35 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:37 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=30 iters=22
+2026-04-23 10:00:37 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:37 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:37 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:39 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=20 iters=25
+2026-04-23 10:00:40 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:40 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:40 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:46 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=150 iters=16
+2026-04-23 10:00:46 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:46 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:46 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:47 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=13
+2026-04-23 10:00:47 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:47 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:47 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:49 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=20 iters=18
+2026-04-23 10:00:49 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:49 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:49 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:50 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=60 iters=15
+2026-04-23 10:00:51 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:00:51 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:51 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:00:54 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=80 iters=26
+2026-04-23 10:00:54 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:00:54 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 10:01:06 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 10:01:06 | INFO     | models.model_registry | Model saved | id=1c716da3-792 algo=BPR version=10 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_10_1c716da3-792.pkl
+2026-04-23 10:01:06 | INFO     | models.model_registry | Model promoted | id=1c716da3-792 algo=BPR
+2026-04-23 10:01:06 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:01:06 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:01:06 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:01:07 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 10:01:07 | INFO     | models.model_registry | Model saved | id=77a95795-8fb algo=Ecommerce-Purchase-ALS version=1 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_1_77a95795-8fb.pkl
+2026-04-23 10:01:07 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:01:07 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:01:09 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 10:01:09 | INFO     | models.model_registry | Model saved | id=98566343-ca7 algo=ALS version=1 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_1_98566343-ca7.pkl
+2026-04-23 10:01:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:01:09 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 10:01:09 | INFO     | models.model_registry | Model saved | id=d811368d-a24 algo=Ecommerce-Popularity version=10 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_10_d811368d-a24.pkl
+2026-04-23 10:01:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:15:53 | WARNING  | recommendation.strategy_service | Model recommendation failed | algorithm=Temporal-SVD error=inference failure
+2026-04-23 10:19:15 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 10:19:15 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 10:19:15 | ERROR    | api.routes | Job 7d39b017-975 failed: Explicit mode requested but dataset does not support explicit feedback.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 153, in _run
+    resolved_mode = self.detector.resolve_mode(feedback, self.config.algorithm_mode)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\feedback_detector.py", line 165, in resolve_mode
+    raise ValueError("Explicit mode requested but dataset does not support explicit feedback.")
+ValueError: Explicit mode requested but dataset does not support explicit feedback.
+2026-04-23 10:19:16 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 10:19:16 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 10:19:16 | ERROR    | api.routes | Job 1fb4e4d1-8f6 failed: Explicit mode requested but dataset does not support explicit feedback.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 153, in _run
+    resolved_mode = self.detector.resolve_mode(feedback, self.config.algorithm_mode)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\feedback_detector.py", line 165, in resolve_mode
+    raise ValueError("Explicit mode requested but dataset does not support explicit feedback.")
+ValueError: Explicit mode requested but dataset does not support explicit feedback.
+2026-04-23 10:20:04 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 10:20:04 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 10:20:05 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 10:20:05 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 10:20:05 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:05 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:05 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:20:06 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 10:20:06 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:06 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 10:20:10 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 10:20:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:10 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 10:20:10 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:20:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:10 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:20:12 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 10:20:13 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:13 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 10:20:26 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 10:20:26 | INFO     | models.model_registry | Model saved | id=451be597-4c0 algo=BPR version=11 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_11_451be597-4c0.pkl
+2026-04-23 10:20:26 | INFO     | models.model_registry | Model promoted | id=451be597-4c0 algo=BPR
+2026-04-23 10:20:26 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:20:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:26 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:20:27 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 10:20:27 | INFO     | models.model_registry | Model saved | id=6c3c86a4-b76 algo=Ecommerce-Purchase-ALS version=2 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_2_6c3c86a4-b76.pkl
+2026-04-23 10:20:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:27 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:20:29 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 10:20:29 | INFO     | models.model_registry | Model saved | id=1ac62613-84b algo=ALS version=2 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_2_1ac62613-84b.pkl
+2026-04-23 10:20:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:20:29 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 10:20:29 | INFO     | models.model_registry | Model saved | id=56167b0c-b2c algo=Ecommerce-Popularity version=11 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_11_56167b0c-b2c.pkl
+2026-04-23 10:20:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:17 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 10:21:17 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 10:21:17 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 10:21:17 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 10:21:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:17 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:21:19 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 10:21:19 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:19 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 10:21:22 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 10:21:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:23 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 10:21:23 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:21:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:23 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:21:25 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 10:21:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:25 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 10:21:37 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 10:21:38 | INFO     | models.model_registry | Model saved | id=d096a192-aad algo=BPR version=12 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_12_d096a192-aad.pkl
+2026-04-23 10:21:38 | INFO     | models.model_registry | Model promoted | id=d096a192-aad algo=BPR
+2026-04-23 10:21:38 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 10:21:38 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:38 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:21:39 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 10:21:39 | INFO     | models.model_registry | Model saved | id=695427bd-889 algo=Ecommerce-Purchase-ALS version=3 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_3_695427bd-889.pkl
+2026-04-23 10:21:39 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:39 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 10:21:41 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 10:21:41 | INFO     | models.model_registry | Model saved | id=67272541-510 algo=ALS version=3 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_3_67272541-510.pkl
+2026-04-23 10:21:41 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 10:21:41 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 10:21:41 | INFO     | models.model_registry | Model saved | id=d7ec7b96-116 algo=Ecommerce-Popularity version=12 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_12_d7ec7b96-116.pkl
+2026-04-23 10:21:41 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:43 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 11:33:43 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 11:33:43 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 11:33:43 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 11:33:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:43 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:33:45 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 11:33:45 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:45 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:33:48 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 11:33:48 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:48 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 11:33:48 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:33:48 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:48 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:33:51 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 11:33:52 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:33:52 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:34:06 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 11:34:06 | INFO     | models.model_registry | Model saved | id=5f688a22-0a2 algo=BPR version=13 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_13_5f688a22-0a2.pkl
+2026-04-23 11:34:06 | INFO     | models.model_registry | Model promoted | id=5f688a22-0a2 algo=BPR
+2026-04-23 11:34:06 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:34:06 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:34:06 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:34:07 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 11:34:07 | INFO     | models.model_registry | Model saved | id=6e55acd3-f6b algo=Ecommerce-Purchase-ALS version=4 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_4_6e55acd3-f6b.pkl
+2026-04-23 11:34:07 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:34:07 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:34:09 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 11:34:09 | INFO     | models.model_registry | Model saved | id=8fa8d06b-8fc algo=ALS version=4 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_4_8fa8d06b-8fc.pkl
+2026-04-23 11:34:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:34:09 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 11:34:09 | INFO     | models.model_registry | Model saved | id=914383d0-9e7 algo=Ecommerce-Popularity version=13 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_13_914383d0-9e7.pkl
+2026-04-23 11:34:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:40:03 | WARNING  | recommendation.strategy_service | Model recommendation failed | algorithm=Temporal-SVD error=inference failure
+2026-04-23 11:43:12 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 11:43:12 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 11:43:12 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 11:43:12 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 11:43:12 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:12 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:12 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:43:14 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 11:43:14 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:14 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:43:17 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 11:43:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:17 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 11:43:17 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:43:17 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:17 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:43:19 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 11:43:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:20 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:43:32 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 11:43:32 | INFO     | models.model_registry | Model saved | id=000772bd-ded algo=BPR version=14 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_14_000772bd-ded.pkl
+2026-04-23 11:43:32 | INFO     | models.model_registry | Model promoted | id=000772bd-ded algo=BPR
+2026-04-23 11:43:32 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:43:32 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:32 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:43:33 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 11:43:33 | INFO     | models.model_registry | Model saved | id=837c3cb4-e3d algo=Ecommerce-Purchase-ALS version=5 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_5_837c3cb4-e3d.pkl
+2026-04-23 11:43:33 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:33 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:43:35 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 11:43:35 | INFO     | models.model_registry | Model saved | id=c6fcdc9d-5b1 algo=ALS version=5 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_5_c6fcdc9d-5b1.pkl
+2026-04-23 11:43:35 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:43:35 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 11:43:35 | INFO     | models.model_registry | Model saved | id=9d19cd60-57c algo=Ecommerce-Popularity version=14 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_14_9d19cd60-57c.pkl
+2026-04-23 11:43:35 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:48 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 11:44:49 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 11:44:49 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 11:44:49 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 11:44:49 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:49 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:49 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:44:50 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 11:44:50 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:50 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:44:54 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 11:44:54 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:54 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 11:44:54 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:44:54 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:54 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:44:56 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 11:44:56 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:44:56 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:45:08 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 11:45:08 | INFO     | models.model_registry | Model saved | id=e074e5a3-9ca algo=BPR version=15 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_15_e074e5a3-9ca.pkl
+2026-04-23 11:45:08 | INFO     | models.model_registry | Model promoted | id=e074e5a3-9ca algo=BPR
+2026-04-23 11:45:08 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:45:08 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:45:08 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:45:09 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 11:45:09 | INFO     | models.model_registry | Model saved | id=e8fcb877-b77 algo=Ecommerce-Purchase-ALS version=6 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_6_e8fcb877-b77.pkl
+2026-04-23 11:45:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:45:09 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:45:11 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 11:45:11 | INFO     | models.model_registry | Model saved | id=0e676309-c71 algo=ALS version=6 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_6_0e676309-c71.pkl
+2026-04-23 11:45:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:45:11 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 11:45:11 | INFO     | models.model_registry | Model saved | id=b9e034d8-d2b algo=Ecommerce-Popularity version=15 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_15_b9e034d8-d2b.pkl
+2026-04-23 11:45:11 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:51:58 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 11:51:58 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 11:51:58 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 11:51:58 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 11:51:58 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:51:58 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:51:58 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:51:59 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 11:51:59 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 11:51:59 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 11:51:59 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 11:51:59 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:51:59 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:51:59 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:00 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 11:52:00 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:00 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:52:04 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 11:52:04 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:04 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 11:52:04 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:52:04 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:04 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:06 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 11:52:07 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:07 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:52:10 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 11:52:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:10 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 11:52:10 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:52:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:10 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:13 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 11:52:14 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:14 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:52:26 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 11:52:26 | INFO     | models.model_registry | Model saved | id=0fc731a0-592 algo=BPR version=16 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_16_0fc731a0-592.pkl
+2026-04-23 11:52:26 | INFO     | models.model_registry | Model promoted | id=0fc731a0-592 algo=BPR
+2026-04-23 11:52:26 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:52:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:26 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:28 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 11:52:28 | INFO     | models.model_registry | Model saved | id=8ce77bed-bad algo=Ecommerce-Purchase-ALS version=7 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_7_8ce77bed-bad.pkl
+2026-04-23 11:52:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:28 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:29 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 11:52:31 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 11:52:31 | INFO     | models.model_registry | Model saved | id=120d3aac-ba9 algo=ALS version=7 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_7_120d3aac-ba9.pkl
+2026-04-23 11:52:31 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:31 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 11:52:31 | INFO     | models.model_registry | Model saved | id=5fff39a9-8b7 algo=Ecommerce-Popularity version=16 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_16_5fff39a9-8b7.pkl
+2026-04-23 11:52:31 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:31 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:31 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 11:52:43 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 11:52:43 | INFO     | models.model_registry | Model saved | id=c627e667-3ea algo=BPR version=17 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_17_c627e667-3ea.pkl
+2026-04-23 11:52:43 | INFO     | models.model_registry | Model promoted | id=c627e667-3ea algo=BPR
+2026-04-23 11:52:43 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 11:52:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:43 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:44 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 11:52:44 | INFO     | models.model_registry | Model saved | id=d7912b69-967 algo=Ecommerce-Purchase-ALS version=8 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_8_d7912b69-967.pkl
+2026-04-23 11:52:44 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:44 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 11:52:46 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 11:52:46 | INFO     | models.model_registry | Model saved | id=4f7a0437-0b4 algo=ALS version=8 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_8_4f7a0437-0b4.pkl
+2026-04-23 11:52:46 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:52:46 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 11:52:46 | INFO     | models.model_registry | Model saved | id=f6bbb56d-d62 algo=Ecommerce-Popularity version=17 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_17_f6bbb56d-d62.pkl
+2026-04-23 11:52:46 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 11:53:23 | INFO     | models.model_loader | Loading model into memory | id=4f7a0437-0b4 algo=ALS version=8
+2026-04-23 11:53:23 | INFO     | models.model_registry | Model loaded | id=4f7a0437-0b4 algo=ALS
+2026-04-23 11:53:23 | INFO     | models.model_loader | Model loaded | algo=ALS id=4f7a0437-0b4 version=8 elapsed=0.03s
+2026-04-23 11:53:23 | WARNING  | recommendation.recommender_engine | User user_123 not found; returning popularity fallback.
+2026-04-23 12:04:04 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 12:04:04 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 12:04:04 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 12:04:04 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 12:04:04 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:04 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:04 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:04:06 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 12:04:06 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:06 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 12:04:10 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 12:04:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:10 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 12:04:10 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 12:04:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:10 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:04:12 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 12:04:13 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:13 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 12:04:26 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 12:04:26 | INFO     | models.model_registry | Model saved | id=25b42a69-5d7 algo=BPR version=18 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_18_25b42a69-5d7.pkl
+2026-04-23 12:04:26 | INFO     | models.model_registry | Model promoted | id=25b42a69-5d7 algo=BPR
+2026-04-23 12:04:26 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 12:04:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:26 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:04:27 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 12:04:27 | INFO     | models.model_registry | Model saved | id=1b2af0f8-9e7 algo=Ecommerce-Purchase-ALS version=9 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_9_1b2af0f8-9e7.pkl
+2026-04-23 12:04:27 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:27 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:04:29 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 12:04:29 | INFO     | models.model_registry | Model saved | id=57d4b53b-192 algo=ALS version=9 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_9_57d4b53b-192.pkl
+2026-04-23 12:04:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:29 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 12:04:29 | INFO     | models.model_registry | Model saved | id=0e35f25c-02b algo=Ecommerce-Popularity version=18 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_18_0e35f25c-02b.pkl
+2026-04-23 12:04:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:46 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 12:04:46 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 12:04:46 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 12:04:46 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 12:04:46 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:46 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:46 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:04:48 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 12:04:48 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:48 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 12:04:52 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 12:04:52 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:52 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 12:04:52 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 12:04:52 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:52 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:04:54 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 12:04:54 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:04:54 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 12:05:06 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 12:05:06 | INFO     | models.model_registry | Model saved | id=65c3f680-750 algo=BPR version=19 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_19_65c3f680-750.pkl
+2026-04-23 12:05:06 | INFO     | models.model_registry | Model promoted | id=65c3f680-750 algo=BPR
+2026-04-23 12:05:06 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 12:05:06 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:05:06 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:05:08 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 12:05:08 | INFO     | models.model_registry | Model saved | id=6303eb5a-d9e algo=Ecommerce-Purchase-ALS version=10 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_10_6303eb5a-d9e.pkl
+2026-04-23 12:05:08 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:05:08 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:05:09 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 12:05:09 | INFO     | models.model_registry | Model saved | id=fc621118-254 algo=ALS version=10 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_10_fc621118-254.pkl
+2026-04-23 12:05:09 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:05:10 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 12:05:10 | INFO     | models.model_registry | Model saved | id=7fbcb90a-292 algo=Ecommerce-Popularity version=19 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_19_7fbcb90a-292.pkl
+2026-04-23 12:05:10 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:29 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 12:19:29 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 12:19:29 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 12:19:29 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 12:19:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:29 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:29 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:19:31 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 12:19:31 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:31 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 12:19:34 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 12:19:34 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:35 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 12:19:35 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 12:19:35 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:35 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:19:37 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 12:19:37 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:37 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 12:19:50 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 12:19:50 | INFO     | models.model_registry | Model saved | id=550fc15a-84e algo=BPR version=20 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_20_550fc15a-84e.pkl
+2026-04-23 12:19:50 | INFO     | models.model_registry | Model promoted | id=550fc15a-84e algo=BPR
+2026-04-23 12:19:50 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 12:19:50 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:50 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:19:51 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 12:19:51 | INFO     | models.model_registry | Model saved | id=157dfcd5-3ab algo=Ecommerce-Purchase-ALS version=11 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_11_157dfcd5-3ab.pkl
+2026-04-23 12:19:51 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:51 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 12:19:53 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 12:19:53 | INFO     | models.model_registry | Model saved | id=39bdbb4c-6aa algo=ALS version=11 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_11_39bdbb4c-6aa.pkl
+2026-04-23 12:19:53 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 12:19:53 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 12:19:53 | INFO     | models.model_registry | Model saved | id=db7da931-f58 algo=Ecommerce-Popularity version=20 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_20_db7da931-f58.pkl
+2026-04-23 12:19:53 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:18 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 15:22:18 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 15:22:18 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 15:22:18 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 15:22:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:18 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:18 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:22:20 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 15:22:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:20 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 15:22:23 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 15:22:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:23 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 15:22:23 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 15:22:23 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:23 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:22:26 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 15:22:26 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:26 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 15:22:38 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 15:22:38 | INFO     | models.model_registry | Model saved | id=ce63f30a-726 algo=BPR version=21 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_21_ce63f30a-726.pkl
+2026-04-23 15:22:38 | INFO     | models.model_registry | Model promoted | id=ce63f30a-726 algo=BPR
+2026-04-23 15:22:38 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 15:22:38 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:38 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:22:40 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 15:22:40 | INFO     | models.model_registry | Model saved | id=5f22c0ad-424 algo=Ecommerce-Purchase-ALS version=12 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_12_5f22c0ad-424.pkl
+2026-04-23 15:22:40 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:40 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:22:41 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 15:22:41 | INFO     | models.model_registry | Model saved | id=d9266bcd-935 algo=ALS version=12 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_12_d9266bcd-935.pkl
+2026-04-23 15:22:41 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:22:41 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 15:22:42 | INFO     | models.model_registry | Model saved | id=9b0c3339-a49 algo=Ecommerce-Popularity version=21 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_21_9b0c3339-a49.pkl
+2026-04-23 15:22:42 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:20 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-23 15:24:20 | INFO     | ingestion.csv_loader | Loaded 2200 rows × 8 columns
+2026-04-23 15:24:20 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=1437 users=112 items=73 sparsity=82.42%
+2026-04-23 15:24:20 | INFO     | data_processing.data_cleaning | Split | train=1077 test=360 cold_removed=0
+2026-04-23 15:24:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:20 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:20 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:24:22 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=50 iters=15
+2026-04-23 15:24:22 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:22 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 15:24:25 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=50 epochs=40
+2026-04-23 15:24:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:25 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=68
+2026-04-23 15:24:25 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 15:24:25 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:25 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:24:28 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=64 iters=20
+2026-04-23 15:24:28 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:28 | WARNING  | algorithms.implicit_models.bpr | 'implicit' library not installed — using numpy BPR fallback
+2026-04-23 15:24:40 | INFO     | algorithms.implicit_models.bpr | BPR (numpy) trained | factors=100 epochs=140
+2026-04-23 15:24:40 | INFO     | models.model_registry | Model saved | id=0f9cd3d2-5c0 algo=BPR version=22 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\bpr_22_0f9cd3d2-5c0.pkl
+2026-04-23 15:24:40 | INFO     | models.model_registry | Model promoted | id=0f9cd3d2-5c0 algo=BPR
+2026-04-23 15:24:40 | INFO     | algorithms.domain_models.ecommerce_models | No 'event_type' column — running standard ALS
+2026-04-23 15:24:40 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:40 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:24:41 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=15
+2026-04-23 15:24:41 | INFO     | models.model_registry | Model saved | id=c63741d7-f6d algo=Ecommerce-Purchase-ALS version=13 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-purchase-als_13_c63741d7-f6d.pkl
+2026-04-23 15:24:41 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:41 | WARNING  | algorithms.implicit_models.als | 'implicit' library not installed — using pure-numpy ALS fallback
+2026-04-23 15:24:43 | INFO     | algorithms.implicit_models.als | ALS (numpy) trained | factors=10 iters=20
+2026-04-23 15:24:43 | INFO     | models.model_registry | Model saved | id=59919d4d-b36 algo=ALS version=13 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\als_13_59919d4d-b36.pkl
+2026-04-23 15:24:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-23 15:24:43 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
+2026-04-23 15:24:43 | INFO     | models.model_registry | Model saved | id=03cce9f8-dcd algo=Ecommerce-Popularity version=22 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_22_03cce9f8-dcd.pkl
+2026-04-23 15:24:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True

@@ -2225,5 +2225,1331 @@
     "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_9_3b509448-44c.pkl",
     "notes": "rank=10/10 status=ok trials=30 metric=NDCG@K",
     "tags": []
+  },
+  "1c716da3-792": {
+    "model_id": "1c716da3-792",
+    "algorithm": "BPR",
+    "version": 10,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776916866.3113625,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_10_1c716da3-792.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "77a95795-8fb": {
+    "model_id": "77a95795-8fb",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 1,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1698
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776916867.6192203,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_1_77a95795-8fb.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "98566343-ca7": {
+    "model_id": "98566343-ca7",
+    "algorithm": "ALS",
+    "version": 1,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2593
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776916869.301825,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_1_98566343-ca7.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "d811368d-a24": {
+    "model_id": "d811368d-a24",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 10,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776916869.381588,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_10_d811368d-a24.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "451be597-4c0": {
+    "model_id": "451be597-4c0",
+    "algorithm": "BPR",
+    "version": 11,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776918026.3523955,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_11_451be597-4c0.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "6c3c86a4-b76": {
+    "model_id": "6c3c86a4-b76",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 2,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1677
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776918027.7517233,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_2_6c3c86a4-b76.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "1ac62613-84b": {
+    "model_id": "1ac62613-84b",
+    "algorithm": "ALS",
+    "version": 2,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.263
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776918029.5406818,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_2_1ac62613-84b.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "56167b0c-b2c": {
+    "model_id": "56167b0c-b2c",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 11,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776918029.6198227,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_11_56167b0c-b2c.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "d096a192-aad": {
+    "model_id": "d096a192-aad",
+    "algorithm": "BPR",
+    "version": 12,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776918098.0185084,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_12_d096a192-aad.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "695427bd-889": {
+    "model_id": "695427bd-889",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 3,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1732
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776918099.4214163,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_3_695427bd-889.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "67272541-510": {
+    "model_id": "67272541-510",
+    "algorithm": "ALS",
+    "version": 3,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2582
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776918101.2413914,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_3_67272541-510.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "d7ec7b96-116": {
+    "model_id": "d7ec7b96-116",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 12,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776918101.320784,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_12_d7ec7b96-116.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "5f688a22-0a2": {
+    "model_id": "5f688a22-0a2",
+    "algorithm": "BPR",
+    "version": 13,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776922446.067872,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_13_5f688a22-0a2.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "6e55acd3-f6b": {
+    "model_id": "6e55acd3-f6b",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 4,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1683
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776922447.6595213,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_4_6e55acd3-f6b.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "8fa8d06b-8fc": {
+    "model_id": "8fa8d06b-8fc",
+    "algorithm": "ALS",
+    "version": 4,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2491
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776922449.696504,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_4_8fa8d06b-8fc.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "914383d0-9e7": {
+    "model_id": "914383d0-9e7",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 13,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776922449.7822366,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_13_914383d0-9e7.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "000772bd-ded": {
+    "model_id": "000772bd-ded",
+    "algorithm": "BPR",
+    "version": 14,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776923012.4014866,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_14_000772bd-ded.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "837c3cb4-e3d": {
+    "model_id": "837c3cb4-e3d",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 5,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1714
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776923013.7673743,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_5_837c3cb4-e3d.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "c6fcdc9d-5b1": {
+    "model_id": "c6fcdc9d-5b1",
+    "algorithm": "ALS",
+    "version": 5,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2545
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776923015.476671,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_5_c6fcdc9d-5b1.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "9d19cd60-57c": {
+    "model_id": "9d19cd60-57c",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 14,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776923015.5547595,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_14_9d19cd60-57c.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "e074e5a3-9ca": {
+    "model_id": "e074e5a3-9ca",
+    "algorithm": "BPR",
+    "version": 15,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776923108.4770734,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_15_e074e5a3-9ca.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "e8fcb877-b77": {
+    "model_id": "e8fcb877-b77",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 6,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1735
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776923109.79014,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_6_e8fcb877-b77.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "0e676309-c71": {
+    "model_id": "0e676309-c71",
+    "algorithm": "ALS",
+    "version": 6,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2583
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776923111.5369866,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_6_0e676309-c71.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "b9e034d8-d2b": {
+    "model_id": "b9e034d8-d2b",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 15,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776923111.6178885,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_15_b9e034d8-d2b.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "0fc731a0-592": {
+    "model_id": "0fc731a0-592",
+    "algorithm": "BPR",
+    "version": 16,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.9134
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776923546.1928988,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_16_0fc731a0-592.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "8ce77bed-bad": {
+    "model_id": "8ce77bed-bad",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 7,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.094
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776923548.2451034,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_7_8ce77bed-bad.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "120d3aac-ba9": {
+    "model_id": "120d3aac-ba9",
+    "algorithm": "ALS",
+    "version": 7,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.3045
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776923551.210456,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_7_120d3aac-ba9.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "5fff39a9-8b7": {
+    "model_id": "5fff39a9-8b7",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 16,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776923551.3252509,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_16_5fff39a9-8b7.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "c627e667-3ea": {
+    "model_id": "c627e667-3ea",
+    "algorithm": "BPR",
+    "version": 17,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.9598
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776923563.2551773,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_17_c627e667-3ea.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "d7912b69-967": {
+    "model_id": "d7912b69-967",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 8,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.094
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776923564.715384,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_8_d7912b69-967.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "4f7a0437-0b4": {
+    "model_id": "4f7a0437-0b4",
+    "algorithm": "ALS",
+    "version": 8,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2748
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776923566.4792933,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_8_4f7a0437-0b4.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "f6bbb56d-d62": {
+    "model_id": "f6bbb56d-d62",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 17,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776923566.559953,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_17_f6bbb56d-d62.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "25b42a69-5d7": {
+    "model_id": "25b42a69-5d7",
+    "algorithm": "BPR",
+    "version": 18,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776924266.1176696,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_18_25b42a69-5d7.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "1b2af0f8-9e7": {
+    "model_id": "1b2af0f8-9e7",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 9,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1744
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776924267.577216,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_9_1b2af0f8-9e7.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "57d4b53b-192": {
+    "model_id": "57d4b53b-192",
+    "algorithm": "ALS",
+    "version": 9,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2648
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776924269.4205487,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_9_57d4b53b-192.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "0e35f25c-02b": {
+    "model_id": "0e35f25c-02b",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 18,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776924269.5084615,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_18_0e35f25c-02b.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "65c3f680-750": {
+    "model_id": "65c3f680-750",
+    "algorithm": "BPR",
+    "version": 19,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776924306.5827985,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_19_65c3f680-750.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "6303eb5a-d9e": {
+    "model_id": "6303eb5a-d9e",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 10,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1771
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776924308.0686724,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_10_6303eb5a-d9e.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "fc621118-254": {
+    "model_id": "fc621118-254",
+    "algorithm": "ALS",
+    "version": 10,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2637
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776924309.957303,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_10_fc621118-254.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "7fbcb90a-292": {
+    "model_id": "7fbcb90a-292",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 19,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776924310.04254,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_19_7fbcb90a-292.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "550fc15a-84e": {
+    "model_id": "550fc15a-84e",
+    "algorithm": "BPR",
+    "version": 20,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776925190.1773815,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_20_550fc15a-84e.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "157dfcd5-3ab": {
+    "model_id": "157dfcd5-3ab",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 11,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1707
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776925191.6368797,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_11_157dfcd5-3ab.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "39bdbb4c-6aa": {
+    "model_id": "39bdbb4c-6aa",
+    "algorithm": "ALS",
+    "version": 11,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2598
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776925193.472064,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_11_39bdbb4c-6aa.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "db7da931-f58": {
+    "model_id": "db7da931-f58",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 20,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776925193.5565865,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_20_db7da931-f58.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "ce63f30a-726": {
+    "model_id": "ce63f30a-726",
+    "algorithm": "BPR",
+    "version": 21,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776936158.623169,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_21_ce63f30a-726.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "5f22c0ad-424": {
+    "model_id": "5f22c0ad-424",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 12,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1703
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776936160.0400403,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_12_5f22c0ad-424.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "d9266bcd-935": {
+    "model_id": "d9266bcd-935",
+    "algorithm": "ALS",
+    "version": 12,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.2578
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776936161.9077559,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_12_d9266bcd-935.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "9b0c3339-a49": {
+    "model_id": "9b0c3339-a49",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 21,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776936161.9918509,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_21_9b0c3339-a49.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "0f9cd3d2-5c0": {
+    "model_id": "0f9cd3d2-5c0",
+    "algorithm": "BPR",
+    "version": 22,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.228,
+      "Recall@K": 0.6732,
+      "NDCG@K": 0.5099,
+      "MAP@K": 0.3507,
+      "Composite Score": 0.794
+    },
+    "params": {
+      "n_factors": 100,
+      "n_epochs": 140,
+      "lr": 0.016689369246557628,
+      "reg": 0.07534933229670147
+    },
+    "is_implicit": true,
+    "created_at": 1776936280.3508008,
+    "promoted": true,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\bpr_22_0f9cd3d2-5c0.pkl",
+    "notes": "rank=1/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "c63741d7-f6d": {
+    "model_id": "c63741d7-f6d",
+    "algorithm": "Ecommerce-Purchase-ALS",
+    "version": 13,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.077,
+      "Recall@K": 0.2344,
+      "NDCG@K": 0.4438,
+      "MAP@K": 0.1027,
+      "Composite Score": 0.1591
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 15,
+      "regularization": 0.8879907505283898,
+      "purchase_weight": 8.088546598854979
+    },
+    "is_implicit": true,
+    "created_at": 1776936281.778275,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-purchase-als_13_c63741d7-f6d.pkl",
+    "notes": "rank=2/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "59919d4d-b36": {
+    "model_id": "59919d4d-b36",
+    "algorithm": "ALS",
+    "version": 13,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.086,
+      "Recall@K": 0.258,
+      "NDCG@K": 0.4399,
+      "MAP@K": 0.1179,
+      "Composite Score": 0.259
+    },
+    "params": {
+      "n_factors": 10,
+      "n_iterations": 20,
+      "regularization": 0.2575817056012466,
+      "alpha": 80.02973339934653
+    },
+    "is_implicit": true,
+    "created_at": 1776936283.6083288,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\als_13_59919d4d-b36.pkl",
+    "notes": "rank=3/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
+  },
+  "03cce9f8-dcd": {
+    "model_id": "03cce9f8-dcd",
+    "algorithm": "Ecommerce-Popularity",
+    "version": 22,
+    "metrics": {
+      "RMSE": null,
+      "MAE": null,
+      "Precision@K": 0.152,
+      "Recall@K": 0.3541,
+      "NDCG@K": 0.274,
+      "MAP@K": 0.1867,
+      "Composite Score": 0.5198
+    },
+    "params": {
+      "recency_decay": 0.9463987883622811,
+      "min_interactions": 12
+    },
+    "is_implicit": true,
+    "created_at": 1776936283.6952682,
+    "promoted": false,
+    "file_path": "C:\\Users\\hi\\Proactive-Ai-Version-2.0.0\\model_store\\ecommerce-popularity_22_03cce9f8-dcd.pkl",
+    "notes": "rank=4/4 status=ok trials=30 metric=NDCG@K",
+    "tags": []
   }
 }

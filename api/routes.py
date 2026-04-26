@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
@@ -387,9 +387,12 @@ def get_job(job_id: str):
 
 
 @router.get("/recommend/options", tags=["Recommendations"])
-def recommendation_options(_: dict = Depends(require_auth)):
+def recommendation_options(
+    top_n_models: int = Query(1, ge=1, le=50, description="How many ranked supported models to return."),
+    _: dict = Depends(require_auth),
+):
     last_result = _runtime_state.get("last_result")
-    options = _strategy_service.recommendation_options(last_result=last_result)
+    options = _strategy_service.recommendation_options(last_result=last_result, top_n_models=top_n_models)
     options["available_algorithms"] = sorted(ALGORITHM_REGISTRY.keys())
     return _sanitise(options)
 
@@ -570,7 +573,7 @@ def _serialise_training_result(result) -> dict:
         "recommendation_options": _strategy_service.recommendation_options(last_result=result),
         "top_model_candidates": (
             (getattr(result, "model_selection_policy", {}) or {}).get("selected_models")
-            or (result.top_model_recommendations or [])[:5]
+            or (result.top_model_recommendations or [])
         ),
         "tuning": [
             {

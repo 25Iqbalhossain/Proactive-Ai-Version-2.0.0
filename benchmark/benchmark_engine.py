@@ -19,8 +19,8 @@ from utils.metrics import evaluate_all
 log = get_logger(__name__)
 
 MODE_TO_ALLOWED_FEEDBACK = {
-    "explicit": {"explicit", "both"},
-    "implicit": {"implicit", "both"},
+    "explicit": {"explicit"},
+    "implicit": {"implicit"},
     "hybrid": {"explicit", "implicit", "both"},
 }
 
