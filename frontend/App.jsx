@@ -1132,6 +1132,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
   const [job, setJob] = useState(null);
   const [jobData, setJobData] = useState(null);
   const [autoLoadedJobId, setAutoLoadedJobId] = useState('');
+  const [autoDownloadedJobId, setAutoDownloadedJobId] = useState('');
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
   const setManual = (k,v) => setForm(p=>({...p,manual_config:{...p.manual_config,[k]:v}}));
 
@@ -1151,6 +1152,12 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
     }, 2000);
     return ()=>clearInterval(t);
   },[job]);
+
+  useEffect(()=>{
+    if (!job || jobData?.status !== 'done' || autoDownloadedJobId === job) return;
+    setAutoDownloadedJobId(job);
+    download(true);
+  },[autoDownloadedJobId, job, jobData?.status]);
 
   useEffect(()=>{
     if (!job || jobData?.status !== 'done' || form.output_format !== 'csv' || autoLoadedJobId === job) return;
@@ -1185,6 +1192,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
       }
       const res = await jfetch(`${SMART_API}/build`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
       setAutoLoadedJobId('');
+      setAutoDownloadedJobId('');
       setJob(res.job_id);
       setJobData({status:'pending',progress:0});
       setMsg('Dataset build started.');
@@ -1201,7 +1209,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
     } catch(e){ setMsg(e.message); }
   }
 
-  async function download() {
+  async function download(autoTriggered = false) {
     try {
       const fmt = form.output_format||'csv';
       const res = await fetch(`${SMART_API}/jobs/${job}/download?output_format=${fmt}`);
@@ -1210,6 +1218,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
       const url = URL.createObjectURL(blob);
       Object.assign(document.createElement('a'),{href:url,download:`built_dataset.${fmt}`}).click();
       URL.revokeObjectURL(url);
+      if (autoTriggered) setMsg(`Dataset ready. ${fmt.toUpperCase()} downloaded to your PC.`);
     } catch(e){ setMsg(e.message); }
   }
 
@@ -1269,14 +1278,14 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
             <select value={form.rec_system_type} onChange={e=>set('rec_system_type',e.target.value)}>
               <option value="hybrid">Hybrid</option>
               <option value="collaborative">Collaborative Filtering</option>
-              <option value="content">Content-Based</option>
+              <option value="content_based">Content-Based</option>
+              <option value="sequential">Sequential</option>
             </select>
           </div>
           <div className="form-group">
             <label>Output format</label>
             <select value={form.output_format} onChange={e=>set('output_format',e.target.value)}>
               <option value="csv">CSV</option>
-              <option value="parquet">Parquet</option>
               <option value="json">JSON</option>
             </select>
           </div>
@@ -1300,6 +1309,15 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
       </div>
 
       {jobData && <JobStatus data={jobData} label="Build" />}
+
+      {isDone && (
+        <div className="log-box" style={{marginTop:12}}>
+          {form.output_format === 'csv'
+            ? 'CSV saved in the app, downloaded to your PC, and prepared for training.'
+            : 'JSON downloaded to your PC.'}
+          {jobData?.output_files?.[form.output_format] ? ` Backend copy: ${jobData.output_files[form.output_format]}` : ''}
+        </div>
+      )}
 
       {isDone && (
         <div className="advance-banner">

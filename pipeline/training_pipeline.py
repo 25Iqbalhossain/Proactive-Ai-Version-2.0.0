@@ -146,6 +146,13 @@ class TrainingPipeline:
         mapping = self.analyzer.confirm_or_override(
             mapping, list(raw_df.columns), interactive=self.config.interactive
         )
+        if not mapping.userID or not mapping.itemID:
+            raise ValueError(
+                "Dataset validation failed: could not confidently detect both userID and itemID columns. "
+                f"Detected mapping was userID={mapping.userID!r}, itemID={mapping.itemID!r}, "
+                f"rating={mapping.rating!r}, timestamp={mapping.timestamp!r}. "
+                "Inspect the built CSV/JSON and ensure it contains real user-item interaction identifiers."
+            )
 
         print(f"\n{Fore.YELLOW}[2/6] Feedback Profiling{Style.RESET_ALL}")
         probe_df = raw_df.rename(columns={mapping.rating: "rating"}) if mapping.rating else raw_df
@@ -155,6 +162,13 @@ class TrainingPipeline:
 
         print(f"\n{Fore.YELLOW}[3/6] Data Cleaning{Style.RESET_ALL}")
         clean_df, cleaning_report = self.cleaner.clean(raw_df, mapping)
+        if clean_df.empty:
+            raise ValueError(
+                "Dataset validation failed after cleaning: 0 interactions remained. "
+                f"Detected mapping was userID={mapping.userID!r}, itemID={mapping.itemID!r}, "
+                f"rating={mapping.rating!r}, timestamp={mapping.timestamp!r}. "
+                f"Available columns: {list(raw_df.columns)}"
+            )
         # For hybrid mode we optimize ranking metrics in Optuna.
         clean_df.attrs["is_implicit"] = resolved_mode in {"implicit", "hybrid"}
         clean_df.attrs["resolved_mode"] = resolved_mode

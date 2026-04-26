@@ -49,6 +49,7 @@ _HINTS: dict[str, list[str]] = {
         "event_time", "interaction_time", "viewed_at", "purchased_at",
     ],
 }
+_ID_NEGATIVE_HINTS = ("type", "name", "title", "date", "time", "status", "action", "log", "desc", "description")
 
 
 @dataclass
@@ -119,6 +120,73 @@ def _confidence_label(dist: int) -> tuple[str, str]:
     return             "FALLBACK",   Fore.RED
 
 
+def _role_penalty(df: pd.DataFrame, col: str, role: str) -> int:
+    norm_col = _normalise(col)
+    series = df[col]
+    n_total = max(len(series), 1)
+    n_unique = max(int(series.nunique(dropna=True)), 0)
+    ratio = n_unique / n_total
+    penalty = 0
+
+    if role in ("userID", "itemID"):
+        if any(bad in norm_col for bad in _ID_NEGATIVE_HINTS):
+            penalty += 4
+        if norm_col == "id":
+            penalty += 4
+        if pd.api.types.is_float_dtype(series):
+            penalty += 3
+        if n_unique <= 1:
+            penalty += 6
+        elif n_unique <= 2:
+            penalty += 5
+        elif n_unique <= 5:
+            penalty += 4
+        elif n_unique <= 10:
+            penalty += 3
+        if n_total > 50:
+            if ratio < 0.01:
+                penalty += 5
+            elif ratio < 0.05:
+                penalty += 3
+            elif ratio < 0.10:
+                penalty += 2
+        if norm_col.endswith("id") and norm_col != "id":
+            penalty -= 1
+
+    if role == "rating":
+        if not pd.api.types.is_numeric_dtype(series):
+            penalty += 2
+        if n_unique > 500:
+            penalty += 4
+
+    if role == "timestamp":
+        if not (
+            pd.api.types.is_datetime64_any_dtype(series)
+            or any(token in norm_col for token in ("time", "date", "created", "updated", "timestamp", "ts"))
+        ):
+            penalty += 2
+
+    return max(penalty, 0)
+
+
+def _is_safe_id_fallback(df: pd.DataFrame, col: str) -> bool:
+    norm_col = _normalise(col)
+    if norm_col == "id" or any(bad in norm_col for bad in _ID_NEGATIVE_HINTS):
+        return False
+
+    series = df[col]
+    n_total = max(len(series), 1)
+    n_unique = int(series.nunique(dropna=True))
+    ratio = n_unique / n_total
+    if n_unique < 10:
+        return False
+    if n_total > 50 and ratio < 0.10:
+        return False
+    if pd.api.types.is_float_dtype(series):
+        return False
+    return norm_col.endswith("id")
+
+
 # ── Core detection ────────────────────────────────────────────────────────────
 
 class DatasetAnalyzer:
@@ -140,7 +208,7 @@ class DatasetAnalyzer:
             for role, hints in _HINTS.items():
                 matched, dist = _fuzzy_match(col, hints)
                 if matched:
-                    candidates[role].append((dist, col))
+                    candidates[role].append((dist + _role_penalty(df, col, role), col))
         for role in candidates:
             candidates[role].sort(key=lambda x: x[0])
 
@@ -176,8 +244,12 @@ class DatasetAnalyzer:
         for role in ("userID", "itemID"):
             if col_map[role][0] is None:
                 for c in df.columns:
-                    if c not in assigned:
-                        col_map[role] = (c, 999); assigned.add(c); break
+                    if c in assigned:
+                        continue
+                    if _is_safe_id_fallback(df, c):
+                        col_map[role] = (c, 999)
+                        assigned.add(c)
+                        break
 
         confidence = {role: _confidence_label(dist) for role, (_, dist) in col_map.items()}
         return ColumnMapping(
@@ -191,6 +263,10 @@ class DatasetAnalyzer:
     def validate_mapping(self, df: pd.DataFrame, mapping: ColumnMapping) -> list[str]:
         """Return a list of validation warnings for the detected column mapping."""
         warnings = []
+        if mapping.userID is None:
+            warnings.append("No userID column could be detected with acceptable confidence.")
+        if mapping.itemID is None:
+            warnings.append("No itemID column could be detected with acceptable confidence.")
         for role, col in [("userID", mapping.userID), ("itemID", mapping.itemID)]:
             if col is None: continue
             series   = df[col]

@@ -15,6 +15,7 @@ Steps:
 from __future__ import annotations
 
 import logging
+import os
 import re
 import traceback
 
@@ -251,8 +252,10 @@ def run_build_job(job: Job, req: BuildRequest) -> None:
             plan = _build_manual_plan(req, schemas)
             job.set_step("llm_plan", "done", plan.description or "Manual plan generated")
         else:
+            has_chat_env = bool(os.getenv("CHAT_API_KEY") and os.getenv("CHAT_MODEL_NAME"))
             logger.info(
-                "Generating LLM plan with providers: groq=%s openai=%s",
+                "Generating LLM plan with providers: chat=%s groq=%s openai=%s",
+                has_chat_env,
                 bool(req.groq_api_key),
                 bool(req.openai_api_key or req.anthropic_api_key),
             )
@@ -284,6 +287,7 @@ def run_build_job(job: Job, req: BuildRequest) -> None:
             output_format=req.output_format,
             max_rows_per_table=req.max_rows_per_table,
             progress_cb=on_progress,
+            output_stem=f"recommendation_dataset_{job.job_id[:8]}",
         )
 
         job.set_step("execute_queries", "done")
@@ -307,6 +311,6 @@ def run_build_job(job: Job, req: BuildRequest) -> None:
         job.error   = str(exc)
         # Mark the currently-running step as error
         for step in job.steps:
-            if step.status == "running":
-                step.status  = "error"
-                step.message = str(exc)
+            if step.get("status") == "running":
+                step["status"] = "error"
+                step["message"] = str(exc)

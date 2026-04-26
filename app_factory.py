@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
 
 from api.routes import router as rec_router
 from smart_db_csv_builder.api.routers import connections, schema, build, jobs
@@ -20,6 +21,7 @@ except ImportError:
 BASE_DIR = Path(__file__).parent
 FRONTEND_DIST = BASE_DIR / 'frontend' / 'dist'
 STATIC_DIR = BASE_DIR / 'static'
+load_dotenv(BASE_DIR / '.env')
 STATIC_DIR.mkdir(exist_ok=True)
 SWAGGER_ASSETS = ('swagger-ui-bundle.js', 'swagger-ui.css')
 INLINE_FAVICON = (

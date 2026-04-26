@@ -8,7 +8,7 @@ from __future__ import annotations
 import uuid
 from enum import Enum
 from typing import Any, Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ── Enums ──────────────────────────────────────────────────────────────────
@@ -209,6 +209,23 @@ class BuildRequest(BaseModel):
         description="Legacy field name. If openai_api_key is missing, this value is reused as the fallback provider key."
     )
 
+    @field_validator("rec_system_type", mode="before")
+    @classmethod
+    def normalize_rec_system_type(cls, value):
+        if isinstance(value, RecSystemType):
+            return value
+        if not isinstance(value, str):
+            return value
+        normalized = value.strip().lower().replace("-", "_")
+        alias_map = {
+            "content": RecSystemType.CONTENT_BASED.value,
+            "contentbased": RecSystemType.CONTENT_BASED.value,
+            "content_based": RecSystemType.CONTENT_BASED.value,
+            "collab": RecSystemType.COLLABORATIVE.value,
+            "cf": RecSystemType.COLLABORATIVE.value,
+        }
+        return alias_map.get(normalized, normalized)
+
     @model_validator(mode="after")
     def populate_openai_fallback(self):
         if not self.openai_api_key and self.anthropic_api_key:
@@ -218,6 +235,16 @@ class BuildRequest(BaseModel):
                 self.target_description = self.query_text
             elif self.mode == BuildMode.LLM and self.llm_prompt:
                 self.target_description = self.llm_prompt
+        if self.mode == BuildMode.QUERY:
+            if not (self.query_text or self.target_description):
+                raise ValueError("query mode requires query_text or target_description")
+        elif self.mode == BuildMode.LLM:
+            if not (self.llm_prompt or self.target_description):
+                raise ValueError("llm mode requires llm_prompt or target_description")
+        elif self.mode == BuildMode.MANUAL:
+            manual = self.manual_config or {}
+            if not any((value or "").strip() for value in manual.values()):
+                raise ValueError("manual mode requires at least one manual_config field")
         return self
 
 class BuildResponse(BaseModel):

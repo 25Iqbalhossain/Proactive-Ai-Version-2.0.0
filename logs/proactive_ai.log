@@ -2537,3 +2537,97 @@ ValueError: Explicit mode requested but dataset does not support explicit feedba
 2026-04-23 15:24:43 | INFO     | algorithms.domain_models.ecommerce_models | E-commerce Popularity trained | eligible_items=41
 2026-04-23 15:24:43 | INFO     | models.model_registry | Model saved | id=03cce9f8-dcd algo=Ecommerce-Popularity version=22 path=C:\Users\hi\Proactive-Ai-Version-2.0.0\model_store\ecommerce-popularity_22_03cce9f8-dcd.pkl
 2026-04-23 15:24:43 | INFO     | data_processing.interaction_matrix | Interaction matrix | 112 users × 73 items | nnz=1077 | density=13.1727% | implicit=True
+2026-04-26 13:56:32 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-26 13:56:32 | INFO     | ingestion.csv_loader | Loaded 375 rows × 18 columns
+2026-04-26 13:56:32 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-26 13:56:32 | ERROR    | api.routes | Job 90d20e41-244 failed: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 161, in _run
+    train, test = self.cleaner.split(clean_df)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\data_cleaning.py", line 153, in split
+    train, test = train_test_split(df, test_size=test_ratio, random_state=seed)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2924, in train_test_split
+    n_train, n_test = _validate_shuffle_split(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2504, in _validate_shuffle_split
+    raise ValueError(
+ValueError: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+2026-04-26 14:48:18 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-26 14:48:18 | INFO     | ingestion.csv_loader | Loaded 375 rows × 18 columns
+2026-04-26 14:48:18 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-26 14:48:18 | ERROR    | api.routes | Job ba546ada-4b2 failed: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 161, in _run
+    train, test = self.cleaner.split(clean_df)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\data_processing\data_cleaning.py", line 153, in split
+    train, test = train_test_split(df, test_size=test_ratio, random_state=seed)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2924, in train_test_split
+    n_train, n_test = _validate_shuffle_split(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\venv\Lib\site-packages\sklearn\model_selection\_split.py", line 2504, in _validate_shuffle_split
+    raise ValueError(
+ValueError: With n_samples=0, test_size=0.25 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+2026-04-26 15:19:14 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-26 15:19:28 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-26 15:37:43 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
+2026-04-26 16:01:51 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-26 16:01:51 | INFO     | ingestion.csv_loader | Loaded 375 rows × 18 columns
+2026-04-26 16:01:51 | ERROR    | api.routes | Job f39eeb75-47e failed: Dataset validation failed: could not confidently detect both userID and itemID columns. Detected mapping was userID='id', itemID=None, rating='rating', timestamp='updated_at'. Inspect the built CSV/JSON and ensure it contains real user-item interaction identifiers.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 150, in _run
+    raise ValueError(
+ValueError: Dataset validation failed: could not confidently detect both userID and itemID columns. Detected mapping was userID='id', itemID=None, rating='rating', timestamp='updated_at'. Inspect the built CSV/JSON and ensure it contains real user-item interaction identifiers.
+2026-04-26 16:02:07 | INFO     | ingestion.csv_loader | Loading file | format=csv source_type=str
+2026-04-26 16:02:07 | INFO     | ingestion.csv_loader | Loaded 375 rows × 18 columns
+2026-04-26 16:02:07 | ERROR    | api.routes | Job 1061e7e0-e26 failed: Dataset validation failed: could not confidently detect both userID and itemID columns. Detected mapping was userID='id', itemID=None, rating='rating', timestamp='updated_at'. Inspect the built CSV/JSON and ensure it contains real user-item interaction identifiers.
+Traceback (most recent call last):
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 232, in _run
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\api\routes.py", line 330, in _task
+    result = pipeline.run_from_file(str(temp_path), file_format=format)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 103, in run_from_file
+    return self._run(df)
+           ^^^^^^^^^^^^^
+  File "C:\Users\hi\Proactive-Ai-Version-2.0.0\pipeline\training_pipeline.py", line 150, in _run
+    raise ValueError(
+ValueError: Dataset validation failed: could not confidently detect both userID and itemID columns. Detected mapping was userID='id', itemID=None, rating='rating', timestamp='updated_at'. Inspect the built CSV/JSON and ensure it contains real user-item interaction identifiers.
+2026-04-26 16:10:45 | INFO     | data_processing.data_cleaning | Cleaning complete | rows=0 users=0 items=0 sparsity=100.00%
