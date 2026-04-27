@@ -173,17 +173,17 @@ class BuildRequest(BaseModel):
 
     target_description: Optional[str] = Field(
         None,
-        description="Free-text hint, e.g. 'e-commerce product recs based on purchase history'"
+        description="Internal normalized build description used by the planner."
     )
 
     query_text: Optional[str] = Field(
         None,
-        description="Free-text query/instruction for query mode."
+        description="User-written dataset query for query mode."
     )
 
     llm_prompt: Optional[str] = Field(
         None,
-        description="Explicit LLM planner prompt for llm mode."
+        description="Planner hint or description for llm mode."
     )
 
     manual_config: Optional[dict[str, Optional[str]]] = Field(
@@ -201,6 +201,11 @@ class BuildRequest(BaseModel):
     openai_api_key: Optional[str] = Field(
         None,
         description="Fallback LLM (OpenAI). Used if Groq fails."
+    )
+
+    mistral_api_key: Optional[str] = Field(
+        None,
+        description="Preferred coding/query-planning LLM (Mistral Codestral). Used first when configured."
     )
 
     # Backward compatibility for older frontend payloads.
@@ -230,21 +235,29 @@ class BuildRequest(BaseModel):
     def populate_openai_fallback(self):
         if not self.openai_api_key and self.anthropic_api_key:
             self.openai_api_key = self.anthropic_api_key
-        if not self.target_description:
-            if self.mode == BuildMode.QUERY and self.query_text:
-                self.target_description = self.query_text
-            elif self.mode == BuildMode.LLM and self.llm_prompt:
-                self.target_description = self.llm_prompt
         if self.mode == BuildMode.QUERY:
-            if not (self.query_text or self.target_description):
-                raise ValueError("query mode requires query_text or target_description")
+            if not self.query_text and self.target_description:
+                self.query_text = self.target_description
+            if self.query_text and not self.target_description:
+                self.target_description = self.query_text
+            if not self.query_text:
+                raise ValueError("query mode requires query_text")
         elif self.mode == BuildMode.LLM:
-            if not (self.llm_prompt or self.target_description):
-                raise ValueError("llm mode requires llm_prompt or target_description")
+            if not self.llm_prompt and self.target_description:
+                self.llm_prompt = self.target_description
+            if self.llm_prompt and not self.target_description:
+                self.target_description = self.llm_prompt
+            if not self.llm_prompt:
+                raise ValueError("llm mode requires llm_prompt")
         elif self.mode == BuildMode.MANUAL:
             manual = self.manual_config or {}
             if not any((value or "").strip() for value in manual.values()):
                 raise ValueError("manual mode requires at least one manual_config field")
+        elif not self.target_description:
+            if self.query_text:
+                self.target_description = self.query_text
+            elif self.llm_prompt:
+                self.target_description = self.llm_prompt
         return self
 
 class BuildResponse(BaseModel):
@@ -271,3 +284,5 @@ class JobResponse(BaseModel):
     row_count:    Optional[int] = None
     column_count: Optional[int] = None
     plan:         Optional[dict] = None  # LLM merge plan (for transparency)
+    csvUrl:       Optional[str] = None
+    jsonUrl:      Optional[str] = None

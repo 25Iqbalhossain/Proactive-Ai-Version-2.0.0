@@ -17,8 +17,8 @@ from smart_db_csv_builder.models.schemas import (
     SchemaResponse,
     TableInfo,
 )
-from smart_db_csv_builder.services.builder import run_build_job
-from smart_db_csv_builder.services.executor import execute_plan
+from smart_db_csv_builder.services.builder import _build_manual_plan, _resolve_raw_sql_query, run_build_job
+from smart_db_csv_builder.services.executor import execute_plan, execute_raw_sql_query
 from smart_db_csv_builder.services.llm_planner import (
     MergePlan,
     TableQuery,
@@ -343,6 +343,11 @@ class SmartDbCsvBuilderLlmPlannerTests(unittest.TestCase):
         self.assertEqual(provider, "google_genai")
         self.assertEqual(model, "gemini-2.5-flash-lite")
 
+    def test_parse_chat_model_name_mistral_provider(self):
+        provider, model = _parse_chat_model_name("mistral:codestral-2508")
+        self.assertEqual(provider, "mistral")
+        self.assertEqual(model, "codestral-2508")
+
     @patch("smart_db_csv_builder.services.llm_planner._call_google_genai")
     def test_build_merge_plan_supports_chat_api_key_with_google_genai_model(self, mock_call_google_genai):
         mock_call_google_genai.return_value = """
@@ -369,6 +374,58 @@ class SmartDbCsvBuilderLlmPlannerTests(unittest.TestCase):
         self.assertEqual(plan.merge_keys, ["userID"])
         self.assertEqual(len(plan.table_queries), 2)
         mock_call_google_genai.assert_called_once()
+
+    @patch("smart_db_csv_builder.services.llm_planner._call_mistral")
+    def test_build_merge_plan_supports_mistral_codestral_provider(self, mock_call_mistral):
+        mock_call_mistral.return_value = """
+        {
+          "description": "Hybrid dataset",
+          "merge_keys": ["user_id"],
+          "final_columns": ["user_id", "country"],
+          "table_queries": [
+            {"connection_id": "conn-1", "table": "events", "columns": ["user_id", "item_id"]},
+            {"connection_id": "conn-1", "table": "users", "columns": ["user_id", "country"]}
+          ],
+          "collection_fetches": []
+        }
+        """
+
+        plan = build_merge_plan(
+            schemas=self._schemas(),
+            rec_type=RecSystemType.HYBRID,
+            target_description="Build rec data",
+            mistral_api_key="test-mistral-key",
+            mistral_model="codestral-2508",
+        )
+
+        self.assertEqual(plan.merge_keys, ["userID"])
+        self.assertEqual(len(plan.table_queries), 2)
+        mock_call_mistral.assert_called_once()
+
+    @patch.dict(os.environ, {"MISTRAL_API_KEY": "env-mistral-key"}, clear=True)
+    @patch("smart_db_csv_builder.services.llm_planner._call_mistral")
+    def test_build_merge_plan_uses_env_mistral_api_key_by_default(self, mock_call_mistral):
+        mock_call_mistral.return_value = """
+        {
+          "description": "Hybrid dataset",
+          "merge_keys": ["user_id"],
+          "final_columns": ["user_id", "country"],
+          "table_queries": [
+            {"connection_id": "conn-1", "table": "events", "columns": ["user_id", "item_id"]},
+            {"connection_id": "conn-1", "table": "users", "columns": ["user_id", "country"]}
+          ],
+          "collection_fetches": []
+        }
+        """
+
+        build_merge_plan(
+            schemas=self._schemas(),
+            rec_type=RecSystemType.HYBRID,
+            target_description="Build rec data",
+        )
+
+        call_args, _ = mock_call_mistral.call_args
+        self.assertEqual(call_args[2], "codestral-2508")
 
     @patch("smart_db_csv_builder.services.llm_planner._call_google_genai")
     def test_build_merge_plan_falls_back_when_llm_plan_has_no_valid_tables(self, mock_call_google_genai):
@@ -429,7 +486,7 @@ class SmartDbCsvBuilderLlmPlannerTests(unittest.TestCase):
 
     @patch.dict(os.environ, {"CHAT_MODEL_NAME": "google_genai:gemini-2.5-flash-lite"}, clear=True)
     def test_build_merge_plan_requires_chat_api_key_when_chat_model_is_configured(self):
-        with self.assertRaisesRegex(RuntimeError, "CHAT_MODEL_NAME is configured but CHAT_API_KEY is missing"):
+        with self.assertRaisesRegex(RuntimeError, "CHAT_MODEL_NAME is configured but no API key is available"):
             build_merge_plan(
                 schemas=self._schemas(),
                 rec_type=RecSystemType.HYBRID,
@@ -634,6 +691,62 @@ class SmartDbCsvBuilderLlmPlannerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Built dataset is not training-ready"):
             execute_plan(plan=plan, output_format=OutputFormat.CSV)
 
+    @patch("smart_db_csv_builder.services.executor.connection_store.get")
+    def test_execute_raw_sql_query_persists_final_dataset_without_renaming(self, mock_get):
+        mock_get.return_value = _FakeConnection(
+            db_type=DBType.SQLITE,
+            driver=_FakeDriver(
+                rows=[
+                    {
+                        "user_id": 1,
+                        "item_id": 101,
+                        "interaction_value": 1,
+                        "service_name": "Alpha",
+                    },
+                    {
+                        "user_id": 2,
+                        "item_id": 202,
+                        "interaction_value": 1,
+                        "service_name": "Beta",
+                    },
+                ]
+            ),
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir, patch(
+            "smart_db_csv_builder.services.executor.OUTPUT_DIR",
+            Path(tmpdir),
+        ):
+            filepath, row_count, col_count, output_files = execute_raw_sql_query(
+                connection_id="conn-1",
+                sql="SELECT user_id, item_id, 1 AS interaction_value, service_name FROM services",
+                output_format=OutputFormat.CSV,
+                output_stem="raw_sql_dataset",
+            )
+
+            frame = __import__("pandas").read_csv(filepath)
+            self.assertEqual(filepath, output_files["csv"])
+            self.assertEqual(row_count, 2)
+            self.assertEqual(col_count, 4)
+            self.assertEqual(
+                list(frame.columns),
+                ["user_id", "item_id", "interaction_value", "service_name"],
+            )
+
+    @patch("smart_db_csv_builder.services.executor.connection_store.get")
+    def test_execute_raw_sql_query_requires_user_and_item_columns(self, mock_get):
+        mock_get.return_value = _FakeConnection(
+            db_type=DBType.SQLITE,
+            driver=_FakeDriver(rows=[{"user_id": 1, "service_name": "Alpha"}]),
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Raw SQL query result must include the required recommendation columns"):
+            execute_raw_sql_query(
+                connection_id="conn-1",
+                sql="SELECT user_id, service_name FROM services",
+                output_format=OutputFormat.CSV,
+            )
+
     def test_run_build_job_marks_running_step_as_error(self):
         job = Job(job_id="job-1")
         req = BuildRequest(
@@ -661,12 +774,96 @@ class SmartDbCsvBuilderLlmPlannerTests(unittest.TestCase):
         self.assertEqual(req.rec_system_type, RecSystemType.CONTENT_BASED)
         self.assertEqual(req.target_description, "build a content dataset")
 
+    def test_build_request_llm_mode_backfills_prompt_from_legacy_target_description(self):
+        req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.LLM,
+            target_description="build a hybrid dataset",
+        )
+
+        self.assertEqual(req.llm_prompt, "build a hybrid dataset")
+        self.assertEqual(req.target_description, "build a hybrid dataset")
+
     def test_build_request_rejects_query_mode_without_text(self):
-        with self.assertRaisesRegex(ValueError, "query mode requires query_text or target_description"):
+        with self.assertRaisesRegex(ValueError, "query mode requires query_text"):
             BuildRequest(
                 connection_ids=["conn-1"],
                 mode=BuildMode.QUERY,
             )
+
+    def test_build_request_query_mode_backfills_query_text_from_legacy_target_description(self):
+        req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.QUERY,
+            target_description="build recommendation interactions from orders",
+        )
+
+        self.assertEqual(req.query_text, "build recommendation interactions from orders")
+        self.assertEqual(req.target_description, "build recommendation interactions from orders")
+
+    def test_resolve_raw_sql_query_accepts_select_and_with(self):
+        select_req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.QUERY,
+            query_text="  SELECT user_id, item_id FROM events;  ",
+        )
+        with_req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.QUERY,
+            query_text="WITH events_cte AS (SELECT user_id, item_id FROM events) SELECT * FROM events_cte;",
+        )
+
+        self.assertEqual(_resolve_raw_sql_query(select_req), "SELECT user_id, item_id FROM events")
+        self.assertEqual(
+            _resolve_raw_sql_query(with_req),
+            "WITH events_cte AS (SELECT user_id, item_id FROM events) SELECT * FROM events_cte",
+        )
+
+    def test_resolve_raw_sql_query_returns_none_for_non_sql_query_mode_prompt(self):
+        req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.QUERY,
+            query_text="build recommendation interactions from orders",
+        )
+
+        self.assertIsNone(_resolve_raw_sql_query(req))
+
+    @patch("smart_db_csv_builder.services.builder.build_merge_plan")
+    @patch("smart_db_csv_builder.services.builder.execute_raw_sql_query")
+    @patch("smart_db_csv_builder.services.builder.connection_store.get")
+    def test_run_build_job_query_mode_raw_sql_skips_schema_and_planner(self, mock_get, mock_execute_raw_sql, mock_build_merge_plan):
+        mock_get.return_value = _FakeConnection(db_type=DBType.SQLITE, driver=_FakeDriver())
+        mock_execute_raw_sql.return_value = (
+            "C:\\tmp\\recommendation_dataset.csv",
+            2,
+            4,
+            {
+                "csv": "C:\\tmp\\recommendation_dataset.csv",
+                "json": "C:\\tmp\\recommendation_dataset.json",
+            },
+        )
+
+        job = Job(job_id="job-raw-sql")
+        req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.QUERY,
+            rec_system_type=RecSystemType.HYBRID,
+            query_text="SELECT user_id, item_id, 1 AS interaction_value FROM events;",
+        )
+
+        run_build_job(job, req)
+
+        self.assertEqual(str(job.status), "JobStatus.DONE")
+        self.assertEqual(job.row_count, 2)
+        self.assertEqual(job.column_count, 4)
+        self.assertTrue(job.plan["raw_sql"])
+        self.assertEqual(job.steps[1]["step"], "extract_schemas")
+        self.assertEqual(job.steps[1]["status"], "done")
+        self.assertEqual(job.steps[1]["message"], "Skipped for raw SQL query")
+        self.assertEqual(job.steps[2]["step"], "llm_plan")
+        self.assertEqual(job.steps[2]["message"], "Raw SQL query detected; planner skipped")
+        mock_execute_raw_sql.assert_called_once()
+        mock_build_merge_plan.assert_not_called()
 
     def test_build_request_rejects_empty_manual_mode(self):
         with self.assertRaisesRegex(ValueError, "manual mode requires at least one manual_config field"):
@@ -675,6 +872,50 @@ class SmartDbCsvBuilderLlmPlannerTests(unittest.TestCase):
                 mode=BuildMode.MANUAL,
                 manual_config={"tables": "   ", "notes": ""},
             )
+
+    def test_build_manual_plan_normalizes_user_and_item_fields_and_keeps_all_columns(self):
+        req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.MANUAL,
+            rec_system_type=RecSystemType.HYBRID,
+            manual_config={
+                "tables": "public.users, public.events, public.items",
+                "relationships": (
+                    "public.users.user_id=public.events.user_id, "
+                    "public.events.item_id=public.items.item_id"
+                ),
+                "target_field": "public.events.user_id",
+                "label_field": "public.events.item_id",
+                "notes": "Manual build",
+            },
+        )
+
+        plan = _build_manual_plan(req, self._schemas())
+        queries = {table_query.table: table_query for table_query in plan.table_queries}
+
+        self.assertEqual(plan.merge_keys, ["userID", "itemID"])
+        self.assertEqual(queries["public.events"].alias_map.get("user_id"), "userID")
+        self.assertEqual(queries["public.events"].alias_map.get("item_id"), "itemID")
+        self.assertEqual(queries["public.users"].alias_map.get("user_id"), "userID")
+        self.assertEqual(queries["public.items"].alias_map.get("item_id"), "itemID")
+        self.assertEqual(plan.final_columns[:4], ["userID", "itemID", "rating", "timestamp"])
+        self.assertIn("country", plan.final_columns)
+        self.assertIn("category", plan.final_columns)
+        self.assertIn("event_type", plan.final_columns)
+
+    def test_build_manual_plan_rejects_unknown_manual_field(self):
+        req = BuildRequest(
+            connection_ids=["conn-1"],
+            mode=BuildMode.MANUAL,
+            rec_system_type=RecSystemType.HYBRID,
+            manual_config={
+                "tables": "public.events",
+                "target_field": "public.events.missing_user_id",
+            },
+        )
+
+        with self.assertRaisesRegex(ValueError, "could not be matched"):
+            _build_manual_plan(req, self._schemas())
 
 
 if __name__ == "__main__":

@@ -18,6 +18,8 @@ from smart_db_csv_builder.services.llm_planner import CollectionFetch, MergePlan
 
 logger = logging.getLogger(__name__)
 OUTPUT_DIR = Path(__file__).resolve().parents[2] / "results" / "built_datasets"
+RAW_SQL_REQUIRED_COLUMNS = ("user_id", "item_id")
+RAW_SQL_OPTIONAL_COLUMNS = ("interaction_value", "timestamp")
 TRAINING_USER_HINTS = ("user", "customer", "member", "account", "client", "person", "subscriber", "owner", "employee", "patient", "buyer")
 TRAINING_ITEM_HINTS = ("item", "product", "service", "offer", "asset", "object", "content", "listing", "catalog", "sku", "article", "book", "movie", "plan", "package")
 TRAINING_RATING_HINTS = ("rating", "score", "stars", "grade", "value", "weight", "rank", "preference")
@@ -69,6 +71,20 @@ def _apply_aliases(df: pd.DataFrame, alias_map: dict[str, str]) -> pd.DataFrame:
     return df.rename(columns={k: v for k, v in alias_map.items() if k in df.columns})
 
 
+def _write_output_files(
+    df: pd.DataFrame,
+    output_format: OutputFormat,
+    output_stem: str | None,
+) -> tuple[str, dict[str, str]]:
+    output_files = _make_output_file_map(output_stem)
+    df.to_csv(output_files[OutputFormat.CSV.value], index=False)
+    df.to_json(output_files[OutputFormat.JSON.value], orient="records", indent=2)
+
+    path = output_files[output_format.value]
+    logger.info("Saved outputs: %s", output_files)
+    return path, output_files
+
+
 def _format_merge_key_number(value) -> str:
     as_float = float(value)
     if as_float.is_integer():
@@ -95,12 +111,19 @@ def _normalize_merge_key_series(series: pd.Series) -> pd.Series:
 
 
 def _normalize_merge_keys(frames: list[pd.DataFrame], merge_keys: list[str]) -> list[pd.DataFrame]:
+    if not merge_keys:
+        return frames
+
     normalized_frames: list[pd.DataFrame] = []
 
     for frame in frames:
-        normalized = frame.copy()
+        normalized = frame
+        copied = False
         for key in merge_keys:
             if key in normalized.columns:
+                if not copied:
+                    normalized = normalized.copy()
+                    copied = True
                 normalized[key] = _normalize_merge_key_series(normalized[key])
         normalized_frames.append(normalized)
 
@@ -145,10 +168,12 @@ def _resolve_output_columns(merged, final_columns, source_maps):
         return list(merged.columns)
 
     ordered = []
+    seen: set[str] = set()
 
     def add(col):
-        if col in merged.columns and col not in ordered:
+        if col in merged.columns and col not in seen:
             ordered.append(col)
+            seen.add(col)
 
     for col in ("userID", "itemID", "rating", "timestamp"):
         add(col)
@@ -261,19 +286,20 @@ def _candidate_id_score(series: pd.Series, column_name: str, role: str) -> float
 
 
 def _best_training_id_candidate(df: pd.DataFrame, role: str, exclude: set[str]) -> str | None:
-    ranked: list[tuple[float, str]] = []
+    best_score = float("-inf")
+    best_column: str | None = None
+
     for column_name in df.columns:
         if column_name in exclude:
             continue
         score = _candidate_id_score(df[column_name], column_name, role)
-        if score > -100:
-            ranked.append((score, column_name))
+        if score > best_score:
+            best_score = score
+            best_column = column_name
 
-    if not ranked:
+    if best_column is None or best_score <= -100:
         return None
 
-    ranked.sort(reverse=True)
-    best_score, best_column = ranked[0]
     if best_score < 40:
         return None
     return best_column
@@ -331,6 +357,51 @@ def _standardize_training_columns(merged: pd.DataFrame) -> pd.DataFrame:
     return standardized
 
 
+def _validate_raw_sql_result_columns(df: pd.DataFrame) -> None:
+    lowered = {str(column).lower(): str(column) for column in df.columns}
+    missing = [column for column in RAW_SQL_REQUIRED_COLUMNS if column not in lowered]
+    if missing:
+        raise RuntimeError(
+            "Raw SQL query result must include the required recommendation columns "
+            f"{list(RAW_SQL_REQUIRED_COLUMNS)}. Missing: {missing}. Available columns: {list(df.columns)}"
+        )
+
+
+def execute_raw_sql_query(
+    connection_id: str,
+    sql: str,
+    output_format: OutputFormat,
+    max_rows: int = 50_000,
+    progress_cb: ProgressCallback | None = None,
+    output_stem: str | None = None,
+):
+    def report(p, msg):
+        logger.info("[%d%%] %s", p, msg)
+        if progress_cb:
+            progress_cb(p, msg)
+
+    conn = connection_store.get(connection_id)
+    if not conn:
+        raise RuntimeError(f"Connection '{connection_id}' was not found for raw SQL execution.")
+
+    report(20, "Executing raw SQL query")
+    try:
+        try:
+            rows = conn.driver.execute(sql, limit=max_rows)
+        except TypeError:
+            rows = conn.driver.execute(sql)
+    except Exception as exc:
+        logger.error("Raw SQL execution error for %s: %s", connection_id, exc)
+        raise RuntimeError(f"Raw SQL query failed: {exc}") from exc
+
+    df = pd.DataFrame(rows).drop_duplicates().reset_index(drop=True)
+    _validate_raw_sql_result_columns(df)
+
+    report(85, "Writing raw SQL query result")
+    path, output_files = _write_output_files(df, output_format, output_stem)
+    return path, len(df), len(df.columns), output_files
+
+
 def execute_plan(
     plan: MergePlan,
     output_format: OutputFormat,
@@ -345,6 +416,7 @@ def execute_plan(
 
     raw_frames = []
     failures: list[str] = []
+    merge_keys = plan.merge_keys
 
     for tq in plan.table_queries:
         conn = connection_store.get(tq.connection_id)
@@ -397,8 +469,8 @@ def execute_plan(
     if failures:
         raise RuntimeError(" ; ".join(failures))
 
-    frames, source_maps = _prepare_frames_for_merge(raw_frames, plan.merge_keys)
-    frames = _normalize_merge_keys(frames, plan.merge_keys)
+    frames, source_maps = _prepare_frames_for_merge(raw_frames, merge_keys)
+    frames = _normalize_merge_keys(frames, merge_keys)
 
     if not frames:
         raise RuntimeError("No data collected")
@@ -408,7 +480,8 @@ def execute_plan(
     merged = frames[0]
 
     for other in frames[1:]:
-        keys = [k for k in plan.merge_keys if k in merged.columns and k in other.columns]
+        other_columns = set(other.columns)
+        keys = [key for key in merge_keys if key in merged.columns and key in other_columns]
 
         if not keys:
             raise RuntimeError("Unable to merge result sets because no validated merge keys were present in both tables.")
@@ -419,18 +492,12 @@ def execute_plan(
         merged=merged,
         final_columns=plan.final_columns,
         source_maps=source_maps,
-        merge_keys=plan.merge_keys,
+        merge_keys=merge_keys,
     )
     merged = _standardize_training_columns(merged)
     ordered_cols = _resolve_output_columns(merged, plan.final_columns, source_maps)
     merged = merged[ordered_cols]
     merged = merged.drop_duplicates().reset_index(drop=True)
 
-    output_files = _make_output_file_map(output_stem)
-    merged.to_csv(output_files[OutputFormat.CSV.value], index=False)
-    merged.to_json(output_files[OutputFormat.JSON.value], orient="records", indent=2)
-
-    path = output_files[output_format.value]
-    logger.info("Saved outputs: %s", output_files)
-
+    path, output_files = _write_output_files(merged, output_format, output_stem)
     return path, len(merged), len(merged.columns), output_files

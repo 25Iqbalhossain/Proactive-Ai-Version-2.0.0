@@ -41,6 +41,8 @@ class Job:
             'row_count': self.row_count,
             'column_count': self.column_count,
             'plan': self.plan,
+            'csvUrl': f"/api/jobs/{self.job_id}/download?output_format=csv" if self.output_files.get("csv") else None,
+            'jsonUrl': f"/api/jobs/{self.job_id}/download?output_format=json" if self.output_files.get("json") else None,
         }
 
 class JobStore:

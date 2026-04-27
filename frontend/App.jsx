@@ -1176,15 +1176,13 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
         max_rows_per_table:Number(form.max_rows_per_table),
       };
       if (mode==='query') {
-        const qt = (form.query_text || form.target_description || '').trim();
-        if (!qt) throw new Error('Query mode requires a query or prompt.');
+        const qt = (form.query_text || '').trim();
+        if (!qt) throw new Error('Query mode requires a written query.');
         payload.query_text = qt;
-        payload.target_description = qt;
       } else if (mode==='llm') {
         const lp = (form.llm_prompt || '').trim();
-        if (!lp) throw new Error('LLM Build mode requires instructions.');
+        if (!lp) throw new Error('Planner hint mode requires instructions.');
         payload.llm_prompt = lp;
-        payload.target_description = lp;
       } else {
         const mc = Object.fromEntries(Object.entries(form.manual_config||{}).map(([k,v])=>[k,(v||'').trim()]));
         if (!Object.values(mc).some(Boolean)) throw new Error('Manual mode requires at least one configuration field.');
@@ -1228,7 +1226,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
     <div className="panel">
       <div className="panel-header">
         <h2>Build dataset</h2>
-        <p>LLM API keys are read from backend environment. Choose a build mode, configure options, then build from your selected connections.</p>
+        <p>Choose how to build the dataset: write the query yourself, give the planner a hint, or manually pick tables and join fields. If `MISTRAL_API_KEY` is configured, complex planner builds prefer Codestral first.</p>
       </div>
 
       {selected.length === 0 && (
@@ -1238,7 +1236,7 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
       )}
 
       <div className="build-modes">
-        {[['query','🔍 Query / Prompt'],['llm','🤖 LLM Build'],['manual','⚙️ Manual']].map(([m,l])=>(
+        {[['query','🔍 User Query'],['llm','🤖 Planner Hint'],['manual','⚙️ Manual Tables']].map(([m,l])=>(
           <button key={m} className={`mode-tab ${form.mode===m?'active':''}`} onClick={()=>set('mode',m)}>{l}</button>
         ))}
       </div>
@@ -1246,26 +1244,29 @@ function PageBuild({ selected, schemas, onBuilt, setMsg }) {
       <div className="form-stack">
         {form.mode === 'query' && (
           <div className="form-group">
-            <label>Target description or query</label>
-            <textarea value={form.target_description} onChange={e=>set('target_description',e.target.value)}
+            <label>Write the dataset query</label>
+            <textarea value={form.query_text} onChange={e=>set('query_text',e.target.value)}
               placeholder="e.g. Build a user-item interaction dataset for product recommendations based on purchase history" />
           </div>
         )}
         {form.mode === 'llm' && (
           <div className="form-group">
-            <label>LLM build instructions</label>
+            <label>Planner hint or description</label>
             <textarea value={form.llm_prompt} onChange={e=>set('llm_prompt',e.target.value)}
-              placeholder="Describe what kind of recommendation dataset you want the AI to build…" />
+              placeholder="Describe the recommendation goal, useful tables, or business context for the planner…" />
           </div>
         )}
         {form.mode === 'manual' && (
           <div className="form-stack">
-            <div className="form-row">
-              <div className="form-group"><label>Tables (comma-separated)</label><input value={form.manual_config.tables} onChange={e=>setManual('tables',e.target.value)} placeholder={availableTables.slice(0,2).join(',') || 'users,items,events'} /></div>
-              <div className="form-group"><label>Target field</label><input value={form.manual_config.target_field} onChange={e=>setManual('target_field',e.target.value)} placeholder="user_id" /></div>
+            <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.6}}>
+              Manual mode keeps all selected table columns, then normalizes the chosen user and item fields so the dataset is ready for training.
             </div>
             <div className="form-row">
-              <div className="form-group"><label>Label field</label><input value={form.manual_config.label_field} onChange={e=>setManual('label_field',e.target.value)} placeholder="item_id" /></div>
+              <div className="form-group"><label>Tables (comma-separated)</label><input value={form.manual_config.tables} onChange={e=>setManual('tables',e.target.value)} placeholder={availableTables.slice(0,2).join(',') || 'users,items,events'} /></div>
+              <div className="form-group"><label>User field</label><input value={form.manual_config.target_field} onChange={e=>setManual('target_field',e.target.value)} placeholder="events.user_id" /></div>
+            </div>
+            <div className="form-row">
+              <div className="form-group"><label>Item field</label><input value={form.manual_config.label_field} onChange={e=>setManual('label_field',e.target.value)} placeholder="events.item_id" /></div>
               <div className="form-group"><label>Relationships</label><input value={form.manual_config.relationships} onChange={e=>setManual('relationships',e.target.value)} placeholder="users.id=events.user_id" /></div>
             </div>
             <div className="form-group"><label>Notes</label><textarea value={form.manual_config.notes} onChange={e=>setManual('notes',e.target.value)} placeholder="Any additional context…" style={{minHeight:60}} /></div>
